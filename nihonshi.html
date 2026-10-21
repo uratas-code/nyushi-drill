@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EAF4FF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161A2E" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="入試ドリル">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}</style>
+<title>日本史ドリル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Nunito:wght@600;800;900&family=Fredoka:wght@600;700&display=swap">
+<style>
+/* Layout: ステッカー風のポップな一列カラム。太いフチ＋ずらした影、分野ごとにカラー */
+:root{
+  --bg:#EAF4FF; --dot:#CFE3FA; --card:#FFFFFF; --ink:#1B1E3A; --muted:#5C6385; --edge:#1B1E3A;
+  --g:#FF5C8A; --v:#2FA8FF; --o:#FFB800; --c:var(--g);
+  --c-soft:#FFE3EC;
+  --ok:#14B06A; --ok-soft:#DDF7EA; --ng:#FF4D4D; --ng-soft:#FFE4E4;
+  --btn-ink:#FFFFFF;
+  --f-jp:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  --f-en:"Nunito","Segoe UI",system-ui,sans-serif;
+  --f-num:"Fredoka","Nunito",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#161A2E; --dot:#22284A; --card:#232945; --ink:#F2F4FF; --muted:#A9B0D4; --edge:#060815;
+  --g:#FF7AA2; --v:#5BBEFF; --o:#FFC933; --c-soft:#3A2440;
+  --ok:#3DD68C; --ok-soft:#173829; --ng:#FF6F6F; --ng-soft:#3E1D22; --btn-ink:#161A2E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161A2E; --dot:#22284A; --card:#232945; --ink:#F2F4FF; --muted:#A9B0D4; --edge:#060815;
+  --g:#FF7AA2; --v:#5BBEFF; --o:#FFC933; --c-soft:#3A2440;
+  --ok:#3DD68C; --ok-soft:#173829; --ng:#FF6F6F; --ng-soft:#3E1D22; --btn-ink:#161A2E; color-scheme:dark}
+[data-cat="G"]{--c:var(--g)} [data-cat="V"]{--c:var(--v)} [data-cat="O"]{--c:var(--o)}
+*{box-sizing:border-box}
+body{background-color:var(--bg);background-image:radial-gradient(var(--dot) 2px,transparent 2.5px);background-size:22px 22px;
+  color:var(--ink);font-family:var(--f-jp);font-weight:500;font-size:15px;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--v);outline-offset:3px}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.subject{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.subject h1{margin:0;font-size:30px;font-weight:900;letter-spacing:.02em;text-wrap:balance;
+  text-shadow:3px 3px 0 var(--g)}
+.subject h1 b{font-family:var(--f-num);font-weight:700;color:var(--v);text-shadow:3px 3px 0 var(--o)}
+.tag{font-size:12px;font-weight:900;background:var(--o);color:#1B1E3A;border:2px solid var(--edge);border-radius:999px;padding:2px 12px;transform:rotate(-4deg);box-shadow:2px 2px 0 var(--edge)}
+.top small{font-family:var(--f-num);font-size:14px;background:var(--card);border:2px solid var(--edge);border-radius:999px;padding:2px 12px}
+.lead{color:var(--muted);margin:0}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.cat{background:var(--card);border:3px solid var(--edge);border-radius:20px;padding:16px 16px 14px;text-align:left;display:flex;flex-direction:column;gap:6px;min-width:0;
+  box-shadow:5px 5px 0 var(--c);transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}
+.cat::after{content:"";position:absolute;right:-24px;top:-24px;width:80px;height:80px;border-radius:50%;background:var(--c);opacity:.25}
+.cat:hover{transform:translate(-2px,-3px) rotate(-.6deg);box-shadow:8px 8px 0 var(--c)}
+.cat:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--c)}
+.cat .k{font-family:var(--f-num);font-size:12px;font-weight:700;color:var(--c);letter-spacing:.12em;filter:brightness(.85)}
+.cat .t{font-size:20px;font-weight:900}
+.cat .d{font-size:13px;color:var(--muted)}
+.meter{height:12px;background:var(--bg);border:2px solid var(--edge);border-radius:999px;position:relative;margin-top:6px;overflow:hidden}
+.meter i{position:absolute;inset:0 auto 0 0;background:var(--c);border-radius:999px}
+.cat .s{font-size:12px;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{background:var(--card);border:3px solid var(--edge);border-radius:999px;padding:8px 20px;font-weight:700;box-shadow:3px 3px 0 var(--edge);transition:transform .1s,box-shadow .1s}
+.btn:hover:not([disabled]){transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--edge)}
+.btn:active:not([disabled]){transform:translate(3px,3px);box-shadow:0 0 0 var(--edge)}
+.btn.primary{background:var(--g);color:#fff}
+#mix.primary{background:linear-gradient(90deg,var(--g),var(--v))}
+.btn[disabled]{opacity:.4;cursor:default;box-shadow:none}
+.seg{display:inline-flex;border:3px solid var(--edge);border-radius:999px;overflow:hidden;box-shadow:3px 3px 0 var(--edge)}
+.seg button{background:var(--card);border:0;padding:5px 16px;font-size:13px;font-weight:700}
+.seg button+button{border-left:2px solid var(--edge)}
+.seg button[aria-pressed="true"]{background:var(--o);color:#1B1E3A}
+.panel{background:var(--card);border:3px solid var(--edge);border-radius:24px;padding:20px;box-shadow:6px 6px 0 var(--edge)}
+.panel h2{margin:0 0 8px;font-size:18px;font-weight:900}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;font-weight:700}
+.bar{height:14px;background:var(--card);border:3px solid var(--edge);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:repeating-linear-gradient(45deg,var(--c) 0 10px,color-mix(in srgb,var(--c) 70%,#fff) 10px 20px);transition:width .35s cubic-bezier(.3,1.6,.5,1)}
+.qno{display:inline-block;background:var(--c);color:#fff;font-family:var(--f-num);font-weight:700;padding:1px 10px;margin-right:8px;font-size:13px;border-radius:999px;border:2px solid var(--edge)}
+[data-cat="O"] .qno{color:#1B1E3A}
+.stem{font-family:var(--f-en);font-weight:800;font-size:21px;line-height:1.6;margin:14px 0 6px}
+.stem .blank{display:inline-block;min-width:5.5em;background:var(--c-soft);border:2px dashed var(--c);border-radius:10px;text-align:center;font-family:var(--f-num);font-size:14px;color:var(--ink);line-height:1.8}
+.ja{color:var(--muted);font-size:14px;margin:0}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+@media (max-width:520px){.choices{grid-template-columns:1fr}}
+.ch{display:flex;align-items:center;gap:12px;background:var(--card);border:3px solid var(--edge);border-radius:16px;padding:10px 14px;text-align:left;font-family:var(--f-en);font-weight:800;font-size:17px;
+  box-shadow:3px 3px 0 var(--edge);transition:transform .12s,box-shadow .12s;min-width:0}
+.ch:hover:not([disabled]){transform:translate(-1px,-2px);box-shadow:4px 5px 0 var(--c)}
+.oval{flex:none;width:30px;height:30px;border:2px solid var(--edge);border-radius:50%;display:grid;place-items:center;font-family:var(--f-num);font-size:14px;font-weight:700;background:var(--c);color:#fff}
+[data-cat="O"] .oval{color:#1B1E3A}
+.ch.right{background:var(--ok-soft);border-color:var(--ok);box-shadow:3px 3px 0 var(--ok)}
+.ch.right .oval{background:var(--ok)}
+.ch.wrong{background:var(--ng-soft);border-color:var(--ng);box-shadow:3px 3px 0 var(--ng);animation:shake .35s}
+.ch.wrong .oval{background:var(--ng)}
+.ch.sel.right{animation:pop .4s}
+.ch[disabled]{cursor:default}
+.ch[disabled]:not(.right):not(.wrong){opacity:.55}
+.fb{margin-top:18px;border:3px solid var(--ok);border-radius:18px;background:var(--ok-soft);padding:12px 16px;animation:pop .35s}
+.fb.ng{border-color:var(--ng);background:var(--ng-soft)}
+.fb .v{font-weight:900;font-size:20px;display:flex;align-items:center;gap:8px}
+.fb.ok .v{color:var(--ok)} .fb.ng .v{color:var(--ng)}
+.fb p{margin:6px 0 0}
+.fb .en{font-family:var(--f-en);font-weight:800;font-size:16px}
+.mark{font-family:var(--f-num);font-size:26px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;border:2px solid var(--edge)}
+.fb.ok .mark{background:var(--ok)} .fb.ng .mark{background:var(--ng)}
+/* 並べ替え */
+.build{min-height:60px;border:3px dashed var(--c);border-radius:16px;background:var(--bg);padding:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;font-family:var(--f-en);font-weight:800;font-size:17px}
+.build .fix{color:var(--muted)}
+.build .ph{color:var(--muted);font-family:var(--f-jp);font-size:13px}
+.pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{border:2px solid var(--edge);border-radius:12px;background:var(--card);padding:4px 14px;font-family:var(--f-en);font-weight:800;font-size:17px;box-shadow:2px 2px 0 var(--edge);transition:transform .1s}
+.chip:hover:not([disabled]){transform:translateY(-2px) rotate(-2deg)}
+.chip.used{opacity:.2;cursor:default;box-shadow:none}
+.build .chip{background:var(--c);color:#fff;animation:pop .25s}
+[data-cat="O"] .build .chip{color:#1B1E3A}
+.kbd{font-size:12px;color:var(--muted)}
+.score{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.score .big{font-family:var(--f-num);font-weight:700;font-size:56px;line-height:1;color:var(--g);text-shadow:3px 3px 0 var(--o)}
+.miss{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.miss li{border:2px solid var(--edge);border-radius:14px;padding:10px 12px;min-width:0;background:var(--bg)}
+.miss .en{font-family:var(--f-en);font-weight:800;font-size:16px}
+.miss .en b{color:var(--ok)}
+.miss .x{font-size:13px;color:var(--muted)}
+footer{color:var(--muted);font-size:12px;text-align:center}
+@keyframes pop{0%{transform:scale(.9)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<style>
+/* 日本史用の追加：時代ごとのカラーと設問ブロック */
+:root{--ea:#F26A2E;--em:#0E9C8C;--ee:#E8457A;--ed:#7353F0;--ep:#2C8FE0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ea:#FF8F5C;--em:#2CC7B5;--ee:#FF7AA2;--ed:#9C85FF;--ep:#5BBEFF}}
+:root[data-theme="dark"]{--ea:#FF8F5C;--em:#2CC7B5;--ee:#FF7AA2;--ed:#9C85FF;--ep:#5BBEFF}
+[data-cat="A"]{--c:var(--ea)} [data-cat="M"]{--c:var(--em)} [data-cat="E"]{--c:var(--ee)} [data-cat="D"]{--c:var(--ed)} [data-cat="P"]{--c:var(--ep)}
+.stem{font-family:var(--f-jp);font-weight:700;font-size:18px}
+.stmts{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.stmt{display:flex;gap:10px;align-items:flex-start;background:var(--bg);border:2px solid var(--edge);border-radius:14px;padding:8px 12px;min-width:0}
+.stmt .lb{flex:none;font-family:var(--f-num);font-weight:700;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:#fff;border:2px solid var(--edge)}
+.stmt .tx{font-weight:700;min-width:0}
+.ch{font-family:var(--f-jp);font-weight:700}
+.choices.six{grid-template-columns:repeat(3,1fr)}
+@media (max-width:520px){.choices.six{grid-template-columns:1fr 1fr}}
+.choices.six .ch{white-space:nowrap;gap:8px;padding:10px}
+@media (max-width:520px){.choices.six .ch{font-size:15px;padding:10px 8px}.choices.six .oval{width:26px;height:26px;font-size:13px}}
+.fmt{display:inline-block;font-size:11px;font-weight:900;border:2px solid var(--edge);border-radius:999px;padding:0 8px;margin-left:6px;background:var(--o);color:#1B1E3A}
+.era-yr{font-family:var(--f-num);font-size:12px;color:var(--muted)}
+.subj-link{font-size:13px;font-weight:700;color:var(--ink);text-decoration:none;border:2px solid var(--edge);border-radius:999px;padding:2px 12px;background:var(--card)}
+.subj-link:hover{background:var(--o);color:#1B1E3A}
+.miss .en{font-family:var(--f-jp);font-weight:700}
+.subject h1 b{font-family:var(--f-jp);font-weight:900}
+</style>
+
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* ===== 問題データ ===== */
+const CATS={
+  A:{name:"原始・古代",k:"ANCIENT",yr:"〜12世紀",d:"縄文・弥生から律令国家、摂関政治まで"},
+  M:{name:"中世",k:"MEDIEVAL",yr:"12〜16世紀",d:"鎌倉・室町・戦国の武家政権"},
+  E:{name:"近世",k:"EARLY MODERN",yr:"16〜19世紀",d:"織豊政権と江戸幕府、開国まで"},
+  D:{name:"近代",k:"MODERN",yr:"1868〜1945",d:"明治維新から立憲国家、戦争の時代"},
+  P:{name:"現代",k:"POSTWAR",yr:"1945〜",d:"占領・独立から高度成長、平成まで"}
+};
+const FMT={K:"4択",S:"正誤",N:"年代整序"};
+const SO=["X 正　Y 正","X 正　Y 誤","X 誤　Y 正","X 誤　Y 誤"];
+const NO=["Ⅰ－Ⅱ－Ⅲ","Ⅰ－Ⅲ－Ⅱ","Ⅱ－Ⅰ－Ⅲ","Ⅱ－Ⅲ－Ⅰ","Ⅲ－Ⅰ－Ⅱ","Ⅲ－Ⅱ－Ⅰ"];
+const NK=["123","132","213","231","312","321"];
+/* K: q,o,a(0)  S: X,Y,x(bool),y(bool)  N: i[3], ord("312"=Ⅲ→Ⅰ→Ⅱ), yr[3] */
+const Q=[
+/* --- 原始・古代 --- */
+{id:"A01",c:"A",f:"K",q:"1877年に大森貝塚を発見・発掘し、日本の近代考古学の出発点をつくったアメリカ人は誰か。",o:["モース","ナウマン","フェノロサ","ベルツ"],a:0,x:"モースは東京大学で動物学を教えた。ナウマンはナウマン象に名を残す地質学者、フェノロサは日本美術を評価した哲学者、ベルツは医学者。"},
+{id:"A02",c:"A",f:"K",q:"239年に魏へ使いを送り、「親魏倭王」の称号と金印を授けられた邪馬台国の女王は誰か。",o:["卑弥呼","壱与","推古天皇","持統天皇"],a:0,x:"『魏志』倭人伝に記される。壱与（台与）は卑弥呼の死後に立てられた一族の女性。"},
+{id:"A03",c:"A",f:"K",q:"603年、氏族ではなく個人の才能や功績に応じて冠位を与えるために定められた制度はどれか。",o:["冠位十二階","憲法十七条","八色の姓","班田収授法"],a:0,x:"推古天皇のもとで厩戸王（聖徳太子）らが定めた。翌604年が憲法十七条。八色の姓は684年に天武天皇が定めた。"},
+{id:"A04",c:"A",f:"K",q:"743年に出され、新しく開墾した田地の永久私有を認めた法令はどれか。",o:["墾田永年私財法","三世一身法","班田収授法","延喜の荘園整理令"],a:0,x:"聖武天皇の時代。723年の三世一身法は期限付きの私有だったため開墾が進まず、永久私有に改めた。のちの荘園発生につながる。"},
+{id:"A05",c:"A",f:"K",q:"894年、唐の衰退などを理由に遣唐使の派遣中止を建議した人物は誰か。",o:["菅原道真","藤原時平","吉備真備","阿倍仲麻呂"],a:0,x:"道真はのち藤原時平の策謀で大宰府に左遷された。遣唐使中止後、国風文化が発達する。"},
+{id:"A06",c:"A",f:"K",q:"宇治に平等院鳳凰堂を建立した人物は誰か。",o:["藤原頼通","藤原道長","藤原良房","藤原基経"],a:0,x:"頼通は道長の子で、約50年にわたり摂政・関白を務めた。鳳凰堂（1053年）は浄土教の阿弥陀堂の代表例。"},
+{id:"A07",c:"A",f:"S",X:"弥生時代には稲作が広まり、収穫した稲を高床倉庫に蓄えた。",Y:"縄文時代の人々は、主に青銅製の農具を用いて耕作した。",x:true,y:false,e:"Y：青銅器が伝わったのは弥生時代で、銅鐸・銅剣などは主に祭器として使われた。縄文時代は狩猟・採集・漁労が中心。"},
+{id:"A08",c:"A",f:"S",X:"大化の改新では、改新の詔によって公地公民の方針が示された。",Y:"壬申の乱に勝利した大海人皇子は、即位して天武天皇となった。",x:true,y:true,e:"どちらも正しい。壬申の乱（672年）は天智天皇の死後、皇位をめぐって大友皇子と大海人皇子が争った戦い。"},
+{id:"A09",c:"A",f:"S",X:"794年に平安京へ遷都したのは聖武天皇である。",Y:"聖武天皇は、国ごとに国分寺・国分尼寺を建てるよう命じた。",x:false,y:true,e:"X：平安京遷都は桓武天皇。聖武天皇は仏教の力で国を守ろうとし、国分寺建立の詔（741年）や大仏造立の詔（743年）を出した。"},
+{id:"A10",c:"A",f:"N",i:["白村江の戦い","磐井の乱","大宝律令の制定"],yr:["663年","527年","701年"],ord:"213",e:"磐井の乱は筑紫の豪族の反乱。白村江の戦いで唐・新羅に敗れた後、律令国家づくりが進んだ。"},
+{id:"A11",c:"A",f:"N",i:["平城京への遷都","長岡京への遷都","藤原京への遷都"],yr:["710年","784年","694年"],ord:"312",e:"藤原京（持統天皇）→ 平城京（元明天皇）→ 長岡京・平安京（桓武天皇）の順。"},
+{id:"A12",c:"A",f:"N",i:["応天門の変","前九年合戦","承平・天慶の乱"],yr:["866年","1051年〜","935年〜"],ord:"132",e:"応天門の変で藤原良房が台頭。承平・天慶の乱は平将門・藤原純友の乱。前九年合戦は源頼義・義家が東北の安倍氏を倒した戦い。"},
+/* --- 中世 --- */
+{id:"M01",c:"M",f:"K",q:"1185年、朝廷に守護・地頭の設置を認めさせた人物は誰か。",o:["源頼朝","源義経","平清盛","北条時政"],a:0,x:"義経の追討を名目に設置を認めさせた。1192年に征夷大将軍に任じられる。"},
+{id:"M02",c:"M",f:"K",q:"1232年、執権北条泰時が定めた最初の武家法はどれか。",o:["御成敗式目","建武式目","武家諸法度","分国法"],a:0,x:"貞永式目とも。頼朝以来の先例と武士社会の道理に基づく。建武式目は足利尊氏、武家諸法度は江戸幕府。"},
+{id:"M03",c:"M",f:"K",q:"文永の役・弘安の役（元寇）のときの鎌倉幕府の執権は誰か。",o:["北条時宗","北条泰時","北条義時","北条時頼"],a:0,x:"時宗は元の服属要求を拒否した。義時は承久の乱、泰時は御成敗式目、時頼は引付の設置で知られる。"},
+{id:"M04",c:"M",f:"K",q:"1338年に征夷大将軍に任じられ、室町幕府を開いた人物は誰か。",o:["足利尊氏","足利義満","足利直義","後醍醐天皇"],a:0,x:"尊氏は建武の新政に反発して後醍醐天皇と対立し、京都に光明天皇を立てた（北朝）。"},
+{id:"M05",c:"M",f:"K",q:"足利義満が始めた日明貿易で、正式な貿易船であることを証明するために使われた札はどれか。",o:["勘合","朱印状","奉書","信牌"],a:0,x:"倭寇と区別するために用いたので勘合貿易ともいう。朱印状は江戸初期の朱印船貿易、奉書は鎖国期の奉書船。"},
+{id:"M06",c:"M",f:"K",q:"応仁の乱が始まった年はどれか。",o:["1467年","1428年","1493年","1573年"],a:0,x:"将軍家・管領家の跡継ぎ争いに細川勝元と山名持豊が絡んで11年続いた。1428年は正長の土一揆、1493年は明応の政変、1573年は室町幕府の滅亡。"},
+{id:"M07",c:"M",f:"S",X:"鎌倉時代、親鸞は悪人正機を説き、浄土真宗を開いた。",Y:"道元は宋から臨済宗を伝え、『興禅護国論』を著した。",x:true,y:false,e:"Y：臨済宗を伝え『興禅護国論』を著したのは栄西。道元は曹洞宗を伝え、只管打坐を説いた。"},
+{id:"M08",c:"M",f:"S",X:"承久の乱の後、幕府は朝廷を監視するため京都に鎌倉府を置いた。",Y:"永仁の徳政令は、足利義満が御家人を救うために出した。",x:false,y:false,e:"X：置かれたのは六波羅探題。鎌倉府は室町幕府が関東支配のために置いた機関。Y：永仁の徳政令（1297年）は鎌倉幕府の執権北条貞時のとき。"},
+{id:"M09",c:"M",f:"S",X:"室町幕府で将軍を補佐する最高の役職は執権であった。",Y:"正長の土一揆では、近江の馬借の蜂起をきっかけに民衆が徳政を要求した。",x:false,y:true,e:"X：室町幕府で将軍を補佐したのは管領（細川・斯波・畠山の三管領）。執権は鎌倉幕府の役職。"},
+{id:"M10",c:"M",f:"N",i:["建武の新政","承久の乱","文永の役"],yr:["1334年","1221年","1274年"],ord:"231",e:"承久の乱で幕府が朝廷に勝利 → 元寇 → 鎌倉幕府滅亡（1333年）後に後醍醐天皇の建武の新政。"},
+{id:"M11",c:"M",f:"N",i:["嘉吉の変","応仁の乱","南北朝の合一"],yr:["1441年","1467年","1392年"],ord:"312",e:"足利義満が南北朝を合一 → 赤松満祐が将軍足利義教を殺害（嘉吉の変）→ 応仁の乱。"},
+{id:"M12",c:"M",f:"N",i:["鉄砲の伝来","山城の国一揆","ザビエルの来日"],yr:["1543年","1485年","1549年"],ord:"213",e:"山城の国一揆では国人らが8年間自治を行った。鉄砲は種子島に伝来し、6年後にザビエルが鹿児島に来てキリスト教を伝えた。"},
+/* --- 近世 --- */
+{id:"E01",c:"E",f:"K",q:"1588年に刀狩令を出し、農民から武器を取り上げた人物は誰か。",o:["豊臣秀吉","織田信長","徳川家康","明智光秀"],a:0,x:"太閤検地とともに兵農分離を進めた。1591年の人掃令で身分の固定がさらに進む。"},
+{id:"E02",c:"E",f:"K",q:"1615年、江戸幕府が大名を統制するために定めた法令はどれか。",o:["武家諸法度","禁中並公家諸法度","御成敗式目","公事方御定書"],a:0,x:"元和令。同じ1615年に朝廷・公家向けの禁中並公家諸法度も出された。公事方御定書は徳川吉宗の時代の裁判の基準。"},
+{id:"E03",c:"E",f:"K",q:"武家諸法度（寛永令）で参勤交代を制度化した将軍は誰か。",o:["徳川家光","徳川家康","徳川綱吉","徳川吉宗"],a:0,x:"1635年。大名は江戸と領地を1年おきに往復し、妻子は江戸に住まわされた。"},
+{id:"E04",c:"E",f:"K",q:"徳川吉宗が享保の改革で、庶民の意見を聞くために設けたものはどれか。",o:["目安箱","人足寄場","七分積金","株仲間の解散"],a:0,x:"目安箱への投書から小石川養生所が作られた。人足寄場と七分積金は松平定信の寛政の改革、株仲間の解散は水野忠邦の天保の改革。"},
+{id:"E05",c:"E",f:"K",q:"前野良沢らとともにオランダ語の解剖書を翻訳し、『解体新書』を出版した人物は誰か。",o:["杉田玄白","本居宣長","伊能忠敬","平賀源内"],a:0,x:"1774年刊行。蘭学発展のきっかけになった。本居宣長は国学（『古事記伝』）、伊能忠敬は日本地図の作成。"},
+{id:"E06",c:"E",f:"K",q:"1858年、天皇の許可（勅許）を得ないまま日米修好通商条約の調印を断行した大老は誰か。",o:["井伊直弼","阿部正弘","堀田正睦","安藤信正"],a:0,x:"反対派を処罰した安政の大獄の後、桜田門外の変（1860年）で暗殺された。阿部正弘は日米和親条約を結んだ老中。"},
+{id:"E07",c:"E",f:"S",X:"寛政の改革を行ったのは老中松平定信である。",Y:"天保の改革で、田沼意次は株仲間の解散を命じた。",x:true,y:false,e:"Y：天保の改革は水野忠邦。田沼意次は逆に株仲間を積極的に公認して営業税を取った。"},
+{id:"E08",c:"E",f:"S",X:"いわゆる鎖国の時代にも、長崎ではオランダ・中国との貿易が行われた。",Y:"島原・天草一揆の後、幕府はポルトガル船の来航を禁止した。",x:true,y:true,e:"どちらも正しい。一揆（1637年）の後の1639年にポルトガル船来航を禁止し、1641年にオランダ商館を出島に移した。"},
+{id:"E09",c:"E",f:"S",X:"近松門左衛門は、浮世草子『日本永代蔵』を著した。",Y:"化政文化の時期に、葛飾北斎が「富嶽三十六景」を描いた。",x:false,y:true,e:"X：『日本永代蔵』は井原西鶴の浮世草子。近松門左衛門は人形浄瑠璃の脚本家（『曽根崎心中』など）。"},
+{id:"E10",c:"E",f:"N",i:["関ヶ原の戦い","本能寺の変","大坂夏の陣"],yr:["1600年","1582年","1615年"],ord:"213",e:"本能寺の変で織田信長が倒れる → 天下分け目の関ヶ原 → 大坂の陣で豊臣氏が滅亡。"},
+{id:"E11",c:"E",f:"N",i:["寛政の改革の開始","生類憐みの令","享保の改革の開始"],yr:["1787年","1685年〜","1716年"],ord:"231",e:"5代綱吉の生類憐みの令 → 8代吉宗の享保の改革 → 松平定信の寛政の改革。"},
+{id:"E12",c:"E",f:"N",i:["大塩平八郎の乱","ペリーの来航","異国船打払令"],yr:["1837年","1853年","1825年"],ord:"312",e:"異国船打払令 → 天保の飢饉を背景に大塩平八郎の乱 → ペリー来航で開国へ。"},
+/* --- 近代 --- */
+{id:"D01",c:"D",f:"K",q:"1868年、明治新政府が国の基本方針を示したものはどれか。",o:["五箇条の誓文","五榜の掲示","政体書","大日本帝国憲法"],a:0,x:"天皇が神に誓う形で出された。翌日に民衆向けの五榜の掲示が出され、キリスト教禁止などは旧幕府の方針が引き継がれた。"},
+{id:"D02",c:"D",f:"K",q:"1871年、藩を廃止して府と県を置き、中央から府知事・県令を派遣した改革はどれか。",o:["廃藩置県","版籍奉還","地租改正","秩禄処分"],a:0,x:"1869年の版籍奉還で土地と人民を天皇に返させ、1871年の廃藩置県で中央集権を完成させた。"},
+{id:"D03",c:"D",f:"K",q:"1874年、民撰議院設立建白書を提出し、自由民権運動の口火を切った中心人物は誰か。",o:["板垣退助","大隈重信","伊藤博文","西郷隆盛"],a:0,x:"板垣はのち自由党（1881年）を結成。大隈重信は立憲改進党を結成した。"},
+{id:"D04",c:"D",f:"K",q:"1894年、イギリスとの条約で領事裁判権（治外法権）の撤廃に成功した外務大臣は誰か。",o:["陸奥宗光","小村寿太郎","井上馨","大隈重信"],a:0,x:"日英通商航海条約。関税自主権の完全回復は1911年の小村寿太郎。"},
+{id:"D05",c:"D",f:"K",q:"日露戦争の講和条約はどれか。",o:["ポーツマス条約","下関条約","天津条約","北京議定書"],a:0,x:"1905年、アメリカの仲介で結ばれた。賠償金が得られず日比谷焼打ち事件が起きた。下関条約は日清戦争の講和条約。"},
+{id:"D06",c:"D",f:"K",q:"1925年、納税額による制限を撤廃し、満25歳以上の男性に選挙権を与えた法律はどれか。",o:["普通選挙法","治安維持法","国家総動員法","大日本帝国憲法"],a:0,x:"加藤高明内閣のとき。同じ年に、共産主義などを取り締まる治安維持法も制定された。"},
+{id:"D07",c:"D",f:"S",X:"大日本帝国憲法は、天皇が定めて国民に与える欽定憲法であった。",Y:"1890年の第1回衆議院議員総選挙では、満20歳以上の男女に選挙権が与えられた。",x:true,y:false,e:"Y：選挙権は直接国税15円以上を納める満25歳以上の男性のみで、人口の約1％だった。男女普通選挙は1945年から。"},
+{id:"D08",c:"D",f:"S",X:"日清戦争の講和条約はポーツマス条約である。",Y:"日本に遼東半島の返還を求めた三国干渉の三国は、イギリス・フランス・ドイツである。",x:false,y:false,e:"X：日清戦争の講和は下関条約（1895年）。Y：三国はロシア・フランス・ドイツ。"},
+{id:"D09",c:"D",f:"S",X:"1918年の米騒動の後、原敬が本格的な政党内閣を組織した。",Y:"1931年の柳条湖事件をきっかけに、満州事変が始まった。",x:true,y:true,e:"どちらも正しい。原敬は衆議院に議席を持つ初の首相で「平民宰相」と呼ばれた。"},
+{id:"D10",c:"D",f:"N",i:["西南戦争","大日本帝国憲法の発布","国会開設の勅諭"],yr:["1877年","1889年","1881年"],ord:"132",e:"西南戦争で士族の反乱が終わり、運動は言論中心に → 明治十四年の政変で国会開設の勅諭 → 憲法発布。"},
+{id:"D11",c:"D",f:"N",i:["韓国併合","日英同盟の締結","第一次世界大戦への参戦"],yr:["1910年","1902年","1914年"],ord:"213",e:"ロシアに対抗して日英同盟 → 日露戦争後に韓国併合 → 日英同盟を理由に第一次世界大戦に参戦。"},
+{id:"D12",c:"D",f:"N",i:["日中戦争の開始","二・二六事件","五・一五事件"],yr:["1937年","1936年","1932年"],ord:"321",e:"五・一五事件で犬養毅首相が暗殺され政党内閣が終わる → 陸軍青年将校の二・二六事件 → 盧溝橋事件から日中戦争。"},
+/* --- 現代 --- */
+{id:"P01",c:"P",f:"K",q:"占領期に日本を間接統治した連合国軍最高司令官総司令部（GHQ）の最高司令官は誰か。",o:["マッカーサー","トルーマン","ダレス","リッジウェイ"],a:0,x:"五大改革指令などを出した。朝鮮戦争中の1951年に解任され、後任がリッジウェイ。ダレスは講和条約の交渉を担った。"},
+{id:"P02",c:"P",f:"K",q:"1951年、日本が48か国と調印し、翌年の発効で独立を回復した条約はどれか。",o:["サンフランシスコ平和条約","日ソ共同宣言","日韓基本条約","日中平和友好条約"],a:0,x:"吉田茂内閣が調印。同じ日に日米安全保障条約も結ばれた。ソ連などは調印しなかった。"},
+{id:"P03",c:"P",f:"K",q:"1956年の日ソ共同宣言によって実現したことはどれか。",o:["国際連合への加盟","沖縄の返還","日米安保条約の改定","OECDへの加盟"],a:0,x:"それまで常任理事国のソ連が反対していたが、国交回復で支持に回った。鳩山一郎内閣のとき。"},
+{id:"P04",c:"P",f:"K",q:"1972年に日中共同声明を発表し、中華人民共和国との国交を正常化した首相は誰か。",o:["田中角栄","佐藤栄作","岸信介","池田勇人"],a:0,x:"1978年の日中平和友好条約は福田赳夫内閣。佐藤栄作は沖縄返還を実現した。"},
+{id:"P05",c:"P",f:"K",q:"1960年に「所得倍増計画」を打ち出した首相は誰か。",o:["池田勇人","吉田茂","佐藤栄作","中曽根康弘"],a:0,x:"安保闘争で退陣した岸信介の後を受け、「寛容と忍耐」を掲げて経済成長を優先した。"},
+{id:"P06",c:"P",f:"K",q:"1973年、第4次中東戦争をきっかけに起こり、高度経済成長を終わらせた出来事はどれか。",o:["第1次石油危機","バブル経済の崩壊","ドッジ・ライン","朝鮮特需"],a:0,x:"原油価格が急騰し「狂乱物価」と呼ばれる物価高に。1974年に戦後初のマイナス成長となった。"},
+{id:"P07",c:"P",f:"S",X:"農地改革によって寄生地主制が解体され、自作農が大幅に増えた。",Y:"日本国憲法は1946年11月3日に公布され、1947年5月3日に施行された。",x:true,y:true,e:"どちらも正しい。公布日は現在の文化の日、施行日は憲法記念日。"},
+{id:"P08",c:"P",f:"S",X:"朝鮮戦争が始まると、アメリカ軍の物資調達によって特需景気が起こった。",Y:"1970年に東京でオリンピックが開かれ、それに合わせて東海道新幹線が開業した。",x:true,y:false,e:"Y：東京オリンピックと東海道新幹線の開業は1964年。1970年は大阪で日本万国博覧会が開かれた年。"},
+{id:"P09",c:"P",f:"S",X:"沖縄は、サンフランシスコ平和条約の発効と同時に日本に返還された。",Y:"1993年、非自民の8党派による細川護熙連立内閣が成立した。",x:false,y:true,e:"X：沖縄は平和条約後もアメリカの施政権下に置かれ、返還は1972年（佐藤栄作内閣）。Y：これで55年体制が終わった。"},
+{id:"P10",c:"P",f:"N",i:["日米安全保障条約の改定","日本国憲法の公布","サンフランシスコ平和条約の調印"],yr:["1960年","1946年","1951年"],ord:"231",e:"憲法公布 → 平和条約と旧安保条約の調印 → 岸信介内閣が新安保条約に改定（安保闘争）。"},
+{id:"P11",c:"P",f:"N",i:["沖縄の返還","日韓基本条約の締結","日中平和友好条約の締結"],yr:["1972年","1965年","1978年"],ord:"213",e:"佐藤栄作内閣で日韓基本条約、続いて沖縄返還。日中平和友好条約は福田赳夫内閣。"},
+{id:"P12",c:"P",f:"N",i:["バブル経済の崩壊","プラザ合意","第1次石油危機"],yr:["1991年頃","1985年","1973年"],ord:"321",e:"石油危機で高度成長が終わる → プラザ合意後の円高・低金利がバブル景気を生む → 地価・株価の下落でバブル崩壊。"},
+/* --- 原始・古代（追加） --- */
+{id:"A13",c:"A",f:"K",q:"相沢忠洋が打製石器を発見し、日本にも旧石器時代があったことが明らかになった群馬県の遺跡はどれか。",o:["岩宿遺跡","登呂遺跡","三内丸山遺跡","吉野ケ里遺跡"],a:0,x:"1946年に発見、1949年に発掘。登呂は静岡の弥生の水田跡、三内丸山は青森の縄文の大集落、吉野ケ里は佐賀の弥生の環濠集落。"},
+{id:"A14",c:"A",f:"K",q:"57年に倭の奴国王が後漢の光武帝から授かったとされる「漢委奴国王」の金印が、江戸時代に発見された場所はどこか。",o:["志賀島","稲荷山古墳","種子島","出島"],a:0,x:"福岡県の志賀島で1784年に発見された。『後漢書』東夷伝に奴国の朝貢の記事がある。"},
+{id:"A15",c:"A",f:"K",q:"埼玉県の稲荷山古墳から出土した鉄剣の銘文にある「ワカタケル大王」は、どの天皇と考えられているか。",o:["雄略天皇","仁徳天皇","欽明天皇","推古天皇"],a:0,x:"熊本県の江田船山古墳の鉄刀にも同じ名が見え、5世紀後半にヤマト政権の支配が関東から九州に及んでいたことがわかる。倭王武とされる。"},
+{id:"A16",c:"A",f:"K",q:"何度も渡航に失敗しながら唐から来日し、正式な戒律を伝えて唐招提寺を開いた僧は誰か。",o:["鑑真","行基","空海","最澄"],a:0,x:"753年に来日。行基は民衆に布教し、のちに大仏造立に協力した僧。"},
+{id:"A17",c:"A",f:"K",q:"平安時代初め、比叡山に延暦寺を開き、天台宗を広めた僧は誰か。",o:["最澄","空海","法然","円仁"],a:0,x:"空海は高野山金剛峯寺を開き真言宗を広めた。両者とも804年に遣唐使とともに唐へ渡った。"},
+{id:"A18",c:"A",f:"K",q:"939年に関東で反乱を起こし、みずから「新皇」と称した人物は誰か。",o:["平将門","藤原純友","平忠常","源義家"],a:0,x:"同じ頃、瀬戸内海では藤原純友が反乱を起こした（承平・天慶の乱）。平忠常の乱は1028年。"},
+{id:"A19",c:"A",f:"S",X:"古墳時代には、渡来人によって須恵器をつくる技術が伝えられた。",Y:"日本最大の前方後円墳である大仙陵古墳は、奈良県にある。",x:true,y:false,e:"Y：大仙陵古墳（伝仁徳天皇陵）は大阪府堺市にある。2019年に百舌鳥・古市古墳群として世界遺産になった。"},
+{id:"A20",c:"A",f:"S",X:"『古事記』は、舎人親王が中心となって編纂した歴史書である。",Y:"『万葉集』には、天皇や貴族から防人・農民までの歌が収められている。",x:false,y:true,e:"X：『古事記』（712年）は稗田阿礼が暗誦したものを太安万侶が筆録した。舎人親王が中心となったのは『日本書紀』（720年）。"},
+{id:"A21",c:"A",f:"S",X:"藤原道長は、宇治に平等院鳳凰堂を建立した。",Y:"天皇が位を譲って上皇となり政治を行う院政は、後三条天皇によって始められた。",x:false,y:false,e:"X：鳳凰堂を建てたのは子の頼通（A06）。Y：院政を始めたのは白河上皇（1086年）。後三条天皇は延久の荘園整理令を出した。"},
+{id:"A22",c:"A",f:"N",i:["小野妹子の遣隋使派遣","仏教の公伝","大化の改新の開始"],yr:["607年","538年","645年"],ord:"213",e:"百済から仏教が伝わる（538年説）→ 推古朝の遣隋使 → 乙巳の変から大化の改新。"},
+{id:"A23",c:"A",f:"N",i:["保元の乱","院政の開始","刀伊の入寇"],yr:["1156年","1086年","1019年"],ord:"321",e:"刀伊の入寇は道長の時代に女真族が九州を襲った事件 → 白河上皇の院政 → 保元の乱で武士の力が中央政治を動かすようになる。"},
+{id:"A24",c:"A",f:"N",i:["平治の乱","平清盛の太政大臣就任","壇ノ浦の戦い"],yr:["1159年","1167年","1185年"],ord:"123",e:"平治の乱で源義朝を破った清盛が武士として初めて太政大臣に → 源平の争乱を経て壇ノ浦で平氏が滅亡。"},
+/* --- 中世（追加） --- */
+{id:"M13",c:"M",f:"K",q:"1221年、鎌倉幕府を倒そうとして承久の乱を起こした上皇は誰か。",o:["後鳥羽上皇","後白河上皇","白河上皇","後醍醐天皇"],a:0,x:"北条政子の呼びかけで御家人が結束し、幕府が勝利した。後鳥羽上皇は隠岐に流された。"},
+{id:"M14",c:"M",f:"K",q:"1225年、北条泰時が有力御家人らによる合議で政治を行うために置いた機関はどれか。",o:["評定衆","引付衆","侍所","問注所"],a:0,x:"執権・連署とともに評定衆が政治や裁判を決めた。引付衆は北条時頼が1249年に置いた裁判の迅速化のための機関。"},
+{id:"M15",c:"M",f:"K",q:"踊念仏によって各地で布教し、時宗の開祖とされる僧は誰か。",o:["一遍","法然","日蓮","栄西"],a:0,x:"一遍は「遊行上人」と呼ばれた。法然は浄土宗、日蓮は日蓮宗（法華宗）、栄西は臨済宗。"},
+{id:"M16",c:"M",f:"K",q:"足利義満が京都の北山に建てた建物はどれか。",o:["鹿苑寺金閣","慈照寺銀閣","平等院鳳凰堂","中尊寺金色堂"],a:0,x:"北山文化を代表する。銀閣は足利義政の東山文化。中尊寺金色堂は奥州藤原氏が平泉に建てた。"},
+{id:"M17",c:"M",f:"K",q:"室町時代に雪舟が明で学び、日本で大成した絵画はどれか。",o:["水墨画","大和絵","浮世絵","障壁画"],a:0,x:"代表作に「四季山水図巻（山水長巻）」。浮世絵は江戸時代、障壁画は安土桃山時代に狩野永徳らが発展させた。"},
+{id:"M18",c:"M",f:"K",q:"戦国大名が領国を治めるために独自に定めた法を何というか。",o:["分国法","御成敗式目","武家諸法度","建武式目"],a:0,x:"家法とも。武田氏の「甲州法度之次第」、朝倉氏の「朝倉孝景条々」などがある。喧嘩両成敗の規定が有名。"},
+{id:"M19",c:"M",f:"S",X:"鎌倉時代には、牛馬を使った耕作が広まり、西日本では二毛作も行われるようになった。",Y:"室町時代、商人や手工業者は座と呼ばれる同業者組合をつくった。",x:true,y:true,e:"どちらも正しい。座は公家や寺社に税を納めて営業の独占権を得た。のちに織田信長が楽市・楽座で座の特権を廃止する。"},
+{id:"M20",c:"M",f:"S",X:"足利義政の時代に、書院造の東求堂同仁斎が建てられた。",Y:"能を大成したのは千利休である。",x:true,y:false,e:"Y：能を大成したのは観阿弥・世阿弥の父子（足利義満の保護を受けた）。千利休は安土桃山時代に茶の湯を大成した。"},
+{id:"M21",c:"M",f:"S",X:"日蓮は、念仏を唱えれば極楽往生できると説いて浄土宗を開いた。",Y:"法然は、ひたすら念仏を唱える専修念仏を説いた。",x:false,y:true,e:"X：浄土宗を開いたのは法然。日蓮は「南無妙法蓮華経」の題目を唱えることを説き、日蓮宗（法華宗）を開いた。"},
+{id:"M22",c:"M",f:"N",i:["永仁の徳政令","御成敗式目の制定","弘安の役"],yr:["1297年","1232年","1281年"],ord:"231",e:"御成敗式目（北条泰時）→ 2度目の元寇・弘安の役（北条時宗）→ 恩賞不足で困窮した御家人救済のため永仁の徳政令（北条貞時）。"},
+{id:"M23",c:"M",f:"N",i:["加賀の一向一揆","正長の土一揆","桶狭間の戦い"],yr:["1488年","1428年","1560年"],ord:"213",e:"正長の土一揆 → 加賀の一向一揆が守護を倒し約100年自治 → 織田信長が今川義元を破った桶狭間の戦い。"},
+{id:"M24",c:"M",f:"N",i:["観応の擾乱","足利義満の将軍就任","鎌倉幕府の滅亡"],yr:["1350年","1368年","1333年"],ord:"312",e:"鎌倉幕府滅亡 → 尊氏と弟直義が争った観応の擾乱 → 義満が3代将軍に就任し、のち南北朝を合一（1392年）。"},
+/* --- 近世（追加） --- */
+{id:"E13",c:"E",f:"K",q:"1575年、織田信長・徳川家康の連合軍が鉄砲を大量に用いて武田勝頼を破った戦いはどれか。",o:["長篠の戦い","桶狭間の戦い","関ヶ原の戦い","山崎の戦い"],a:0,x:"足軽鉄砲隊が武田の騎馬隊を破ったとされる。山崎の戦いは1582年、豊臣秀吉が明智光秀を破った戦い。"},
+{id:"E14",c:"E",f:"K",q:"織田信長が安土城下などで、市場の税を免除し座の特権を廃止した政策はどれか。",o:["楽市・楽座","太閤検地","刀狩","関所の設置"],a:0,x:"自由な商工業を促し城下町を発展させた。信長はむしろ関所を撤廃して物流を盛んにした。"},
+{id:"E15",c:"E",f:"K",q:"1641年にオランダ商館が平戸から移された、長崎の人工島はどこか。",o:["出島","平戸","種子島","対馬"],a:0,x:"もとはポルトガル人を住まわせるために築かれた。対馬は宗氏を通じた朝鮮との窓口。"},
+{id:"E16",c:"E",f:"K",q:"5代将軍徳川綱吉の頃を中心に、上方（京都・大坂）の町人を担い手として栄えた文化はどれか。",o:["元禄文化","化政文化","桃山文化","寛永文化"],a:0,x:"井原西鶴・近松門左衛門・松尾芭蕉、菱川師宣の浮世絵、尾形光琳など。化政文化は19世紀前半に江戸の町人が担った。"},
+{id:"E17",c:"E",f:"K",q:"『古事記伝』を著して国学を大成した人物は誰か。",o:["本居宣長","賀茂真淵","平田篤胤","荻生徂徠"],a:0,x:"伊勢松坂の医師。師は賀茂真淵。平田篤胤は復古神道を唱え、幕末の尊王攘夷運動に影響を与えた。荻生徂徠は儒学者。"},
+{id:"E18",c:"E",f:"K",q:"1867年、15代将軍徳川慶喜が政権を朝廷に返上したことを何というか。",o:["大政奉還","王政復古の大号令","版籍奉還","廃藩置県"],a:0,x:"土佐藩の山内豊信（容堂）の建白による。同年、薩長など倒幕派は王政復古の大号令を出して新政府を樹立した。"},
+{id:"E19",c:"E",f:"S",X:"江戸時代、朝鮮からは将軍の代替わりなどの際に通信使が来日した。",Y:"琉球王国は薩摩藩の支配を受けながらも、中国との朝貢関係を続けた。",x:true,y:true,e:"どちらも正しい。琉球は将軍の代替わりに慶賀使、国王の代替わりに謝恩使を江戸に派遣した。"},
+{id:"E20",c:"E",f:"S",X:"田沼意次は、印旛沼・手賀沼の干拓を計画した。",Y:"松平定信は、江戸・大坂周辺を幕府領にする上知令を出したが、反対を受けて撤回した。",x:true,y:false,e:"Y：上知令（1843年）を出したのは天保の改革の水野忠邦。反対を受けて撤回し、忠邦は失脚した。"},
+{id:"E21",c:"E",f:"S",X:"『東海道中膝栗毛』を著したのは井原西鶴である。",Y:"『奥の細道』を著したのは小林一茶である。",x:false,y:false,e:"X：『東海道中膝栗毛』は化政文化の十返舎一九。Y：『奥の細道』は元禄文化の松尾芭蕉。小林一茶は化政期の俳人。"},
+{id:"E22",c:"E",f:"N",i:["生麦事件","桜田門外の変","薩長同盟の成立"],yr:["1862年","1860年","1866年"],ord:"213",e:"井伊直弼が暗殺される → 島津久光の行列がイギリス人を殺傷（生麦事件、翌年に薩英戦争）→ 坂本龍馬らの仲介で薩長同盟。"},
+{id:"E23",c:"E",f:"N",i:["島原・天草一揆","明暦の大火","幕府直轄地への禁教令"],yr:["1637年","1657年","1612年"],ord:"312",e:"禁教令（翌1613年に全国へ）→ キリシタンも多く加わった島原・天草一揆 → 4代家綱の時代に江戸の大半を焼いた明暦の大火。"},
+{id:"E24",c:"E",f:"N",i:["フェートン号事件","天明の飢饉","ラクスマンの根室来航"],yr:["1808年","1782年〜","1792年"],ord:"231",e:"天明の飢饉（田沼時代）→ ロシアのラクスマンが通商を求めて根室に来航 → イギリス軍艦が長崎に侵入したフェートン号事件。のちの異国船打払令（1825年）につながる。"},
+/* --- 近代（追加） --- */
+{id:"D13",c:"D",f:"K",q:"1873年から実施された、地価の3％を土地所有者に現金で納めさせた税制改革はどれか。",o:["地租改正","廃藩置県","秩禄処分","殖産興業"],a:0,x:"国家の財政を安定させたが負担は重く、各地で一揆が起きたため1877年に2.5％に引き下げた。"},
+{id:"D14",c:"D",f:"K",q:"1872年に公布された、フランスにならった近代的な学校制度を定めた法令はどれか。",o:["学制","教育勅語","学校令","教育基本法"],a:0,x:"国民皆学をめざした。学校令は1886年（森有礼）、教育勅語は1890年、教育基本法は戦後の1947年。"},
+{id:"D15",c:"D",f:"K",q:"1885年に内閣制度をつくり、初代内閣総理大臣となった人物は誰か。",o:["伊藤博文","山県有朋","黒田清隆","大久保利通"],a:0,x:"伊藤はヨーロッパで憲法を調査し、ドイツ（プロイセン）の憲法を参考に大日本帝国憲法の草案をつくった。"},
+{id:"D16",c:"D",f:"K",q:"1911年、関税自主権の完全な回復を実現した外務大臣は誰か。",o:["小村寿太郎","陸奥宗光","井上馨","岩倉具視"],a:0,x:"これで幕末の不平等条約の改正が完成した。小村はポーツマス条約の全権でもあった。領事裁判権の撤廃は陸奥宗光（D04）。"},
+{id:"D17",c:"D",f:"K",q:"大正時代に民本主義を唱え、大正デモクラシーの理論的な支えとなった人物は誰か。",o:["吉野作造","美濃部達吉","幸徳秋水","中江兆民"],a:0,x:"普通選挙と政党内閣を主張した。美濃部達吉は天皇機関説、中江兆民は明治の自由民権思想家、幸徳秋水は社会主義者。"},
+{id:"D18",c:"D",f:"K",q:"1941年12月、日本軍がハワイの真珠湾を攻撃し、マレー半島に上陸して始まった戦争はどれか。",o:["太平洋戦争","日中戦争","日露戦争","第一次世界大戦"],a:0,x:"アジア・太平洋戦争とも呼ぶ。東条英機内閣のとき。1945年8月のポツダム宣言受諾で終わった。"},
+{id:"D19",c:"D",f:"S",X:"1872年、新橋・横浜間に日本初の鉄道が開通した。",Y:"富岡製糸場は、民間の実業家が設立した工場である。",x:true,y:false,e:"Y：富岡製糸場（1872年）は殖産興業政策の官営模範工場。フランスの技術を導入した。2014年に世界遺産。"},
+{id:"D20",c:"D",f:"S",X:"治安維持法は、共産主義などの運動を取り締まる目的で制定された。",Y:"日本は1920年に国際連盟に加盟し、常任理事国となった。",x:true,y:true,e:"どちらも正しい。国際連盟の事務局次長には新渡戸稲造が就いた。日本は1933年に脱退を通告する。"},
+{id:"D21",c:"D",f:"S",X:"1940年に結成された大政翼賛会は、政党の力を強めるための組織だった。",Y:"1941年、日本はソ連と日ソ中立条約を結んだ。",x:false,y:true,e:"X：大政翼賛会は近衛文麿の新体制運動で結成された。政党はすべて解散して合流し、国民を戦争に協力させる組織となった。"},
+{id:"D22",c:"D",f:"N",i:["日露戦争の開始","日清戦争の開始","関税自主権の回復"],yr:["1904年","1894年","1911年"],ord:"213",e:"日清戦争（直前に領事裁判権撤廃）→ 日露戦争 → 小村寿太郎が関税自主権を回復。"},
+{id:"D23",c:"D",f:"N",i:["米騒動","関東大震災","大逆事件"],yr:["1918年","1923年","1910年"],ord:"312",e:"社会主義者が弾圧された大逆事件 → シベリア出兵前後の米価高騰で米騒動 → 関東大震災。"},
+{id:"D24",c:"D",f:"N",i:["日独伊三国同盟の締結","満州事変の開始","国際連盟からの脱退通告"],yr:["1940年","1931年","1933年"],ord:"231",e:"満州事変 → リットン報告書をもとにした勧告に反発して連盟脱退を通告 → ドイツ・イタリアと三国同盟を結ぶ。"},
+/* --- 現代（追加） --- */
+{id:"P13",c:"P",f:"K",q:"1945年8月に日本が受諾した、日本に降伏の条件を示した宣言はどれか。",o:["ポツダム宣言","カイロ宣言","大西洋憲章","ヤルタ協定"],a:0,x:"アメリカ・イギリス・中国の名で発表された（のちにソ連も参加）。カイロ宣言は1943年、日本の領土の扱いを示した。"},
+{id:"P14",c:"P",f:"K",q:"1949年、インフレを収束させるためにGHQの経済顧問が示した経済安定策はどれか。",o:["ドッジ・ライン","傾斜生産方式","シャウプ勧告","所得倍増計画"],a:0,x:"単一為替レート（1ドル＝360円）を設定し、赤字を許さない予算を組ませた。シャウプ勧告は同じ年の税制改革の勧告。"},
+{id:"P15",c:"P",f:"K",q:"1955年に始まった、自由民主党が長く政権を握り、日本社会党が野党第一党を占めた政治体制を何というか。",o:["55年体制","翼賛体制","大正デモクラシー","連立政権"],a:0,x:"自由党と日本民主党が合同して自由民主党が結成された（保守合同）。1993年の細川内閣の成立で終わった（P09）。"},
+{id:"P16",c:"P",f:"K",q:"1950年、朝鮮戦争の勃発を受けてGHQの指令で創設された組織はどれか。",o:["警察予備隊","保安隊","自衛隊","海上保安庁"],a:0,x:"警察予備隊（1950年）→ 保安隊（1952年）→ 自衛隊（1954年）と改組された。"},
+{id:"P17",c:"P",f:"K",q:"高度経済成長期に深刻になった公害に対応するため、1967年に制定された法律はどれか。",o:["公害対策基本法","環境基本法","労働基準法","独占禁止法"],a:0,x:"1971年には環境庁が設置された。環境基本法は1993年に公害対策基本法に代わって制定された。"},
+{id:"P18",c:"P",f:"K",q:"1989年、竹下登内閣のもとで導入された税はどれか。",o:["消費税","所得税","法人税","地租"],a:0,x:"税率3％で始まり、1997年に5％、2014年に8％、2019年に10％（軽減税率あり）となった。"},
+{id:"P19",c:"P",f:"S",X:"1945年の衆議院議員選挙法改正で、女性の参政権が認められた。",Y:"財閥解体の一環として、1947年に独占禁止法が制定された。",x:true,y:true,e:"どちらも正しい。選挙権は満20歳以上の男女に与えられ、1946年の総選挙で女性議員39人が誕生した。"},
+{id:"P20",c:"P",f:"S",X:"1956年の『経済白書』は「もはや戦後ではない」と記した。",Y:"高度経済成長期の後半には、カラーテレビ・クーラー・自動車が「三種の神器」と呼ばれた。",x:true,y:false,e:"Y：カラーテレビ・クーラー・自動車は「3C（新三種の神器）」。「三種の神器」は白黒テレビ・電気洗濯機・電気冷蔵庫。"},
+{id:"P21",c:"P",f:"S",X:"日本国憲法の施行と同時に、日米安全保障条約が結ばれた。",Y:"東京オリンピックが開かれた1964年に、日本は国際連合に加盟した。",x:false,y:false,e:"X：日米安全保障条約は1951年、サンフランシスコ平和条約と同じ日に調印された。Y：国連加盟は日ソ共同宣言後の1956年（P03）。"},
+{id:"P22",c:"P",f:"N",i:["警察予備隊の創設","ポツダム宣言の受諾","自衛隊の発足"],yr:["1950年","1945年","1954年"],ord:"213",e:"敗戦 → 朝鮮戦争で警察予備隊 → 保安隊を経て自衛隊（P16）。"},
+{id:"P23",c:"P",f:"N",i:["日本万国博覧会（大阪）","日ソ共同宣言","東京オリンピックの開催"],yr:["1970年","1956年","1964年"],ord:"231",e:"日ソ共同宣言で国連加盟 → 高度成長のさなかに東京オリンピック → 大阪万博。"},
+{id:"P24",c:"P",f:"N",i:["消費税の導入","阪神・淡路大震災","国鉄の分割民営化"],yr:["1989年","1995年","1987年"],ord:"312",e:"中曽根康弘内閣で国鉄がJRに → 竹下登内閣で消費税 → 平成に入り阪神・淡路大震災。"}
+];
+Q.forEach(q=>{if(q.f==="S"){q.o=SO;q.a=(q.x?0:2)+(q.y?0:1)}else if(q.f==="N"){q.o=NO;q.a=NK.indexOf(q.ord)}});
+
+/* ===== 記録（このブラウザのみ） ===== */
+const KEY="kyotsu-nihonshi-v1";
+let rec={};
+try{rec=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){rec={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(rec))}catch(e){}}
+function mark(id,ok){const r=rec[id]||{c:0,w:0};ok?r.c++:r.w++;r.last=ok;rec[id]=r;save()}
+
+/* ===== 状態 ===== */
+const app=document.getElementById("app");
+let S={view:"home",size:10,fmt:"ALL"};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ROM=["Ⅰ","Ⅱ","Ⅲ"];
+
+function header(){return `<header class="top"><div class="subject"><h1><b>日本史</b> ドリル</h1><span class="tag">共通テスト対策</span></div>
+  <div class="row"><a class="subj-link" href="index.html">メニュー</a><a class="subj-link" href="english.html">英語へ</a><small class="num">全${Q.length}問</small></div></header>`}
+const fmtOK=q=>S.fmt==="ALL"||q.f===S.fmt;
+function stats(cat){const qs=Q.filter(q=>!cat||q.c===cat);let done=0,ok=0;qs.forEach(q=>{const r=rec[q.id];if(r){done++;if(r.last)ok++}});return{n:qs.length,done,ok}}
+
+function home(){
+  delete app.dataset.cat;
+  const missN=Q.filter(q=>rec[q.id]&&rec[q.id].last===false&&fmtOK(q)).length;
+  const all=stats();
+  app.innerHTML=header()+`
+  <p class="lead">時代を選んで始めてください。4択・正誤判定・年代整序がまざって出題され、1問ごとに解説が出ます。記録はこのブラウザに保存されます。</p>
+  <div class="row"><span class="kbd">形式</span>
+    <div class="seg" role="group" aria-label="形式">${[["ALL","すべて"],["K","4択"],["S","正誤"],["N","年代整序"]].map(([k,l])=>`<button id="fm${k}" aria-pressed="${S.fmt===k}" data-fmt="${k}">${l}</button>`).join("")}</div>
+    <span class="kbd">出題数</span>
+    <div class="seg" role="group" aria-label="出題数">${[10,20,0].map(n=>`<button id="sz${n}" aria-pressed="${S.size===n}" data-size="${n}">${n?n+"問":"全問"}</button>`).join("")}</div></div>
+  <div class="cats">${Object.entries(CATS).map(([k,c])=>{const s=stats(k);const pct=s.n?Math.round(s.ok/s.n*100):0;
+    return `<button class="cat" id="cat${k}" data-cat="${k}"><span class="k">${c.k}　<span class="era-yr">${c.yr}</span></span><span class="t">${c.name}</span><span class="d">${c.d}</span>
+    <span class="meter" aria-hidden="true"><i style="width:${pct}%"></i></span><span class="s num">正解済 ${s.ok} / ${s.n}　解答済 ${s.done}</span></button>`}).join("")}</div>
+  <div class="row">
+    <button class="btn primary" id="mix" data-cat="ALL">全時代ミックス</button>
+    <button class="btn" id="review" data-cat="MISS" ${missN?"":"disabled"}>間違えた問題を復習（${missN}問）</button>
+  </div>
+  <div class="panel"><h2>これまでの成績</h2>
+    <div class="score"><span class="big">${all.done?Math.round(all.ok/all.done*100):0}<small style="font-size:18px">%</small></span>
+    <span class="kbd num">直近の正答率（解答済 ${all.done} 問中 ${all.ok} 問正解）</span></div>
+    <div class="row" style="margin-top:10px"><button class="btn" id="reset" ${all.done?"":"disabled"}>記録を消す</button><span class="kbd" id="resetMsg"></span></div>
+  </div>
+  <footer>操作：選択肢は数字キー（1〜6）、次へは Enter キーでも進めます。</footer>`;
+  app.querySelectorAll("[data-size]").forEach(b=>b.onclick=()=>{S.size=+b.dataset.size;home()});
+  app.querySelectorAll("[data-fmt]").forEach(b=>b.onclick=()=>{S.fmt=b.dataset.fmt;home()});
+  app.querySelectorAll("button[data-cat]").forEach(b=>b.onclick=()=>start(b.dataset.cat));
+  let armed=false;const rb=document.getElementById("reset");
+  rb.onclick=()=>{if(!armed){armed=true;rb.textContent="本当に消す";document.getElementById("resetMsg").textContent="もう一度押すと全記録を消去します";return}rec={};save();home()};
+}
+
+function start(cat){
+  let pool=Q.filter(fmtOK);
+  pool=cat==="ALL"?pool:cat==="MISS"?pool.filter(q=>rec[q.id]&&rec[q.id].last===false):pool.filter(q=>q.c===cat);
+  if(!pool.length){home();return}
+  pool=shuffle(pool);if(S.size&&cat!=="MISS")pool=pool.slice(0,S.size);
+  S={...S,view:"quiz",cat,list:pool,i:0,res:[],done:false};
+  question();
+}
+
+function body(q){
+  if(q.f==="S")return `<p class="stem">次の文X・Yについて、その正誤の組合せとして正しいものを選べ。</p>
+    <div class="stmts"><div class="stmt"><span class="lb">X</span><span class="tx">${esc(q.X)}</span></div><div class="stmt"><span class="lb">Y</span><span class="tx">${esc(q.Y)}</span></div></div>`;
+  if(q.f==="N")return `<p class="stem">次のⅠ〜Ⅲについて、古いものから年代順に正しく配列したものを選べ。</p>
+    <div class="stmts">${q.i.map((t,k)=>`<div class="stmt"><span class="lb">${ROM[k]}</span><span class="tx">${esc(t)}</span></div>`).join("")}</div>`;
+  return `<p class="stem">${esc(q.q)}</p>`;
+}
+
+function question(){
+  const q=S.list[S.i];S.done=false;app.dataset.cat=q.c;
+  const label=S.cat==="ALL"?"全時代ミックス":S.cat==="MISS"?"復習":CATS[S.cat].name;
+  S.opts=(q.f==="K"?shuffle(q.o.map((t,k)=>({t,k}))):q.o.map((t,k)=>({t,k})));
+  app.innerHTML=`${header()}<div class="qhead"><span>${label}　<span class="num">${S.i+1} / ${S.list.length}</span></span><button class="btn" id="quit" style="padding:4px 12px;font-size:13px">やめる</button></div>
+  <div class="bar"><i style="width:${S.i/S.list.length*100}%"></i></div>
+  <div class="panel"><div><span class="qno">${q.id}</span><span class="kbd">${CATS[q.c].name}</span><span class="fmt">${FMT[q.f]}</span></div>
+    ${body(q)}
+    <div class="choices ${q.f==="N"?"six":""}">${S.opts.map((o,n)=>`<button class="ch" id="ch${n}" data-n="${n}"><span class="oval">${n+1}</span><span>${esc(o.t)}</span></button>`).join("")}</div>
+    <div id="fb"></div></div>`;
+  app.querySelectorAll(".ch").forEach(b=>b.onclick=()=>choose(+b.dataset.n));
+  document.getElementById("quit").onclick=()=>{S.view="home";home()};
+}
+
+function answerText(q){
+  if(q.f==="N"){const o=q.ord.split("").map(d=>+d-1);return `${NO[q.a]}（${o.map(k=>`${esc(q.i[k])}〈${esc(q.yr[k])}〉`).join(" → ")}）`}
+  return esc(q.o[q.a]);
+}
+function choose(n){
+  if(S.done)return;S.done=true;
+  const q=S.list[S.i];const ok=S.opts[n].k===q.a;
+  app.querySelectorAll(".ch").forEach((b,m)=>{b.disabled=true;if(S.opts[m].k===q.a)b.classList.add("right")});
+  const b=document.getElementById("ch"+n);b.classList.add("sel");if(!ok)b.classList.add("wrong");
+  mark(q.id,ok);S.res.push({q,ok,your:S.opts[n].t});
+  const last=S.i===S.list.length-1;
+  document.getElementById("fb").innerHTML=`<div class="fb ${ok?"ok":"ng"}" role="status">
+    <div class="v"><span class="mark">${ok?"○":"×"}</span>${ok?"正解！":"おしい！"}</div>
+    <p>正解：<b>${answerText(q)}</b></p><p>${esc(q.x&&q.f==="K"?q.x:q.e)}</p></div>
+    <div class="row" style="margin-top:14px"><button class="btn primary" id="next">${last?"結果を見る":"次の問題へ"}</button></div>`;
+  const nx=document.getElementById("next");nx.focus({preventScroll:true});
+  nx.onclick=()=>{if(last){result()}else{S.i++;question();window.scrollTo({top:0})}};
+}
+
+function qSummary(q){
+  if(q.f==="S")return `X：${esc(q.X)}<br>Y：${esc(q.Y)}`;
+  if(q.f==="N")return q.i.map((t,k)=>`${ROM[k]} ${esc(t)}`).join("　");
+  return esc(q.q);
+}
+function result(){
+  S.view="result";delete app.dataset.cat;
+  const n=S.res.length,ok=S.res.filter(r=>r.ok).length,miss=S.res.filter(r=>!r.ok);
+  app.innerHTML=header()+`<div class="panel"><h2>結果</h2>
+    <div class="score"><span class="big">${ok}</span><span class="num" style="font-size:20px">/ ${n}</span><span class="kbd">正答率 ${Math.round(ok/n*100)}%</span></div>
+    ${miss.length?`<ul class="miss">${miss.map(r=>`<li data-cat="${r.q.c}"><div class="kbd"><span class="qno">${r.q.id}</span>${CATS[r.q.c].name}<span class="fmt">${FMT[r.q.f]}</span></div>
+      <div class="en">${qSummary(r.q)}</div>
+      <div class="x">正解：<b>${answerText(r.q)}</b>　／　あなたの解答：${esc(r.your)}</div><div class="x">${esc(r.q.f==="K"?r.q.x:r.q.e)}</div></li>`).join("")}</ul>`:`<p style="font-size:18px;font-weight:900">全問正解！すばらしい！</p>`}
+    <div class="row" style="margin-top:16px"><button class="btn primary" id="again">同じ条件でもう一度</button><button class="btn" id="back">トップへ戻る</button></div></div>`;
+  document.getElementById("again").onclick=()=>start(S.cat);
+  document.getElementById("back").onclick=home;
+}
+
+document.addEventListener("keydown",e=>{
+  if(S.view!=="quiz")return;
+  const n=S.list[S.i].o.length;
+  if(/^[1-6]$/.test(e.key)&&!S.done&&+e.key<=n){choose(+e.key-1)}
+  else if(e.key==="Enter"&&S.done){const nx=document.getElementById("next");if(nx&&document.activeElement!==nx){e.preventDefault();nx.click()}}
+});
+home();
+</script>
+
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
+</body>
+</html>

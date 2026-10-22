@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EAF4FF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161A2E" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="入試ドリル">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}</style>
+<title>数学ドリル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Nunito:wght@600;800;900&family=Fredoka:wght@600;700&display=swap">
+<style>
+/* Layout: ステッカー風のポップな一列カラム。太いフチ＋ずらした影、分野ごとにカラー */
+:root{
+  --bg:#EAF4FF; --dot:#CFE3FA; --card:#FFFFFF; --ink:#1B1E3A; --muted:#5C6385; --edge:#1B1E3A;
+  --g:#FF5C8A; --v:#2FA8FF; --o:#FFB800; --c:var(--g);
+  --c-soft:#FFE3EC;
+  --ok:#14B06A; --ok-soft:#DDF7EA; --ng:#FF4D4D; --ng-soft:#FFE4E4;
+  --btn-ink:#FFFFFF;
+  --f-jp:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  --f-en:"Nunito","Segoe UI",system-ui,sans-serif;
+  --f-num:"Fredoka","Nunito",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#161A2E; --dot:#22284A; --card:#232945; --ink:#F2F4FF; --muted:#A9B0D4; --edge:#060815;
+  --g:#FF7AA2; --v:#5BBEFF; --o:#FFC933; --c-soft:#3A2440;
+  --ok:#3DD68C; --ok-soft:#173829; --ng:#FF6F6F; --ng-soft:#3E1D22; --btn-ink:#161A2E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161A2E; --dot:#22284A; --card:#232945; --ink:#F2F4FF; --muted:#A9B0D4; --edge:#060815;
+  --g:#FF7AA2; --v:#5BBEFF; --o:#FFC933; --c-soft:#3A2440;
+  --ok:#3DD68C; --ok-soft:#173829; --ng:#FF6F6F; --ng-soft:#3E1D22; --btn-ink:#161A2E; color-scheme:dark}
+[data-cat="G"]{--c:var(--g)} [data-cat="V"]{--c:var(--v)} [data-cat="O"]{--c:var(--o)}
+*{box-sizing:border-box}
+body{background-color:var(--bg);background-image:radial-gradient(var(--dot) 2px,transparent 2.5px);background-size:22px 22px;
+  color:var(--ink);font-family:var(--f-jp);font-weight:500;font-size:15px;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--v);outline-offset:3px}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.subject{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.subject h1{margin:0;font-size:30px;font-weight:900;letter-spacing:.02em;text-wrap:balance;
+  text-shadow:3px 3px 0 var(--g)}
+.subject h1 b{font-family:var(--f-num);font-weight:700;color:var(--v);text-shadow:3px 3px 0 var(--o)}
+.tag{font-size:12px;font-weight:900;background:var(--o);color:#1B1E3A;border:2px solid var(--edge);border-radius:999px;padding:2px 12px;transform:rotate(-4deg);box-shadow:2px 2px 0 var(--edge)}
+.top small{font-family:var(--f-num);font-size:14px;background:var(--card);border:2px solid var(--edge);border-radius:999px;padding:2px 12px}
+.lead{color:var(--muted);margin:0}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.cat{background:var(--card);border:3px solid var(--edge);border-radius:20px;padding:16px 16px 14px;text-align:left;display:flex;flex-direction:column;gap:6px;min-width:0;
+  box-shadow:5px 5px 0 var(--c);transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}
+.cat::after{content:"";position:absolute;right:-24px;top:-24px;width:80px;height:80px;border-radius:50%;background:var(--c);opacity:.25}
+.cat:hover{transform:translate(-2px,-3px) rotate(-.6deg);box-shadow:8px 8px 0 var(--c)}
+.cat:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--c)}
+.cat .k{font-family:var(--f-num);font-size:12px;font-weight:700;color:var(--c);letter-spacing:.12em;filter:brightness(.85)}
+.cat .t{font-size:20px;font-weight:900}
+.cat .d{font-size:13px;color:var(--muted)}
+.meter{height:12px;background:var(--bg);border:2px solid var(--edge);border-radius:999px;position:relative;margin-top:6px;overflow:hidden}
+.meter i{position:absolute;inset:0 auto 0 0;background:var(--c);border-radius:999px}
+.cat .s{font-size:12px;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{background:var(--card);border:3px solid var(--edge);border-radius:999px;padding:8px 20px;font-weight:700;box-shadow:3px 3px 0 var(--edge);transition:transform .1s,box-shadow .1s}
+.btn:hover:not([disabled]){transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--edge)}
+.btn:active:not([disabled]){transform:translate(3px,3px);box-shadow:0 0 0 var(--edge)}
+.btn.primary{background:var(--g);color:#fff}
+#mix.primary{background:linear-gradient(90deg,var(--g),var(--v))}
+.btn[disabled]{opacity:.4;cursor:default;box-shadow:none}
+.seg{display:inline-flex;border:3px solid var(--edge);border-radius:999px;overflow:hidden;box-shadow:3px 3px 0 var(--edge)}
+.seg button{background:var(--card);border:0;padding:5px 16px;font-size:13px;font-weight:700}
+.seg button+button{border-left:2px solid var(--edge)}
+.seg button[aria-pressed="true"]{background:var(--o);color:#1B1E3A}
+.panel{background:var(--card);border:3px solid var(--edge);border-radius:24px;padding:20px;box-shadow:6px 6px 0 var(--edge)}
+.panel h2{margin:0 0 8px;font-size:18px;font-weight:900}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;font-weight:700}
+.bar{height:14px;background:var(--card);border:3px solid var(--edge);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:repeating-linear-gradient(45deg,var(--c) 0 10px,color-mix(in srgb,var(--c) 70%,#fff) 10px 20px);transition:width .35s cubic-bezier(.3,1.6,.5,1)}
+.qno{display:inline-block;background:var(--c);color:#fff;font-family:var(--f-num);font-weight:700;padding:1px 10px;margin-right:8px;font-size:13px;border-radius:999px;border:2px solid var(--edge)}
+[data-cat="O"] .qno{color:#1B1E3A}
+.stem{font-family:var(--f-en);font-weight:800;font-size:21px;line-height:1.6;margin:14px 0 6px}
+.stem .blank{display:inline-block;min-width:5.5em;background:var(--c-soft);border:2px dashed var(--c);border-radius:10px;text-align:center;font-family:var(--f-num);font-size:14px;color:var(--ink);line-height:1.8}
+.ja{color:var(--muted);font-size:14px;margin:0}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+@media (max-width:520px){.choices{grid-template-columns:1fr}}
+.ch{display:flex;align-items:center;gap:12px;background:var(--card);border:3px solid var(--edge);border-radius:16px;padding:10px 14px;text-align:left;font-family:var(--f-en);font-weight:800;font-size:17px;
+  box-shadow:3px 3px 0 var(--edge);transition:transform .12s,box-shadow .12s;min-width:0}
+.ch:hover:not([disabled]){transform:translate(-1px,-2px);box-shadow:4px 5px 0 var(--c)}
+.oval{flex:none;width:30px;height:30px;border:2px solid var(--edge);border-radius:50%;display:grid;place-items:center;font-family:var(--f-num);font-size:14px;font-weight:700;background:var(--c);color:#fff}
+[data-cat="O"] .oval{color:#1B1E3A}
+.ch.right{background:var(--ok-soft);border-color:var(--ok);box-shadow:3px 3px 0 var(--ok)}
+.ch.right .oval{background:var(--ok)}
+.ch.wrong{background:var(--ng-soft);border-color:var(--ng);box-shadow:3px 3px 0 var(--ng);animation:shake .35s}
+.ch.wrong .oval{background:var(--ng)}
+.ch.sel.right{animation:pop .4s}
+.ch[disabled]{cursor:default}
+.ch[disabled]:not(.right):not(.wrong){opacity:.55}
+.fb{margin-top:18px;border:3px solid var(--ok);border-radius:18px;background:var(--ok-soft);padding:12px 16px;animation:pop .35s}
+.fb.ng{border-color:var(--ng);background:var(--ng-soft)}
+.fb .v{font-weight:900;font-size:20px;display:flex;align-items:center;gap:8px}
+.fb.ok .v{color:var(--ok)} .fb.ng .v{color:var(--ng)}
+.fb p{margin:6px 0 0}
+.fb .en{font-family:var(--f-en);font-weight:800;font-size:16px}
+.mark{font-family:var(--f-num);font-size:26px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;border:2px solid var(--edge)}
+.fb.ok .mark{background:var(--ok)} .fb.ng .mark{background:var(--ng)}
+/* 並べ替え */
+.build{min-height:60px;border:3px dashed var(--c);border-radius:16px;background:var(--bg);padding:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;font-family:var(--f-en);font-weight:800;font-size:17px}
+.build .fix{color:var(--muted)}
+.build .ph{color:var(--muted);font-family:var(--f-jp);font-size:13px}
+.pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{border:2px solid var(--edge);border-radius:12px;background:var(--card);padding:4px 14px;font-family:var(--f-en);font-weight:800;font-size:17px;box-shadow:2px 2px 0 var(--edge);transition:transform .1s}
+.chip:hover:not([disabled]){transform:translateY(-2px) rotate(-2deg)}
+.chip.used{opacity:.2;cursor:default;box-shadow:none}
+.build .chip{background:var(--c);color:#fff;animation:pop .25s}
+[data-cat="O"] .build .chip{color:#1B1E3A}
+.kbd{font-size:12px;color:var(--muted)}
+.score{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.score .big{font-family:var(--f-num);font-weight:700;font-size:56px;line-height:1;color:var(--g);text-shadow:3px 3px 0 var(--o)}
+.miss{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.miss li{border:2px solid var(--edge);border-radius:14px;padding:10px 12px;min-width:0;background:var(--bg)}
+.miss .en{font-family:var(--f-en);font-weight:800;font-size:16px}
+.miss .en b{color:var(--ok)}
+.miss .x{font-size:13px;color:var(--muted)}
+footer{color:var(--muted);font-size:12px;text-align:center}
+@keyframes pop{0%{transform:scale(.9)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<style>
+/* 日本史用の追加：時代ごとのカラーと設問ブロック */
+:root{--ey:#B88A00;--ea:#F26A2E;--em:#0E9C8C;--ee:#E8457A;--ed:#7353F0;--ep:#2C8FE0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ea:#FF8F5C;--em:#2CC7B5;--ee:#FF7AA2;--ed:#9C85FF;--ep:#5BBEFF;--ey:#E6C340}}
+:root[data-theme="dark"]{--ea:#FF8F5C;--em:#2CC7B5;--ee:#FF7AA2;--ed:#9C85FF;--ep:#5BBEFF;--ey:#E6C340}
+[data-cat="A"]{--c:var(--ea)} [data-cat="B"]{--c:var(--em)} [data-cat="C"]{--c:var(--ee)} [data-cat="D"]{--c:var(--ed)} [data-cat="E"]{--c:var(--ep)}
+.stem{font-family:var(--f-jp);font-weight:700;font-size:18px}
+.stmts{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.stmt{display:flex;gap:10px;align-items:flex-start;background:var(--bg);border:2px solid var(--edge);border-radius:14px;padding:8px 12px;min-width:0}
+.stmt .lb{flex:none;font-family:var(--f-num);font-weight:700;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:#fff;border:2px solid var(--edge)}
+.stmt .tx{font-weight:700;min-width:0}
+.ch{font-family:var(--f-jp);font-weight:700}
+.choices.six{grid-template-columns:repeat(3,1fr)}
+@media (max-width:520px){.choices.six{grid-template-columns:1fr 1fr}}
+.choices.six .ch{white-space:nowrap;gap:8px;padding:10px}
+@media (max-width:520px){.choices.six .ch{font-size:15px;padding:10px 8px}.choices.six .oval{width:26px;height:26px;font-size:13px}}
+.fmt{display:inline-block;font-size:11px;font-weight:900;border:2px solid var(--edge);border-radius:999px;padding:0 8px;margin-left:6px;background:var(--o);color:#1B1E3A}
+.era-yr{font-family:var(--f-num);font-size:12px;color:var(--muted)}
+.subj-link{font-size:13px;font-weight:700;color:var(--ink);text-decoration:none;border:2px solid var(--edge);border-radius:999px;padding:2px 12px;background:var(--card)}
+.subj-link:hover{background:var(--o);color:#1B1E3A}
+.miss .en{font-family:var(--f-jp);font-weight:700}
+.subject h1 b{font-family:var(--f-jp);font-weight:900}
+</style>
+<style>
+/* ランク表示 */
+.rankp{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.rk-body{flex:1;min-width:200px}
+.rk-body h2{margin:0 0 2px}
+.rk-body p{margin:4px 0}
+.rk-meter i{background:linear-gradient(90deg,var(--o),var(--g))}
+.rk-badge{flex:none;width:118px;height:118px;border-radius:50%;border:4px solid var(--edge);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;box-shadow:4px 4px 0 var(--edge);transform:rotate(-6deg);text-align:center;color:#1B1E3A}
+.rk-badge .rk-en{font-family:var(--f-num);font-size:10px;letter-spacing:.12em;font-weight:700}
+.rk-badge .rk-t{font-size:22px;font-weight:900;line-height:1.2}
+.rk-badge .rk-st{font-size:12px;letter-spacing:1px}
+.rk0{background:#E4E8F2}.rk1{background:#BFE6FF}.rk2{background:#C9F2DA}.rk3{background:#FFD873}.rk4{background:#FFB3CB}
+.rk5{background:conic-gradient(#FFD873,#FFB3CB,#BFE6FF,#C9F2DA,#FFD873)}
+.rk-session{display:flex;align-items:baseline;gap:10px;margin-top:12px;flex-wrap:wrap}
+.rk-title{font-size:26px;font-weight:900;color:var(--ink);background:var(--o);border:3px solid var(--edge);border-radius:999px;padding:0 16px;box-shadow:3px 3px 0 var(--edge);transform:rotate(-2deg);display:inline-block;color:#1B1E3A}
+.rk-up{margin-top:12px;font-weight:900;font-size:18px;color:var(--g);animation:pop .5s}
+</style>
+
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* ===== 問題データ ===== */
+const D={"cats": {"A": {"name": "数と式・2次関数・集合と論理", "k": "ALGEBRA_QUADRATIC", "yr": "数学Ⅰ", "d": "式の展開・因数分解、平方根、1次・2次不等式、2次関数の最大最小、集合と命題"}, "B": {"name": "図形と計量・データの分析", "k": "TRIG_DATA", "yr": "数学Ⅰ", "d": "三角比、正弦定理・余弦定理、三角形の面積、平均・分散・標準偏差・相関係数"}, "C": {"name": "場合の数と確率・図形の性質・整数", "k": "COMBINATORICS", "yr": "数学A", "d": "順列・組合せ、確率・条件付き確率・期待値、円と三角形の性質、約数・倍数・n進法"}, "D": {"name": "式と証明・図形と方程式・三角関数・指数対数・微分積分", "k": "MATH2", "yr": "数学Ⅱ", "d": "二項定理、剰余の定理、直線と円、加法定理、指数・対数、微分・積分"}, "E": {"name": "数列・統計的な推測・ベクトル・複素数平面", "k": "MATH_BC", "yr": "数学B・数学C", "d": "等差・等比数列、Σ、漸化式、確率分布と統計的推測、平面・空間ベクトル、複素数平面"}}, "q": [{"id": "A01", "c": "A", "f": "K", "q": "(2x−3)<sup>2</sup> を展開せよ。", "o": ["4x<sup>2</sup>−12x+9", "4x<sup>2</sup>−9", "4x<sup>2</sup>+12x+9", "4x<sup>2</sup>−6x+9"], "e": "(a−b)<sup>2</sup>=a<sup>2</sup>−2ab+b<sup>2</sup> より 4x<sup>2</sup>−2・2x・3+9=4x<sup>2</sup>−12x+9。"}, {"id": "A02", "c": "A", "f": "K", "q": "x<sup>2</sup>−5x+6 を因数分解せよ。", "o": ["(x−2)(x−3)", "(x+2)(x+3)", "(x−1)(x−6)", "(x+1)(x−6)"], "e": "積が6、和が−5となる2数は−2と−3なので (x−2)(x−3)。"}, {"id": "A03", "c": "A", "f": "K", "q": "6x<sup>2</sup>+x−2 を因数分解せよ。", "o": ["(2x−1)(3x+2)", "(2x+1)(3x−2)", "(2x−1)(3x−2)", "(6x+1)(x−2)"], "e": "たすき掛けで 2×2+3×(−1)=1 となる組を探すと (2x−1)(3x+2)。展開して確かめるとよい。"}, {"id": "A04", "c": "A", "f": "K", "q": "1/(√3−√2) の分母を有理化せよ。", "o": ["√3+√2", "√3−√2", "(√3+√2)/5", "−√3−√2"], "e": "分母・分子に √3+√2 を掛けると、分母は (√3)<sup>2</sup>−(√2)<sup>2</sup>=1 となり √3+√2。"}, {"id": "A05", "c": "A", "f": "K", "q": "√12+√27−√48 を計算せよ。", "o": ["√3", "3√3", "−√3", "9√3"], "e": "√12=2√3、√27=3√3、√48=4√3 より 2√3+3√3−4√3=√3。"}, {"id": "A06", "c": "A", "f": "K", "q": "x=√5+1 のとき、x<sup>2</sup>−2x の値を求めよ。", "o": ["4", "6", "5", "2√5"], "e": "x<sup>2</sup>−2x=(x−1)<sup>2</sup>−1 と変形し、x−1=√5 を代入して 5−1=4。"}, {"id": "A07", "c": "A", "f": "K", "q": "不等式 |x−2|＜3 を解け。", "o": ["−1＜x＜5", "x＜−1, 5＜x", "−5＜x＜1", "−1＜x＜3"], "e": "|x−2|＜3 ⇔ −3＜x−2＜3 より −1＜x＜5。"}, {"id": "A08", "c": "A", "f": "K", "q": "不等式 3x−5＞5x+1 を解け。", "o": ["x＜−3", "x＞−3", "x＜3", "x＞3"], "e": "移項して −2x＞6。負の数で割るので不等号の向きが変わり x＜−3。"}, {"id": "A09", "c": "A", "f": "K", "q": "放物線 y=x<sup>2</sup>−4x+1 の頂点の座標を求めよ。", "o": ["(2, −3)", "(−2, −3)", "(2, 5)", "(4, 1)"], "e": "y=(x−2)<sup>2</sup>−4+1=(x−2)<sup>2</sup>−3 と平方完成して頂点は (2, −3)。"}, {"id": "A10", "c": "A", "f": "K", "q": "2次関数 y=−2x<sup>2</sup>+8x−3 の最大値を求めよ。", "o": ["5", "−11", "1", "13"], "e": "y=−2(x<sup>2</sup>−4x)−3=−2(x−2)<sup>2</sup>+8−3=−2(x−2)<sup>2</sup>+5 より、x=2 で最大値5。"}, {"id": "A11", "c": "A", "f": "K", "q": "2次方程式 x<sup>2</sup>−3x−1=0 を解け。", "o": ["x=(3±√13)/2", "x=(−3±√13)/2", "x=(3±√5)/2", "x=3±√13"], "e": "解の公式 x=(−b±√(b<sup>2</sup>−4ac))/(2a) に a=1, b=−3, c=−1 を代入し x=(3±√(9+4))/2=(3±√13)/2。"}, {"id": "A12", "c": "A", "f": "K", "q": "2次方程式 x<sup>2</sup>+2x+k=0 が異なる2つの実数解をもつような定数 k の値の範囲を求めよ。", "o": ["k＜1", "k＞1", "k≦1", "k＜4"], "e": "判別式 D/4=1<sup>2</sup>−k＞0 より k＜1。等号を含めると重解の場合も入ってしまう。"}, {"id": "A13", "c": "A", "f": "K", "q": "2次不等式 x<sup>2</sup>−x−6＜0 を解け。", "o": ["−2＜x＜3", "x＜−2, 3＜x", "−3＜x＜2", "x＜−3, 2＜x"], "e": "(x+2)(x−3)＜0 より、2解 −2 と 3 の間で −2＜x＜3。"}, {"id": "A14", "c": "A", "f": "K", "q": "頂点が点 (1, 2) で、点 (2, 5) を通る放物線をグラフとする2次関数を求めよ。", "o": ["y=3(x−1)<sup>2</sup>+2", "y=3(x+1)<sup>2</sup>+2", "y=(x−1)<sup>2</sup>+2", "y=3(x−1)<sup>2</sup>−2"], "e": "y=a(x−1)<sup>2</sup>+2 とおき (2, 5) を代入すると 5=a+2 より a=3。"}, {"id": "A15", "c": "A", "f": "K", "q": "2次関数 y=x<sup>2</sup>−2x+3（0≦x≦3）の最大値と最小値を求めよ。", "o": ["最大値6、最小値2", "最大値6、最小値3", "最大値3、最小値2", "最大値9、最小値2"], "e": "y=(x−1)<sup>2</sup>+2。軸 x=1 は範囲内なので最小値2、軸から遠い x=3 で最大値 9−6+3=6。"}, {"id": "A16", "c": "A", "f": "K", "q": "放物線 y=x<sup>2</sup> を x軸方向に2、y軸方向に−3 だけ平行移動した放物線の方程式を求めよ。", "o": ["y=(x−2)<sup>2</sup>−3", "y=(x+2)<sup>2</sup>−3", "y=(x−2)<sup>2</sup>+3", "y=(x+2)<sup>2</sup>+3"], "e": "x を x−2、y を y+3 に置き換えて y+3=(x−2)<sup>2</sup>、すなわち y=(x−2)<sup>2</sup>−3。"}, {"id": "A17", "c": "A", "f": "K", "q": "2次方程式 x<sup>2</sup>−4x+k=0 が重解をもつような定数 k の値を求めよ。", "o": ["k=4", "k=−4", "k=2", "k=16"], "e": "重解をもつ条件は D/4=(−2)<sup>2</sup>−k=0 なので k=4。"}, {"id": "A18", "c": "A", "f": "K", "q": "1から10までの整数のうち、2の倍数または3の倍数であるものの個数を求めよ。", "o": ["7", "8", "6", "1"], "e": "n(A∪B)=n(A)+n(B)−n(A∩B)=5+3−1=7。6の倍数を二重に数えないよう注意。"}, {"id": "A19", "c": "A", "f": "K", "q": "実数 x について、「x=2」は「x<sup>2</sup>=4」であるための何条件か。", "o": ["十分条件であるが必要条件でない", "必要条件であるが十分条件でない", "必要十分条件である", "必要条件でも十分条件でもない"], "e": "x=2 ⇒ x<sup>2</sup>=4 は真。逆は x=−2 が反例となり偽なので、十分条件であるが必要条件でない。"}, {"id": "A20", "c": "A", "f": "K", "q": "命題「すべての実数 x について x<sup>2</sup>≧0」の否定を選べ。", "o": ["ある実数 x について x<sup>2</sup>＜0", "すべての実数 x について x<sup>2</sup>＜0", "ある実数 x について x<sup>2</sup>≧0", "すべての実数 x について x<sup>2</sup>≦0"], "e": "「すべての〜について p」の否定は「ある〜について p でない」。≧0 の否定は ＜0。"}, {"id": "A21", "c": "A", "f": "K", "q": "全体集合 U={1, 2, 3, 4, 5, 6}、A={1, 2, 3, 4}、B={3, 4, 5} とする。A の補集合と B の補集合の共通部分を求めよ。", "o": ["{6}", "{1, 2, 5, 6}", "{3, 4}", "{1, 2, 5}"], "e": "ド・モルガンの法則より（Aの補集合）∩（Bの補集合）は A∪B={1, 2, 3, 4, 5} の補集合で {6}。"}, {"id": "A22", "c": "A", "f": "K", "q": "√(5+2√6) を簡単にせよ。", "o": ["√3+√2", "√3−√2", "√6+1", "√5+√6"], "e": "和が5、積が6の2数は3と2なので √(5+2√6)=√((√3+√2)<sup>2</sup>)=√3+√2。"}, {"id": "A23", "c": "A", "f": "K", "q": "a+b=3、ab=1 のとき、a<sup>2</sup>+b<sup>2</sup> の値を求めよ。", "o": ["7", "11", "9", "5"], "e": "a<sup>2</sup>+b<sup>2</sup>=(a+b)<sup>2</sup>−2ab=9−2=7。"}, {"id": "A24", "c": "A", "f": "K", "q": "a+b=2、ab=−1 のとき、a<sup>3</sup>+b<sup>3</sup> の値を求めよ。", "o": ["14", "2", "8", "11"], "e": "a<sup>3</sup>+b<sup>3</sup>=(a+b)<sup>3</sup>−3ab(a+b)=8−3・(−1)・2=14。"}, {"id": "B01", "c": "B", "f": "K", "q": "sin 60°×cos 30° の値を求めよ。", "o": ["3/4", "1/4", "√3/4", "3/2"], "e": "sin 60°=cos 30°=√3/2 なので (√3/2)<sup>2</sup>=3/4。"}, {"id": "B02", "c": "B", "f": "K", "q": "sin 135° の値を求めよ。", "o": ["√2/2", "−√2/2", "1/2", "√3/2"], "e": "sin 135°=sin(180°−45°)=sin 45°=√2/2。第2象限で sin は正。"}, {"id": "B03", "c": "B", "f": "K", "q": "cos 120° の値を求めよ。", "o": ["−1/2", "1/2", "−√3/2", "√3/2"], "e": "cos 120°=cos(180°−60°)=−cos 60°=−1/2。第2象限で cos は負。"}, {"id": "B04", "c": "B", "f": "K", "q": "θ は鋭角で sin θ=3/5 のとき、tan θ の値を求めよ。", "o": ["3/4", "4/3", "4/5", "5/4"], "e": "cos θ=√(1−9/25)=4/5（鋭角なので正）。tan θ=sin θ/cos θ=(3/5)/(4/5)=3/4。"}, {"id": "B05", "c": "B", "f": "K", "q": "90°＜θ＜180° で cos θ=−1/3 のとき、sin θ の値を求めよ。", "o": ["2√2/3", "−2√2/3", "2/3", "8/9"], "e": "sin<sup>2</sup>θ=1−1/9=8/9。90°＜θ＜180° では sin θ＞0 なので sin θ=√8/3=2√2/3。"}, {"id": "B06", "c": "B", "f": "K", "q": "θ は鋭角で tan θ=2 のとき、cos<sup>2</sup>θ の値を求めよ。", "o": ["1/5", "4/5", "1/3", "5"], "e": "1+tan<sup>2</sup>θ=1/cos<sup>2</sup>θ より 1/cos<sup>2</sup>θ=5、よって cos<sup>2</sup>θ=1/5。"}, {"id": "B07", "c": "B", "f": "K", "q": "△ABC において a=6、A=30° のとき、外接円の半径 R を求めよ。", "o": ["6", "12", "3", "6√3"], "e": "正弦定理 a/sin A=2R より 2R=6/(1/2)=12、よって R=6。"}, {"id": "B08", "c": "B", "f": "K", "q": "△ABC において a=√2、A=45°、B=60° のとき、b を求めよ。", "o": ["√3", "2√3/3", "√6", "1"], "e": "正弦定理 a/sin A=b/sin B より b=√2×(√3/2)÷(√2/2)=√3。"}, {"id": "B09", "c": "B", "f": "K", "q": "△ABC において b=3、c=5、A=120° のとき、a を求めよ。", "o": ["7", "√19", "49", "√34"], "e": "余弦定理 a<sup>2</sup>=b<sup>2</sup>+c<sup>2</sup>−2bc cos A=9+25−2・3・5・(−1/2)=49 より a=7。"}, {"id": "B10", "c": "B", "f": "K", "q": "△ABC において a=7、b=5、c=3 のとき、角 A の大きさを求めよ。", "o": ["120°", "60°", "150°", "135°"], "e": "cos A=(b<sup>2</sup>+c<sup>2</sup>−a<sup>2</sup>)/(2bc)=(25+9−49)/30=−1/2 より A=120°。"}, {"id": "B11", "c": "B", "f": "K", "q": "△ABC において b=4、c=5、A=60° のとき、△ABC の面積を求めよ。", "o": ["5√3", "10√3", "10", "5"], "e": "S=(1/2)bc sin A=(1/2)・4・5・(√3/2)=5√3。"}, {"id": "B12", "c": "B", "f": "K", "q": "3辺の長さが 5、6、7 である三角形の面積を求めよ。", "o": ["6√6", "12√6", "3√6", "6√5"], "e": "cos(長さ7の辺の対角)=(25+36−49)/60=1/5、sin=2√6/5 より S=(1/2)・5・6・(2√6/5)=6√6。"}, {"id": "B13", "c": "B", "f": "K", "q": "sin<sup>2</sup>20°+sin<sup>2</sup>70° の値を求めよ。", "o": ["1", "0", "2", "1/2"], "e": "sin 70°=sin(90°−20°)=cos 20° なので sin<sup>2</sup>20°+cos<sup>2</sup>20°=1。"}, {"id": "B14", "c": "B", "f": "K", "q": "3辺の長さが 3、4、5 である直角三角形の内接円の半径 r を求めよ。", "o": ["1", "2", "5/2", "1/2"], "e": "面積 S=(1/2)・3・4=6。S=(1/2)r(a+b+c) より 6=(1/2)r・12、r=1。（5/2 は外接円の半径）"}, {"id": "B15", "c": "B", "f": "K", "q": "0°≦θ≦180° のとき、sin θ=1/2 を満たす θ を求めよ。", "o": ["θ=30°, 150°", "θ=30°", "θ=60°, 120°", "θ=150°"], "e": "単位円で y座標が 1/2 となる点は2つあり、θ=30° と 180°−30°=150°。"}, {"id": "B16", "c": "B", "f": "K", "q": "5個のデータ 2, 4, 6, 8, 10 の分散を求めよ。", "o": ["8", "10", "40", "2√2"], "e": "平均は6。偏差の2乗 16, 4, 0, 4, 16 の平均をとって 40/5=8。（2√2 は標準偏差）"}, {"id": "B17", "c": "B", "f": "K", "q": "4個のデータ 1, 3, 5, 7 の標準偏差を求めよ。", "o": ["√5", "5", "2√5", "20"], "e": "平均4、偏差の2乗 9, 1, 1, 9 の平均が分散で 20/4=5。標準偏差はその正の平方根で √5。"}, {"id": "B18", "c": "B", "f": "K", "q": "6個のデータ 3, 8, 5, 1, 9, 4 の中央値を求めよ。", "o": ["4.5", "5", "4", "5.5"], "e": "小さい順に 1, 3, 4, 5, 8, 9。偶数個なので中央の2つ 4 と 5 の平均で 4.5。（5 は平均値）"}, {"id": "B19", "c": "B", "f": "K", "q": "9個のデータ 1, 2, 3, 4, 5, 6, 7, 8, 9 の四分位範囲を求めよ。ただし、データが奇数個のときは中央値を除いて上下に分けるものとする。", "o": ["5", "6", "4", "8"], "e": "下位 1, 2, 3, 4 の中央値 Q<sub>1</sub>=2.5、上位 6, 7, 8, 9 の中央値 Q<sub>3</sub>=7.5。Q<sub>3</sub>−Q<sub>1</sub>=5。"}, {"id": "B20", "c": "B", "f": "K", "q": "変量 x の標準偏差が2、変量 y の標準偏差が3、x と y の共分散が −3 のとき、相関係数を求めよ。", "o": ["−0.5", "0.5", "−1.5", "−0.25"], "e": "相関係数 r=（共分散）/（x の標準偏差×y の標準偏差）=−3/(2×3)=−0.5。"}, {"id": "B21", "c": "B", "f": "K", "q": "変量 x の平均値が5、分散が4 のとき、y=3x−2 で定まる変量 y の平均値と分散を求めよ。", "o": ["平均値13、分散36", "平均値13、分散12", "平均値15、分散36", "平均値13、分散34"], "e": "平均値は 3×5−2=13。分散は a<sup>2</sup> 倍になり定数の加減は影響しないので 3<sup>2</sup>×4=36。"}, {"id": "B22", "c": "B", "f": "K", "q": "ある変量 x の平均値が3、x<sup>2</sup> の平均値が13 のとき、x の分散を求めよ。", "o": ["4", "10", "22", "2"], "e": "分散＝（x<sup>2</sup> の平均値）−（x の平均値）<sup>2</sup>=13−9=4。"}, {"id": "B23", "c": "B", "f": "K", "q": "△ABC において AB=3、AC=2、∠A=60° のとき、BC の長さを求めよ。", "o": ["√7", "√19", "7", "√13"], "e": "余弦定理 BC<sup>2</sup>=9+4−2・3・2・cos 60°=13−6=7 より BC=√7。"}, {"id": "B24", "c": "B", "f": "K", "q": "tan 150° の値を求めよ。", "o": ["−√3/3", "√3/3", "−√3", "√3"], "e": "tan 150°=−tan 30°=−1/√3=−√3/3。第2象限で tan は負。"}, {"id": "C01", "c": "C", "f": "K", "q": "<sub>5</sub>P<sub>3</sub> の値を求めよ。", "o": ["60", "10", "125", "15"], "e": "<sub>5</sub>P<sub>3</sub>=5×4×3=60。（10 は <sub>5</sub>C<sub>3</sub>）"}, {"id": "C02", "c": "C", "f": "K", "q": "<sub>7</sub>C<sub>3</sub> の値を求めよ。", "o": ["35", "210", "21", "56"], "e": "<sub>7</sub>C<sub>3</sub>=(7×6×5)/(3×2×1)=35。"}, {"id": "C03", "c": "C", "f": "K", "q": "男子4人と女子3人が1列に並ぶとき、女子3人が隣り合う並び方は何通りか。", "o": ["720通り", "120通り", "144通り", "5040通り"], "e": "女子3人をひとまとめにして5つのものの並べ方 5! 通り、まとめた中の並び方 3! 通りで 120×6=720 通り。"}, {"id": "C04", "c": "C", "f": "K", "q": "6人が円形のテーブルに座る座り方は何通りか。", "o": ["120通り", "720通り", "60通り", "36通り"], "e": "円順列は (n−1)! 通りなので 5!=120 通り。（60 はじゅず順列）"}, {"id": "C05", "c": "C", "f": "K", "q": "a, b, c の3種類の文字から重複を許して4個を選び1列に並べる方法は何通りか。", "o": ["81通り", "64通り", "12通り", "24通り"], "e": "各位置に3通りずつ選べるので重複順列 3<sup>4</sup>=81 通り。"}, {"id": "C06", "c": "C", "f": "K", "q": "A, A, B, B, B, C の6文字を1列に並べる方法は何通りか。", "o": ["60通り", "720通り", "120通り", "360通り"], "e": "同じものを含む順列で 6!/(2!3!)=720/12=60 通り。"}, {"id": "C07", "c": "C", "f": "K", "q": "2個のさいころを同時に投げるとき、出た目の和が5になる確率を求めよ。", "o": ["1/9", "1/6", "1/18", "5/36"], "e": "和が5となるのは (1,4), (2,3), (3,2), (4,1) の4通りなので 4/36=1/9。"}, {"id": "C08", "c": "C", "f": "K", "q": "3枚の硬貨を同時に投げるとき、少なくとも1枚が表となる確率を求めよ。", "o": ["7/8", "1/8", "3/8", "1/2"], "e": "余事象「3枚とも裏」の確率は 1/8 なので 1−1/8=7/8。"}, {"id": "C09", "c": "C", "f": "K", "q": "赤玉3個、白玉2個が入った袋から同時に2個取り出すとき、2個とも赤玉である確率を求めよ。", "o": ["3/10", "9/25", "3/5", "2/5"], "e": "<sub>3</sub>C<sub>2</sub>/<sub>5</sub>C<sub>2</sub>=3/10。（9/25 は戻して取り出す場合）"}, {"id": "C10", "c": "C", "f": "K", "q": "1回の試行で事象Aが起こる確率が 1/3 である。この試行を4回繰り返すとき、Aがちょうど2回起こる確率を求めよ。", "o": ["8/27", "4/81", "1/9", "16/81"], "e": "反復試行の確率 <sub>4</sub>C<sub>2</sub>(1/3)<sup>2</sup>(2/3)<sup>2</sup>=6×4/81=24/81=8/27。"}, {"id": "C11", "c": "C", "f": "K", "q": "1個のさいころを投げて偶数の目が出たとき、その目が4以上である条件付き確率を求めよ。", "o": ["2/3", "1/3", "1/2", "3/4"], "e": "偶数 {2, 4, 6} のうち4以上は {4, 6} なので P<sub>A</sub>(B)=2/3。（1/3 は P(A∩B)）"}, {"id": "C12", "c": "C", "f": "K", "q": "1個のさいころを1回投げるとき、出る目の期待値を求めよ。", "o": ["7/2", "3", "4", "21"], "e": "(1+2+3+4+5+6)×(1/6)=21/6=7/2。"}, {"id": "C13", "c": "C", "f": "K", "q": "10進数の 23 を2進法で表せ。", "o": ["10111<sub>(2)</sub>", "11101<sub>(2)</sub>", "10011<sub>(2)</sub>", "11011<sub>(2)</sub>"], "e": "23=16+4+2+1=1・2<sup>4</sup>+0・2<sup>3</sup>+1・2<sup>2</sup>+1・2+1 より 10111<sub>(2)</sub>。2で割った余りを下から読む。"}, {"id": "C14", "c": "C", "f": "K", "q": "正八角形の対角線の本数を求めよ。", "o": ["20本", "28本", "40本", "12本"], "e": "8頂点から2点を選ぶ <sub>8</sub>C<sub>2</sub>=28 から辺の数8を引いて 20 本。"}, {"id": "C15", "c": "C", "f": "K", "q": "x+y+z=6 を満たす0以上の整数の組 (x, y, z) の個数を求めよ。", "o": ["28個", "21個", "10個", "56個"], "e": "6個の○と2本の仕切りの並べ方で <sub>8</sub>C<sub>2</sub>=28 個。（10 は正の整数解の個数）"}, {"id": "C16", "c": "C", "f": "K", "q": "△ABC において AB=6、AC=4、BC=5 である。∠A の二等分線と辺 BC の交点を D とするとき、BD の長さを求めよ。", "o": ["3", "2", "5/2", "10/3"], "e": "角の二等分線の性質より BD:DC=AB:AC=6:4=3:2。BD=5×3/5=3。"}, {"id": "C17", "c": "C", "f": "K", "q": "円の2つの弦 AB、CD が点 P で交わり、PA=4、PB=3、PC=2 のとき、PD の長さを求めよ。", "o": ["6", "8/3", "3/2", "5"], "e": "方べきの定理 PA・PB=PC・PD より 12=2PD、PD=6。"}, {"id": "C18", "c": "C", "f": "K", "q": "円の外部の点 P から引いた接線の接点を T、P を通る直線と円の交点を P に近い方から A、B とする。PA=4、AB=5 のとき、PT の長さを求めよ。", "o": ["6", "2√5", "3", "36"], "e": "方べきの定理 PT<sup>2</sup>=PA・PB=4×(4+5)=36 より PT=6。"}, {"id": "C19", "c": "C", "f": "K", "q": "円 O の弧 AB に対する中心角が 140° のとき、同じ弧 AB に対する円周角を求めよ。", "o": ["70°", "140°", "40°", "110°"], "e": "円周角は同じ弧に対する中心角の半分なので 140°÷2=70°。"}, {"id": "C20", "c": "C", "f": "K", "q": "円に内接する四角形 ABCD において ∠A=75° のとき、∠C の大きさを求めよ。", "o": ["105°", "75°", "15°", "150°"], "e": "円に内接する四角形の対角の和は 180° なので ∠C=180°−75°=105°。"}, {"id": "C21", "c": "C", "f": "K", "q": "△ABC の辺 AB、BC、CA 上にそれぞれ点 R、P、Q があり、AP、BQ、CR が1点で交わる。AR:RB=2:1、BP:PC=1:3 のとき、CQ:QA を求めよ。", "o": ["3:2", "2:3", "1:6", "6:1"], "e": "チェバの定理 (AR/RB)(BP/PC)(CQ/QA)=1 より 2×(1/3)×(CQ/QA)=1、CQ/QA=3/2。"}, {"id": "C22", "c": "C", "f": "K", "q": "84 と 126 の最大公約数を求めよ。", "o": ["42", "21", "14", "252"], "e": "84=2<sup>2</sup>・3・7、126=2・3<sup>2</sup>・7。共通な素因数の最小の指数をとり 2・3・7=42。（252 は最小公倍数）"}, {"id": "C23", "c": "C", "f": "K", "q": "12 と 18 の最小公倍数を求めよ。", "o": ["36", "6", "216", "72"], "e": "12=2<sup>2</sup>・3、18=2・3<sup>2</sup>。各素因数の最大の指数をとり 2<sup>2</sup>・3<sup>2</sup>=36。"}, {"id": "C24", "c": "C", "f": "K", "q": "2<sup>10</sup> を 7 で割った余りを求めよ。", "o": ["2", "1", "4", "3"], "e": "2<sup>3</sup>=8≡1 (mod 7) より 2<sup>10</sup>=(2<sup>3</sup>)<sup>3</sup>・2≡1・2=2。"}, {"id": "D01", "c": "D", "f": "K", "q": "(x+2)<sup>5</sup> の展開式における x<sup>3</sup> の係数を求めよ。", "o": ["40", "10", "80", "20"], "e": "一般項 <sub>5</sub>C<sub>r</sub>x<sup>5−r</sup>2<sup>r</sup> で r=2 のとき <sub>5</sub>C<sub>2</sub>・2<sup>2</sup>=10×4=40。"}, {"id": "D02", "c": "D", "f": "K", "q": "整式 P(x)=x<sup>3</sup>−2x+1 を x−2 で割った余りを求めよ。", "o": ["5", "−3", "1", "13"], "e": "剰余の定理より余りは P(2)=8−4+1=5。（−3 は P(−2)）"}, {"id": "D03", "c": "D", "f": "K", "q": "x＞0 のとき、x+4/x の最小値を求めよ。", "o": ["4", "2", "5", "8"], "e": "相加平均・相乗平均の関係より x+4/x≧2√(x・4/x)=4。等号は x=2 のとき成り立つ。"}, {"id": "D04", "c": "D", "f": "K", "q": "2点 A(1, 2)、B(4, 6) 間の距離を求めよ。", "o": ["5", "7", "25", "√89"], "e": "AB=√((4−1)<sup>2</sup>+(6−2)<sup>2</sup>)=√(9+16)=5。"}, {"id": "D05", "c": "D", "f": "K", "q": "2点 A(−1, 3)、B(5, −3) を結ぶ線分 AB を 2:1 に内分する点の座標を求めよ。", "o": ["(3, −1)", "(1, 1)", "(11, −9)", "(2, 0)"], "e": "m:n に内分する点は ((nx<sub>1</sub>+mx<sub>2</sub>)/(m+n), (ny<sub>1</sub>+my<sub>2</sub>)/(m+n)) より ((−1+10)/3, (3−6)/3)=(3, −1)。"}, {"id": "D06", "c": "D", "f": "K", "q": "点 (1, 2) を通り、直線 y=3x+1 に垂直な直線の方程式を求めよ。", "o": ["x+3y−7=0", "3x−y−1=0", "x+3y+7=0", "x−3y+5=0"], "e": "垂直な直線の傾きは −1/3。y−2=−(1/3)(x−1) を整理して x+3y−7=0。"}, {"id": "D07", "c": "D", "f": "K", "q": "点 (1, 2) と直線 3x+4y−1=0 の距離を求めよ。", "o": ["2", "10", "10/7", "12/5"], "e": "距離の公式 |3・1+4・2−1|/√(3<sup>2</sup>+4<sup>2</sup>)=10/5=2。"}, {"id": "D08", "c": "D", "f": "K", "q": "円 x<sup>2</sup>+y<sup>2</sup>−4x+6y−3=0 の中心の座標と半径を求めよ。", "o": ["中心 (2, −3)、半径4", "中心 (−2, 3)、半径4", "中心 (2, −3)、半径16", "中心 (2, −3)、半径√10"], "e": "(x−2)<sup>2</sup>+(y+3)<sup>2</sup>=3+4+9=16 と変形して、中心 (2, −3)、半径4。"}, {"id": "D09", "c": "D", "f": "K", "q": "sin 75° の値を求めよ。", "o": ["(√6+√2)/4", "(√6−√2)/4", "(√3+1)/2", "(√2+√3)/2"], "e": "sin(45°+30°)=sin 45°cos 30°+cos 45°sin 30°=(√2/2)(√3/2)+(√2/2)(1/2)=(√6+√2)/4。"}, {"id": "D10", "c": "D", "f": "K", "q": "sin θ=1/3 のとき、cos 2θ の値を求めよ。", "o": ["7/9", "8/9", "−7/9", "2/3"], "e": "2倍角の公式 cos 2θ=1−2sin<sup>2</sup>θ=1−2/9=7/9。"}, {"id": "D11", "c": "D", "f": "K", "q": "0≦θ＜2π のとき、方程式 2cos θ+1=0 を解け。", "o": ["θ=2π/3, 4π/3", "θ=π/3, 5π/3", "θ=2π/3", "θ=5π/6, 7π/6"], "e": "cos θ=−1/2。単位円で x座標が −1/2 の点を考えて θ=2π/3, 4π/3。"}, {"id": "D12", "c": "D", "f": "K", "q": "関数 y=sin θ+√3cos θ の最大値を求めよ。", "o": ["2", "1+√3", "4", "√2"], "e": "三角関数の合成で y=2sin(θ+π/3)。振幅は √(1<sup>2</sup>+(√3)<sup>2</sup>)=2 なので最大値は2。"}, {"id": "D13", "c": "D", "f": "K", "q": "150° を弧度法で表せ。", "o": ["5π/6", "5π/3", "3π/5", "7π/6"], "e": "180°=π なので 150°=150×π/180=5π/6。"}, {"id": "D14", "c": "D", "f": "K", "q": "8<sup>2/3</sup> の値を求めよ。", "o": ["4", "16/3", "2", "16"], "e": "8=2<sup>3</sup> より 8<sup>2/3</sup>=2<sup>3×2/3</sup>=2<sup>2</sup>=4。"}, {"id": "D15", "c": "D", "f": "K", "q": "27<sup>−1/3</sup> の値を求めよ。", "o": ["1/3", "−3", "−9", "3"], "e": "27<sup>−1/3</sup>=1/27<sup>1/3</sup>=1/3。負の指数は逆数を表し、値が負になるわけではない。"}, {"id": "D16", "c": "D", "f": "K", "q": "log<sub>2</sub>24−log<sub>2</sub>3 の値を求めよ。", "o": ["3", "8", "log<sub>2</sub>21", "1"], "e": "log<sub>2</sub>24−log<sub>2</sub>3=log<sub>2</sub>(24/3)=log<sub>2</sub>8=3。"}, {"id": "D17", "c": "D", "f": "K", "q": "放物線 y=x<sup>2</sup>−2x と x軸で囲まれた部分の面積を求めよ。", "o": ["4/3", "−4/3", "8/3", "2/3"], "e": "交点は x=0, 2。0≦x≦2 で y≦0 なので S=−∫<sub>0</sub><sup>2</sup>(x<sup>2</sup>−2x)dx=−(8/3−4)=4/3。"}, {"id": "D18", "c": "D", "f": "K", "q": "log<sub>4</sub>8 の値を求めよ。", "o": ["3/2", "2/3", "2", "1/2"], "e": "底の変換公式で log<sub>4</sub>8=log<sub>2</sub>8/log<sub>2</sub>4=3/2。"}, {"id": "D19", "c": "D", "f": "K", "q": "方程式 2<sup>x+1</sup>=16 を解け。", "o": ["x=3", "x=4", "x=7", "x=15"], "e": "16=2<sup>4</sup> より x+1=4、x=3。"}, {"id": "D20", "c": "D", "f": "K", "q": "不等式 log<sub>2</sub>x＜3 を解け。", "o": ["0＜x＜8", "x＜8", "x＞8", "0＜x＜6"], "e": "真数条件 x＞0。底2＞1 なので log<sub>2</sub>x＜log<sub>2</sub>8 ⇔ x＜8。合わせて 0＜x＜8。"}, {"id": "D21", "c": "D", "f": "K", "q": "f(x)=x<sup>3</sup>−3x<sup>2</sup>+2 のとき、f′(3) の値を求めよ。", "o": ["9", "2", "27", "18"], "e": "f′(x)=3x<sup>2</sup>−6x より f′(3)=27−18=9。（2 は f(3) の値）"}, {"id": "D22", "c": "D", "f": "K", "q": "曲線 y=x<sup>2</sup> 上の点 (1, 1) における接線の方程式を求めよ。", "o": ["y=2x−1", "y=2x+1", "y=2x", "y=x"], "e": "y′=2x より傾きは2。y−1=2(x−1) から y=2x−1。"}, {"id": "D23", "c": "D", "f": "K", "q": "関数 f(x)=x<sup>3</sup>−3x の極大値を求めよ。", "o": ["2", "−2", "−1", "1"], "e": "f′(x)=3x<sup>2</sup>−3=3(x+1)(x−1)。x=−1 の前後で f′ が正から負に変わるので極大値 f(−1)=−1+3=2。"}, {"id": "D24", "c": "D", "f": "K", "q": "定積分 ∫<sub>0</sub><sup>2</sup>(3x<sup>2</sup>−2x)dx を計算せよ。", "o": ["4", "8", "12", "0"], "e": "[x<sup>3</sup>−x<sup>2</sup>]<sub>0</sub><sup>2</sup>=(8−4)−0=4。"}, {"id": "E01", "c": "E", "f": "K", "q": "初項3、公差4 の等差数列の第10項を求めよ。", "o": ["39", "43", "35", "42"], "e": "a<sub>n</sub>=a+(n−1)d より a<sub>10</sub>=3+9×4=39。"}, {"id": "E02", "c": "E", "f": "K", "q": "初項2、公差3 の等差数列の初項から第10項までの和を求めよ。", "o": ["155", "310", "145", "170"], "e": "第10項は 2+9×3=29。和は 10×(2+29)/2=155。"}, {"id": "E03", "c": "E", "f": "K", "q": "初項2、公比3 の等比数列の第5項を求めよ。", "o": ["162", "486", "54", "243"], "e": "a<sub>n</sub>=ar<sup>n−1</sup> より a<sub>5</sub>=2×3<sup>4</sup>=162。（486 は指数を n としたミス）"}, {"id": "E04", "c": "E", "f": "K", "q": "1+2+2<sup>2</sup>+…+2<sup>9</sup> の値を求めよ。", "o": ["1023", "1024", "511", "2047"], "e": "初項1、公比2、項数10 の等比数列の和で (2<sup>10</sup>−1)/(2−1)=1023。"}, {"id": "E05", "c": "E", "f": "K", "q": "Σ<sub>k=1</sub><sup>10</sup>k<sup>2</sup> の値を求めよ。", "o": ["385", "55", "3025", "350"], "e": "Σk<sup>2</sup>=n(n+1)(2n+1)/6 に n=10 を代入して 10×11×21/6=385。"}, {"id": "E06", "c": "E", "f": "K", "q": "Σ<sub>k=1</sub><sup>n</sup>(2k+1) を n の式で表せ。", "o": ["n<sup>2</sup>+2n", "n<sup>2</sup>+n", "n<sup>2</sup>+2n+1", "2n<sup>2</sup>+n"], "e": "2Σk+Σ1=2・n(n+1)/2+n=n<sup>2</sup>+2n。定数1の和は n になることに注意。"}, {"id": "E07", "c": "E", "f": "K", "q": "a<sub>1</sub>=1、a<sub>n+1</sub>=a<sub>n</sub>+2n で定められる数列 {a<sub>n</sub>} の一般項を求めよ。", "o": ["a<sub>n</sub>=n<sup>2</sup>−n+1", "a<sub>n</sub>=n<sup>2</sup>+n+1", "a<sub>n</sub>=n<sup>2</sup>−n", "a<sub>n</sub>=n<sup>2</sup>+1"], "e": "n≧2 のとき a<sub>n</sub>=1+Σ<sub>k=1</sub><sup>n−1</sup>2k=1+n(n−1)=n<sup>2</sup>−n+1。これは n=1 でも成り立つ。"}, {"id": "E08", "c": "E", "f": "K", "q": "a<sub>1</sub>=2、a<sub>n+1</sub>=3a<sub>n</sub> で定められる数列 {a<sub>n</sub>} の一般項を求めよ。", "o": ["a<sub>n</sub>=2・3<sup>n−1</sup>", "a<sub>n</sub>=3・2<sup>n−1</sup>", "a<sub>n</sub>=2・3<sup>n</sup>", "a<sub>n</sub>=6<sup>n−1</sup>"], "e": "初項2、公比3 の等比数列なので a<sub>n</sub>=2・3<sup>n−1</sup>。"}, {"id": "E09", "c": "E", "f": "K", "q": "a<sub>1</sub>=1、a<sub>n+1</sub>=2a<sub>n</sub>+1 で定められる数列 {a<sub>n</sub>} の一般項を求めよ。", "o": ["a<sub>n</sub>=2<sup>n</sup>−1", "a<sub>n</sub>=2<sup>n−1</sup>", "a<sub>n</sub>=2<sup>n+1</sup>−1", "a<sub>n</sub>=2<sup>n</sup>+1"], "e": "a<sub>n+1</sub>+1=2(a<sub>n</sub>+1) と変形。{a<sub>n</sub>+1} は初項2、公比2 の等比数列で a<sub>n</sub>+1=2<sup>n</sup>、a<sub>n</sub>=2<sup>n</sup>−1。"}, {"id": "E10", "c": "E", "f": "K", "q": "複素数 z=1+√3i を極形式で表せ。ただし偏角 θ は 0≦θ＜2π とする。", "o": ["2(cos(π/3)+i sin(π/3))", "2(cos(π/6)+i sin(π/6))", "4(cos(π/3)+i sin(π/3))", "2(cos(2π/3)+i sin(2π/3))"], "e": "|z|=√(1+3)=2、cos θ=1/2、sin θ=√3/2 より θ=π/3。"}, {"id": "E11", "c": "E", "f": "K", "q": "確率変数 X の期待値が 3、分散が 4 のとき、Y=2X+1 の期待値 E(Y) と分散 V(Y) を求めよ。", "o": ["E(Y)=7、V(Y)=16", "E(Y)=7、V(Y)=9", "E(Y)=7、V(Y)=8", "E(Y)=6、V(Y)=16"], "e": "E(aX+b)=aE(X)+b=7、V(aX+b)=a<sup>2</sup>V(X)=4×4=16。"}, {"id": "E12", "c": "E", "f": "K", "q": "確率変数 X が二項分布 B(100, 1/5) に従うとき、X の期待値と分散を求めよ。", "o": ["期待値20、分散16", "期待値20、分散4", "期待値20、分散20", "期待値16、分散20"], "e": "E(X)=np=100×1/5=20、V(X)=np(1−p)=20×4/5=16。（4 は標準偏差）"}, {"id": "E13", "c": "E", "f": "K", "q": "確率変数 X が二項分布 B(400, 1/2) に従うとき、X の標準偏差を求めよ。", "o": ["10", "100", "200", "20"], "e": "V(X)=np(1−p)=400×1/2×1/2=100、標準偏差は √100=10。"}, {"id": "E14", "c": "E", "f": "K", "q": "確率変数 X が正規分布 N(50, 10<sup>2</sup>) に従うとき、P(X≧70) を求めよ。ただし、標準正規分布 Z について P(0≦Z≦2)=0.4772 とする。", "o": ["0.0228", "0.4772", "0.9772", "0.0456"], "e": "Z=(X−50)/10 と標準化すると X≧70 は Z≧2。P(Z≧2)=0.5−0.4772=0.0228。"}, {"id": "E15", "c": "E", "f": "K", "q": "母標準偏差12 の母集団から大きさ36 の無作為標本を抽出するとき、標本平均の標準偏差を求めよ。", "o": ["2", "12", "1/3", "4"], "e": "標本平均の標準偏差は σ/√n=12/√36=12/6=2。（4 は σ<sup>2</sup>/n）"}, {"id": "E16", "c": "E", "f": "K", "q": "母標準偏差10 の母集団から大きさ100 の標本を抽出したところ、標本平均は50 であった。母平均 m に対する信頼度95％の信頼区間を求めよ。", "o": ["48.04≦m≦51.96", "30.4≦m≦69.6", "49.804≦m≦50.196", "47.42≦m≦52.58"], "e": "50±1.96×10/√100=50±1.96 より 48.04≦m≦51.96。√n で割ることを忘れない。"}, {"id": "E17", "c": "E", "f": "K", "q": "→a=(2, −1)、→b=(1, 3) のとき、内積 →a・→b を求めよ。", "o": ["−1", "5", "1", "7"], "e": "→a・→b=a<sub>1</sub>b<sub>1</sub>+a<sub>2</sub>b<sub>2</sub>=2×1+(−1)×3=−1。"}, {"id": "E18", "c": "E", "f": "K", "q": "|→a|=2、|→b|=3、→a・→b=3 のとき、|→a+→b| を求めよ。", "o": ["√19", "√13", "5", "√7"], "e": "|→a+→b|<sup>2</sup>=|→a|<sup>2</sup>+2→a・→b+|→b|<sup>2</sup>=4+6+9=19 より √19。"}, {"id": "E19", "c": "E", "f": "K", "q": "→a=(1, √3)、→b=(√3, 1) のなす角 θ（0°≦θ≦180°）を求めよ。", "o": ["30°", "60°", "45°", "150°"], "e": "→a・→b=√3+√3=2√3、|→a|=|→b|=2 より cos θ=2√3/4=√3/2、θ=30°。"}, {"id": "E20", "c": "E", "f": "K", "q": "→a=(2, x)、→b=(3, −6) が垂直になるような x の値を求めよ。", "o": ["x=1", "x=−1", "x=−4", "x=4"], "e": "垂直 ⇔ 内積0。2×3+x×(−6)=0 より x=1。（x=−4 は平行の条件）"}, {"id": "E21", "c": "E", "f": "K", "q": "空間ベクトル →a=(1, 2, −2) の大きさを求めよ。", "o": ["3", "9", "1", "√5"], "e": "|→a|=√(1<sup>2</sup>+2<sup>2</sup>+(−2)<sup>2</sup>)=√9=3。"}, {"id": "E22", "c": "E", "f": "K", "q": "2点 A(→a)、B(→b) を結ぶ線分 AB を 3:2 に内分する点 P の位置ベクトルを求めよ。", "o": ["(2→a+3→b)/5", "(3→a+2→b)/5", "−2→a+3→b", "(2→a+3→b)/3"], "e": "m:n に内分する点は (n→a+m→b)/(m+n) なので (2→a+3→b)/5。"}, {"id": "E23", "c": "E", "f": "K", "q": "複素数 z=3−4i の絶対値 |z| を求めよ。", "o": ["5", "7", "25", "1"], "e": "|a+bi|=√(a<sup>2</sup>+b<sup>2</sup>) より √(9+16)=5。"}, {"id": "E24", "c": "E", "f": "K", "q": "(1+i)<sup>8</sup> を計算せよ。", "o": ["16", "−16", "16i", "256"], "e": "1+i=√2(cos(π/4)+i sin(π/4))。ド・モアブルの定理より (√2)<sup>8</sup>(cos 2π+i sin 2π)=16。"}]};
+const CATS=D.cats;const Q=D.q;
+const FMT={K:"4択",S:"正誤",N:"整序"};
+const SO=["X 正　Y 正","X 正　Y 誤","X 誤　Y 正","X 誤　Y 誤"];
+const NO=["Ⅰ－Ⅱ－Ⅲ","Ⅰ－Ⅲ－Ⅱ","Ⅱ－Ⅰ－Ⅲ","Ⅱ－Ⅲ－Ⅰ","Ⅲ－Ⅰ－Ⅱ","Ⅲ－Ⅱ－Ⅰ"];
+const NK=["123","132","213","231","312","321"];
+Q.forEach(q=>{if(q.f==="S"){q.o=SO;q.a=(q.xs?0:2)+(q.ys?0:1)}else if(q.f==="N"){q.o=NO;q.a=NK.indexOf(q.ord)}else{q.a=0}});
+const FSEG=[["ALL","すべて"]].concat(["K","S","N"].filter(f=>Q.some(q=>q.f===f)).map(f=>[f,FMT[f]]));
+
+/* ===== 記録（このブラウザのみ） ===== */
+const KEY="kyotsu-sugaku-v1";
+let rec={};
+try{rec=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){rec={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(rec))}catch(e){}}
+function mark(id,ok){const r=rec[id]||{c:0,w:0};ok?r.c++:r.w++;r.last=ok;rec[id]=r;save()}
+/* ===== ランク（習得度：正解済み問題の割合） ===== */
+const RANKS=[
+  {t:"新入生",en:"FRESHMAN",min:0},
+  {t:"学士",en:"BACHELOR",min:15},
+  {t:"修士",en:"MASTER",min:35},
+  {t:"博士",en:"DOCTOR",min:55},
+  {t:"教授",en:"PROFESSOR",min:75},
+  {t:"名誉教授",en:"EMERITUS",min:90}
+];
+function mastery(){let ok=0;Q.forEach(q=>{const r=rec[q.id];if(r&&r.last)ok++});return{ok,n:Q.length,pct:Q.length?ok/Q.length*100:0}}
+function rankOf(pct){let i=0;RANKS.forEach((r,k)=>{if(pct>=r.min)i=k});return i}
+function stars(i){return "★".repeat(i)+"☆".repeat(RANKS.length-1-i)}
+function rankPanel(){
+  const m=mastery(),i=rankOf(m.pct),r=RANKS[i],nx=RANKS[i+1];
+  const need=nx?Math.max(1,Math.ceil(nx.min/100*m.n)-m.ok):0;
+  const lo=r.min,hi=nx?nx.min:100,prog=nx?Math.min(100,Math.max(0,(m.pct-lo)/(hi-lo)*100)):100;
+  return `<div class="panel rankp"><div class="rk-badge rk${i}" aria-hidden="true"><span class="rk-en">${r.en}</span><span class="rk-t">${r.t}</span><span class="rk-st">${stars(i)}</span></div>
+    <div class="rk-body"><h2>あなたのランク：${r.t}</h2>
+    <p class="kbd num">正解済み ${m.ok} / ${m.n} 問（${Math.floor(m.pct)}%）</p>
+    <div class="meter rk-meter"><i style="width:${prog}%"></i></div>
+    <p class="kbd">${nx?`次の「${nx.t}」まで、あと <b class="num">${need}</b> 問正解`:"最高ランクに到達しました！"}</p></div></div>`;
+}
+const TITLES=[[100,"名誉教授級"],[90,"教授級"],[75,"博士級"],[60,"修士級"],[40,"学士級"],[0,"新入生級"]];
+function sessionRank(ok,n,r0){
+  const p=n?ok/n*100:0;const t=TITLES.find(x=>p>=x[0])[1];
+  const r1=rankOf(mastery().pct);
+  const up=r1>r0?`<div class="rk-up">ランクアップ！ ${RANKS[r0].t} → <b>${RANKS[r1].t}</b></div>`:"";
+  return `<div class="rk-session"><span class="kbd">今回の称号</span><span class="rk-title">${t}</span></div>${up}`;
+}
+
+/* ===== 状態 ===== */
+const app=document.getElementById("app");
+let S={view:"home",size:10,fmt:"ALL"};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const rich=s=>esc(s).replace(/&lt;(\/?)(sup|sub|u)&gt;/g,"<$1$2>").replace(/&lt;br&gt;/g,"<br>");
+const ROM=["Ⅰ","Ⅱ","Ⅲ"];
+
+function header(){return `<header class="top"><div class="subject"><h1><b>数学</b> ドリル</h1><span class="tag">共通テスト対策</span></div>
+  <div class="row"><a class="subj-link" href="index.html">メニュー</a><small class="num">全${Q.length}問</small></div></header>`}
+const fmtOK=q=>S.fmt==="ALL"||q.f===S.fmt;
+function stats(cat){const qs=Q.filter(q=>!cat||q.c===cat);let done=0,ok=0;qs.forEach(q=>{const r=rec[q.id];if(r){done++;if(r.last)ok++}});return{n:qs.length,done,ok}}
+
+function home(){
+  delete app.dataset.cat;
+  const missN=Q.filter(q=>rec[q.id]&&rec[q.id].last===false&&fmtOK(q)).length;
+  const all=stats();
+  app.innerHTML=header()+`
+  <p class="lead">分野を選んで始めてください。1問ごとに正誤と解説が出ます。正解を増やすとランクが上がります。記録はこの端末に保存されます。</p>
+  <div class="row"><span class="kbd" ${FSEG.length<3?"hidden":""}>形式</span>
+    <div class="seg" role="group" aria-label="形式" ${FSEG.length<3?"hidden":""}>${FSEG.map(([k,l])=>`<button id="fm${k}" aria-pressed="${S.fmt===k}" data-fmt="${k}">${l}</button>`).join("")}</div>
+    <span class="kbd">出題数</span>
+    <div class="seg" role="group" aria-label="出題数">${[10,20,0].map(n=>`<button id="sz${n}" aria-pressed="${S.size===n}" data-size="${n}">${n?n+"問":"全問"}</button>`).join("")}</div></div>
+  <div class="cats">${Object.entries(CATS).map(([k,c])=>{const s=stats(k);const pct=s.n?Math.round(s.ok/s.n*100):0;
+    return `<button class="cat" id="cat${k}" data-cat="${k}"><span class="k">${c.k}　<span class="era-yr">${c.yr}</span></span><span class="t">${c.name}</span><span class="d">${c.d}</span>
+    <span class="meter" aria-hidden="true"><i style="width:${pct}%"></i></span><span class="s num">正解済 ${s.ok} / ${s.n}　解答済 ${s.done}</span></button>`}).join("")}</div>
+  <div class="row">
+    <button class="btn primary" id="mix" data-cat="ALL">全分野ミックス</button>
+    <button class="btn" id="review" data-cat="MISS" ${missN?"":"disabled"}>間違えた問題を復習（${missN}問）</button>
+  </div>
+  ${rankPanel()}
+  <div class="panel"><h2>これまでの成績</h2>
+    <div class="score"><span class="big">${all.done?Math.round(all.ok/all.done*100):0}<small style="font-size:18px">%</small></span>
+    <span class="kbd num">直近の正答率（解答済 ${all.done} 問中 ${all.ok} 問正解）</span></div>
+    <div class="row" style="margin-top:10px"><button class="btn" id="reset" ${all.done?"":"disabled"}>記録を消す</button><span class="kbd" id="resetMsg"></span></div>
+  </div>
+  <footer>操作：選択肢は数字キー（1〜6）、次へは Enter キーでも進めます。</footer>`;
+  app.querySelectorAll("[data-size]").forEach(b=>b.onclick=()=>{S.size=+b.dataset.size;home()});
+  app.querySelectorAll("[data-fmt]").forEach(b=>b.onclick=()=>{S.fmt=b.dataset.fmt;home()});
+  app.querySelectorAll("button[data-cat]").forEach(b=>b.onclick=()=>start(b.dataset.cat));
+  let armed=false;const rb=document.getElementById("reset");
+  rb.onclick=()=>{if(!armed){armed=true;rb.textContent="本当に消す";document.getElementById("resetMsg").textContent="もう一度押すと全記録を消去します";return}rec={};save();home()};
+}
+
+function start(cat){
+  let pool=Q.filter(fmtOK);
+  pool=cat==="ALL"?pool:cat==="MISS"?pool.filter(q=>rec[q.id]&&rec[q.id].last===false):pool.filter(q=>q.c===cat);
+  if(!pool.length){home();return}
+  pool=shuffle(pool);if(S.size&&cat!=="MISS")pool=pool.slice(0,S.size);
+  S={...S,view:"quiz",r0:rankOf(mastery().pct),cat,list:pool,i:0,res:[],done:false};
+  question();
+}
+
+function body(q){
+  if(q.f==="S")return `<p class="stem">次の文X・Yについて、その正誤の組合せとして正しいものを選べ。</p>
+    <div class="stmts"><div class="stmt"><span class="lb">X</span><span class="tx">${rich(q.X)}</span></div><div class="stmt"><span class="lb">Y</span><span class="tx">${rich(q.Y)}</span></div></div>`;
+  if(q.f==="N")return `<p class="stem">${rich(q.p||"次のⅠ〜Ⅲについて、古いものから年代順に正しく配列したものを選べ。")}</p>
+    <div class="stmts">${q.i.map((t,k)=>`<div class="stmt"><span class="lb">${ROM[k]}</span><span class="tx">${rich(t)}</span></div>`).join("")}</div>`;
+  return `<p class="stem">${rich(q.q)}</p>`;
+}
+
+function question(){
+  const q=S.list[S.i];S.done=false;app.dataset.cat=q.c;
+  const label=S.cat==="ALL"?"全分野ミックス":S.cat==="MISS"?"復習":CATS[S.cat].name;
+  S.opts=(q.f==="K"?shuffle(q.o.map((t,k)=>({t,k}))):q.o.map((t,k)=>({t,k})));
+  app.innerHTML=`${header()}<div class="qhead"><span>${label}　<span class="num">${S.i+1} / ${S.list.length}</span></span><button class="btn" id="quit" style="padding:4px 12px;font-size:13px">やめる</button></div>
+  <div class="bar"><i style="width:${S.i/S.list.length*100}%"></i></div>
+  <div class="panel"><div><span class="qno">${q.id}</span><span class="kbd">${CATS[q.c].name}</span><span class="fmt">${FMT[q.f]}</span></div>
+    ${body(q)}
+    <div class="choices ${q.f==="N"?"six":""}">${S.opts.map((o,n)=>`<button class="ch" id="ch${n}" data-n="${n}"><span class="oval">${n+1}</span><span>${rich(o.t)}</span></button>`).join("")}</div>
+    <div id="fb"></div></div>`;
+  app.querySelectorAll(".ch").forEach(b=>b.onclick=()=>choose(+b.dataset.n));
+  document.getElementById("quit").onclick=()=>{S.view="home";home()};
+}
+
+function answerText(q){
+  if(q.f==="N"){const o=q.ord.split("").map(d=>+d-1);return `${NO[q.a]}（${o.map(k=>`${rich(q.i[k])}${q.yr?`〈${rich(q.yr[k])}〉`:""}`).join(" → ")}）`}
+  return rich(q.o[q.a]);
+}
+function choose(n){
+  if(S.done)return;S.done=true;
+  const q=S.list[S.i];const ok=S.opts[n].k===q.a;
+  app.querySelectorAll(".ch").forEach((b,m)=>{b.disabled=true;if(S.opts[m].k===q.a)b.classList.add("right")});
+  const b=document.getElementById("ch"+n);b.classList.add("sel");if(!ok)b.classList.add("wrong");
+  mark(q.id,ok);S.res.push({q,ok,your:S.opts[n].t});
+  const last=S.i===S.list.length-1;
+  document.getElementById("fb").innerHTML=`<div class="fb ${ok?"ok":"ng"}" role="status">
+    <div class="v"><span class="mark">${ok?"○":"×"}</span>${ok?"正解！":"おしい！"}</div>
+    <p>正解：<b>${answerText(q)}</b></p><p>${rich(q.e)}</p></div>
+    <div class="row" style="margin-top:14px"><button class="btn primary" id="next">${last?"結果を見る":"次の問題へ"}</button></div>`;
+  const nx=document.getElementById("next");nx.focus({preventScroll:true});
+  nx.onclick=()=>{if(last){result()}else{S.i++;question();window.scrollTo({top:0})}};
+}
+
+function qSummary(q){
+  if(q.f==="S")return `X：${rich(q.X)}<br>Y：${rich(q.Y)}`;
+  if(q.f==="N")return q.i.map((t,k)=>`${ROM[k]} ${rich(t)}`).join("　");
+  return rich(q.q);
+}
+function result(){
+  S.view="result";delete app.dataset.cat;
+  const n=S.res.length,ok=S.res.filter(r=>r.ok).length,miss=S.res.filter(r=>!r.ok);
+  app.innerHTML=header()+`<div class="panel"><h2>結果</h2>
+    <div class="score"><span class="big">${ok}</span><span class="num" style="font-size:20px">/ ${n}</span><span class="kbd">正答率 ${Math.round(ok/n*100)}%</span></div>${sessionRank(ok,n,S.r0)}
+    ${miss.length?`<ul class="miss">${miss.map(r=>`<li data-cat="${r.q.c}"><div class="kbd"><span class="qno">${r.q.id}</span>${CATS[r.q.c].name}<span class="fmt">${FMT[r.q.f]}</span></div>
+      <div class="en">${qSummary(r.q)}</div>
+      <div class="x">正解：<b>${answerText(r.q)}</b>　／　あなたの解答：${rich(r.your)}</div><div class="x">${rich(r.q.e)}</div></li>`).join("")}</ul>`:`<p style="font-size:18px;font-weight:900">全問正解！すばらしい！</p>`}
+    <div class="row" style="margin-top:16px"><button class="btn primary" id="again">同じ条件でもう一度</button><button class="btn" id="back">トップへ戻る</button></div></div>`;
+  document.getElementById("again").onclick=()=>start(S.cat);
+  document.getElementById("back").onclick=home;
+}
+
+document.addEventListener("keydown",e=>{
+  if(S.view!=="quiz")return;
+  const n=S.list[S.i].o.length;
+  if(/^[1-6]$/.test(e.key)&&!S.done&&+e.key<=n){choose(+e.key-1)}
+  else if(e.key==="Enter"&&S.done){const nx=document.getElementById("next");if(nx&&document.activeElement!==nx){e.preventDefault();nx.click()}}
+});
+home();
+</script>
+
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
+</body>
+</html>

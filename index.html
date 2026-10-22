@@ -14,6 +14,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <style>html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}</style>
 <title>入試ドリル</title>
+</head>
+<body>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Nunito:wght@600;800;900&family=Fredoka:wght@600;700&display=swap">
 <style>
@@ -131,32 +133,70 @@ footer{color:var(--muted);font-size:12px;text-align:center}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
-
 <style>
-.hero{display:flex;flex-direction:column;gap:6px;padding-block:8px}
-.hero p{margin:0;color:var(--muted)}
-.subj{display:grid;grid-template-columns:1fr;gap:16px}
-@media (min-width:560px){.subj{grid-template-columns:1fr 1fr}}
-a.cat{text-decoration:none;color:var(--ink);padding:22px 20px}
-a.cat .t{font-size:26px}
-.cat[data-s="en"]{--c:var(--g)} .cat[data-s="jh"]{--c:var(--v)}
-.big-n{font-family:var(--f-num);font-size:40px;font-weight:700;line-height:1;color:var(--c)}
-.big-n small{font-size:16px;color:var(--muted)}
-.subject h1 b{font-family:var(--f-jp);font-weight:900}
-.tip{font-size:13px;color:var(--muted)}
+/* ランク表示 */
+.rankp{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.rk-body{flex:1;min-width:200px}
+.rk-body h2{margin:0 0 2px}
+.rk-body p{margin:4px 0}
+.rk-meter i{background:linear-gradient(90deg,var(--o),var(--g))}
+.rk-badge{flex:none;width:118px;height:118px;border-radius:50%;border:4px solid var(--edge);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;box-shadow:4px 4px 0 var(--edge);transform:rotate(-6deg);text-align:center;color:#1B1E3A}
+.rk-badge .rk-en{font-family:var(--f-num);font-size:10px;letter-spacing:.12em;font-weight:700}
+.rk-badge .rk-t{font-size:22px;font-weight:900;line-height:1.2}
+.rk-badge .rk-st{font-size:12px;letter-spacing:1px}
+.rk0{background:#E4E8F2}.rk1{background:#BFE6FF}.rk2{background:#C9F2DA}.rk3{background:#FFD873}.rk4{background:#FFB3CB}
+.rk5{background:conic-gradient(#FFD873,#FFB3CB,#BFE6FF,#C9F2DA,#FFD873)}
+.rk-session{display:flex;align-items:baseline;gap:10px;margin-top:12px;flex-wrap:wrap}
+.rk-title{font-size:26px;font-weight:900;color:var(--ink);background:var(--o);border:3px solid var(--edge);border-radius:999px;padding:0 16px;box-shadow:3px 3px 0 var(--edge);transform:rotate(-2deg);display:inline-block;color:#1B1E3A}
+.rk-up{margin-top:12px;font-weight:900;font-size:18px;color:var(--g);animation:pop .5s}
 </style>
-</head>
-<body>
+<style>
+:root{--ea:#F26A2E;--em:#0E9C8C;--ee:#E8457A;--ed:#7353F0;--ep:#2C8FE0;--ey:#B88A00}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ea:#FF8F5C;--em:#2CC7B5;--ee:#FF7AA2;--ed:#9C85FF;--ep:#5BBEFF;--ey:#E6C340}}
+:root[data-theme="dark"]{--ea:#FF8F5C;--em:#2CC7B5;--ee:#FF7AA2;--ed:#9C85FF;--ep:#5BBEFF;--ey:#E6C340}
+.subj{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (min-width:640px){.subj{grid-template-columns:repeat(3,minmax(0,1fr))}}
+a.cat{text-decoration:none;color:var(--ink);padding:14px}
+a.cat .t{font-size:22px}
+a.cat .k{font-size:10px}
+.big-n{font-family:var(--f-num);font-size:26px;font-weight:700;line-height:1;color:var(--c)}
+.big-n small{font-size:13px;color:var(--muted)}
+.rkline b{color:var(--ink)}
+.subject h1 b{font-family:var(--f-jp);font-weight:900}
+.tip{font-size:13px;color:var(--muted);margin:0}
+.lead{margin:0}
+</style>
 <div class="wrap">
-  <header class="top"><div class="subject"><h1><b>入試</b> ドリル</h1><span class="tag">共通テスト対策</span></div></header>
-  <div class="hero"><p>科目を選んでください。オフラインでも解けます。成績はこの端末に保存されます。</p></div>
+  <header class="top"><div class="subject"><h1><b>入試</b> ドリル</h1><span class="tag">共通テスト対策</span></div><small class="num">10科目・全1211問</small></header>
+  <p class="lead">科目を選んでください。正解した問題が増えるほど、新入生 → 学士 → 修士 → 博士 → 教授 → 名誉教授 とランクが上がります。</p>
+  <div id="overall"></div>
   <div class="subj">
-    <a class="cat" data-s="en" href="english.html"><span class="k">ENGLISH</span><span class="t">英語</span><span class="d">文法・語法／語彙・熟語／並べ替え</span><span class="big-n">131<small> 問</small></span></a>
-    <a class="cat" data-s="jh" href="nihonshi.html"><span class="k">JAPANESE HISTORY</span><span class="t">日本史</span><span class="d">原始〜現代／4択・正誤判定・年代整序</span><span class="big-n">120<small> 問</small></span></a>
+<a class="cat" style="--c:var(--g)" href="english.html" data-key="kyotsu-eigo-v1" data-n="131"><span class="k">ENGLISH</span><span class="t">英語</span><span class="big-n">131<small> 問</small></span><span class="rkline kbd">ランク：<b>新入生</b></span><span class="meter" aria-hidden="true"><i style="width:0%"></i></span></a>
+<a class="cat" style="--c:var(--v)" href="kokugo.html" data-key="kyotsu-kokugo-v1" data-n="120"><span class="k">JAPANESE</span><span class="t">国語</span><span class="big-n">120<small> 問</small></span><span class="rkline kbd">ランク：<b>新入生</b></span><span class="meter" aria-hidden="true"><i style="width:0%"></i></span></a>
+<a class="cat" style="--c:var(--o)" href="sugaku.html" data-key="kyotsu-sugaku-v1" data-n="120"><span class="k">MATHEMATICS</span><span class="t">数学</span><span class="big-n">120<small> 問</small></span><span class="rkline kbd">ランク：<b>新入生</b></span><span class="meter" aria-hidden="true"><i style="width:0%"></i></span></a>
+<a class="cat" style="--c:var(--ea)" href="nihonshi.html" data-key="kyotsu-nihonshi-v1" data-n="120"><span class="k">JAPANESE HISTORY</span><span class="t">日本史</span><span class="big-n">120<small> 問</small></span><span class="rkline kbd">ランク：<b>新入生</b></span><span class="meter" aria-hidden="true"><i style="width:0%"></i></span></a>
+<a class="cat" style="--c:var(--em)" href="chiri.html" data-key="kyotsu-chiri-v1" data-n="120"><span class="k">GEOGRAPHY</span><span class="t">地理</span><span class="big-n">120<small> 問</small></span><span class="rkline kbd">ランク：<b>新入生</b></span><span class="meter" aria-hidden="true"><i style="width:0%"></i></span></a>
+<a class="cat" style="--c:var(--ee)" href="seikei.html" data-key="kyotsu-seikei-v1" data-n="120"><span class="k">POLITICS & ECONOMICS</span><span class="t">政治・経済</span><span class="big-n">120<small> 問</small></span><span class="rkline kbd">ランク：<b>新入生</b></span><span class="meter" aria-hidden="true"><i style="width:0%"></i></span></a>
+<a class="cat" style="--c:var(--ed)" href="butsuri.html" data-key="kyotsu-butsuri-v1" data-n="120"><span class="k">PHYSICS</span><span class="t">物理</span><span class="big-n">120<small> 問</small></span><span class="rkline kbd">ランク：<b>新入生</b></span><span class="meter" aria-hidden="true"><i style="width:0%"></i></span></a>
+<a class="cat" style="--c:var(--ep)" href="kagaku.html" data-key="kyotsu-kagaku-v1" data-n="120"><span class="k">CHEMISTRY</span><span class="t">化学</span><span class="big-n">120<small> 問</small></span><span class="rkline kbd">ランク：<b>新入生</b></span><span class="meter" aria-hidden="true"><i style="width:0%"></i></span></a>
+<a class="cat" style="--c:var(--ey)" href="seibutsu.html" data-key="kyotsu-seibutsu-v1" data-n="120"><span class="k">BIOLOGY</span><span class="t">生物</span><span class="big-n">120<small> 問</small></span><span class="rkline kbd">ランク：<b>新入生</b></span><span class="meter" aria-hidden="true"><i style="width:0%"></i></span></a>
+<a class="cat" style="--c:var(--g)" href="joho.html" data-key="kyotsu-joho-v1" data-n="120"><span class="k">INFORMATICS</span><span class="t">情報</span><span class="big-n">120<small> 問</small></span><span class="rkline kbd">ランク：<b>新入生</b></span><span class="meter" aria-hidden="true"><i style="width:0%"></i></span></a>
   </div>
   <p class="tip" id="tip">iPhoneでは、Safariの共有ボタン →「ホーム画面に追加」でアプリとして使えます。</p>
 </div>
-<script>if(window.navigator.standalone||matchMedia("(display-mode: standalone)").matches){document.getElementById("tip").hidden=true}</script>
+<script>
+const RANKS=[["新入生",0,"FRESHMAN"],["学士",15,"BACHELOR"],["修士",35,"MASTER"],["博士",55,"DOCTOR"],["教授",75,"PROFESSOR"],["名誉教授",90,"EMERITUS"]];
+const rk=p=>{let i=0;RANKS.forEach((r,k)=>{if(p>=r[1])i=k});return i};
+let tot=0,okAll=0;
+document.querySelectorAll("a.cat").forEach(a=>{
+  let rec={};try{rec=JSON.parse(localStorage.getItem(a.dataset.key)||"{}")||{}}catch(e){}
+  const n=+a.dataset.n,ok=Object.values(rec).filter(r=>r&&r.last).length,p=n?ok/n*100:0;tot+=n;okAll+=ok;
+  a.querySelector(".rkline b").textContent=RANKS[rk(p)][0];a.querySelector(".meter i").style.width=Math.min(100,p)+"%";
+});
+const p=tot?okAll/tot*100:0,i=rk(p);
+document.getElementById("overall").innerHTML=`<div class="panel rankp"><div class="rk-badge rk${i}" aria-hidden="true"><span class="rk-en">${RANKS[i][2]}</span><span class="rk-t">${RANKS[i][0]}</span><span class="rk-st">${"★".repeat(i)+"☆".repeat(5-i)}</span></div><div class="rk-body"><h2>総合ランク：${RANKS[i][0]}</h2><p class="kbd num">全科目で正解済み ${okAll} / ${tot} 問（${Math.floor(p)}%）</p><div class="meter rk-meter"><i style="width:${p}%"></i></div></div></div>`;
+try{if(navigator.standalone||matchMedia("(display-mode: standalone)").matches)document.getElementById("tip").hidden=true}catch(e){}
+</script>
 <script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
 </body>
 </html>

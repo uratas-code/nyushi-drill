@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EAF4FF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161A2E" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="入試ドリル">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}</style>
+<title>情報ドリル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Nunito:wght@600;800;900&family=Fredoka:wght@600;700&display=swap">
+<style>
+/* Layout: ステッカー風のポップな一列カラム。太いフチ＋ずらした影、分野ごとにカラー */
+:root{
+  --bg:#EAF4FF; --dot:#CFE3FA; --card:#FFFFFF; --ink:#1B1E3A; --muted:#5C6385; --edge:#1B1E3A;
+  --g:#FF5C8A; --v:#2FA8FF; --o:#FFB800; --c:var(--g);
+  --c-soft:#FFE3EC;
+  --ok:#14B06A; --ok-soft:#DDF7EA; --ng:#FF4D4D; --ng-soft:#FFE4E4;
+  --btn-ink:#FFFFFF;
+  --f-jp:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  --f-en:"Nunito","Segoe UI",system-ui,sans-serif;
+  --f-num:"Fredoka","Nunito",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#161A2E; --dot:#22284A; --card:#232945; --ink:#F2F4FF; --muted:#A9B0D4; --edge:#060815;
+  --g:#FF7AA2; --v:#5BBEFF; --o:#FFC933; --c-soft:#3A2440;
+  --ok:#3DD68C; --ok-soft:#173829; --ng:#FF6F6F; --ng-soft:#3E1D22; --btn-ink:#161A2E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161A2E; --dot:#22284A; --card:#232945; --ink:#F2F4FF; --muted:#A9B0D4; --edge:#060815;
+  --g:#FF7AA2; --v:#5BBEFF; --o:#FFC933; --c-soft:#3A2440;
+  --ok:#3DD68C; --ok-soft:#173829; --ng:#FF6F6F; --ng-soft:#3E1D22; --btn-ink:#161A2E; color-scheme:dark}
+[data-cat="G"]{--c:var(--g)} [data-cat="V"]{--c:var(--v)} [data-cat="O"]{--c:var(--o)}
+*{box-sizing:border-box}
+body{background-color:var(--bg);background-image:radial-gradient(var(--dot) 2px,transparent 2.5px);background-size:22px 22px;
+  color:var(--ink);font-family:var(--f-jp);font-weight:500;font-size:15px;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--v);outline-offset:3px}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.subject{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.subject h1{margin:0;font-size:30px;font-weight:900;letter-spacing:.02em;text-wrap:balance;
+  text-shadow:3px 3px 0 var(--g)}
+.subject h1 b{font-family:var(--f-num);font-weight:700;color:var(--v);text-shadow:3px 3px 0 var(--o)}
+.tag{font-size:12px;font-weight:900;background:var(--o);color:#1B1E3A;border:2px solid var(--edge);border-radius:999px;padding:2px 12px;transform:rotate(-4deg);box-shadow:2px 2px 0 var(--edge)}
+.top small{font-family:var(--f-num);font-size:14px;background:var(--card);border:2px solid var(--edge);border-radius:999px;padding:2px 12px}
+.lead{color:var(--muted);margin:0}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.cat{background:var(--card);border:3px solid var(--edge);border-radius:20px;padding:16px 16px 14px;text-align:left;display:flex;flex-direction:column;gap:6px;min-width:0;
+  box-shadow:5px 5px 0 var(--c);transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}
+.cat::after{content:"";position:absolute;right:-24px;top:-24px;width:80px;height:80px;border-radius:50%;background:var(--c);opacity:.25}
+.cat:hover{transform:translate(-2px,-3px) rotate(-.6deg);box-shadow:8px 8px 0 var(--c)}
+.cat:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--c)}
+.cat .k{font-family:var(--f-num);font-size:12px;font-weight:700;color:var(--c);letter-spacing:.12em;filter:brightness(.85)}
+.cat .t{font-size:20px;font-weight:900}
+.cat .d{font-size:13px;color:var(--muted)}
+.meter{height:12px;background:var(--bg);border:2px solid var(--edge);border-radius:999px;position:relative;margin-top:6px;overflow:hidden}
+.meter i{position:absolute;inset:0 auto 0 0;background:var(--c);border-radius:999px}
+.cat .s{font-size:12px;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{background:var(--card);border:3px solid var(--edge);border-radius:999px;padding:8px 20px;font-weight:700;box-shadow:3px 3px 0 var(--edge);transition:transform .1s,box-shadow .1s}
+.btn:hover:not([disabled]){transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--edge)}
+.btn:active:not([disabled]){transform:translate(3px,3px);box-shadow:0 0 0 var(--edge)}
+.btn.primary{background:var(--g);color:#fff}
+#mix.primary{background:linear-gradient(90deg,var(--g),var(--v))}
+.btn[disabled]{opacity:.4;cursor:default;box-shadow:none}
+.seg{display:inline-flex;border:3px solid var(--edge);border-radius:999px;overflow:hidden;box-shadow:3px 3px 0 var(--edge)}
+.seg button{background:var(--card);border:0;padding:5px 16px;font-size:13px;font-weight:700}
+.seg button+button{border-left:2px solid var(--edge)}
+.seg button[aria-pressed="true"]{background:var(--o);color:#1B1E3A}
+.panel{background:var(--card);border:3px solid var(--edge);border-radius:24px;padding:20px;box-shadow:6px 6px 0 var(--edge)}
+.panel h2{margin:0 0 8px;font-size:18px;font-weight:900}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;font-weight:700}
+.bar{height:14px;background:var(--card);border:3px solid var(--edge);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:repeating-linear-gradient(45deg,var(--c) 0 10px,color-mix(in srgb,var(--c) 70%,#fff) 10px 20px);transition:width .35s cubic-bezier(.3,1.6,.5,1)}
+.qno{display:inline-block;background:var(--c);color:#fff;font-family:var(--f-num);font-weight:700;padding:1px 10px;margin-right:8px;font-size:13px;border-radius:999px;border:2px solid var(--edge)}
+[data-cat="O"] .qno{color:#1B1E3A}
+.stem{font-family:var(--f-en);font-weight:800;font-size:21px;line-height:1.6;margin:14px 0 6px}
+.stem .blank{display:inline-block;min-width:5.5em;background:var(--c-soft);border:2px dashed var(--c);border-radius:10px;text-align:center;font-family:var(--f-num);font-size:14px;color:var(--ink);line-height:1.8}
+.ja{color:var(--muted);font-size:14px;margin:0}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+@media (max-width:520px){.choices{grid-template-columns:1fr}}
+.ch{display:flex;align-items:center;gap:12px;background:var(--card);border:3px solid var(--edge);border-radius:16px;padding:10px 14px;text-align:left;font-family:var(--f-en);font-weight:800;font-size:17px;
+  box-shadow:3px 3px 0 var(--edge);transition:transform .12s,box-shadow .12s;min-width:0}
+.ch:hover:not([disabled]){transform:translate(-1px,-2px);box-shadow:4px 5px 0 var(--c)}
+.oval{flex:none;width:30px;height:30px;border:2px solid var(--edge);border-radius:50%;display:grid;place-items:center;font-family:var(--f-num);font-size:14px;font-weight:700;background:var(--c);color:#fff}
+[data-cat="O"] .oval{color:#1B1E3A}
+.ch.right{background:var(--ok-soft);border-color:var(--ok);box-shadow:3px 3px 0 var(--ok)}
+.ch.right .oval{background:var(--ok)}
+.ch.wrong{background:var(--ng-soft);border-color:var(--ng);box-shadow:3px 3px 0 var(--ng);animation:shake .35s}
+.ch.wrong .oval{background:var(--ng)}
+.ch.sel.right{animation:pop .4s}
+.ch[disabled]{cursor:default}
+.ch[disabled]:not(.right):not(.wrong){opacity:.55}
+.fb{margin-top:18px;border:3px solid var(--ok);border-radius:18px;background:var(--ok-soft);padding:12px 16px;animation:pop .35s}
+.fb.ng{border-color:var(--ng);background:var(--ng-soft)}
+.fb .v{font-weight:900;font-size:20px;display:flex;align-items:center;gap:8px}
+.fb.ok .v{color:var(--ok)} .fb.ng .v{color:var(--ng)}
+.fb p{margin:6px 0 0}
+.fb .en{font-family:var(--f-en);font-weight:800;font-size:16px}
+.mark{font-family:var(--f-num);font-size:26px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;border:2px solid var(--edge)}
+.fb.ok .mark{background:var(--ok)} .fb.ng .mark{background:var(--ng)}
+/* 並べ替え */
+.build{min-height:60px;border:3px dashed var(--c);border-radius:16px;background:var(--bg);padding:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;font-family:var(--f-en);font-weight:800;font-size:17px}
+.build .fix{color:var(--muted)}
+.build .ph{color:var(--muted);font-family:var(--f-jp);font-size:13px}
+.pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{border:2px solid var(--edge);border-radius:12px;background:var(--card);padding:4px 14px;font-family:var(--f-en);font-weight:800;font-size:17px;box-shadow:2px 2px 0 var(--edge);transition:transform .1s}
+.chip:hover:not([disabled]){transform:translateY(-2px) rotate(-2deg)}
+.chip.used{opacity:.2;cursor:default;box-shadow:none}
+.build .chip{background:var(--c);color:#fff;animation:pop .25s}
+[data-cat="O"] .build .chip{color:#1B1E3A}
+.kbd{font-size:12px;color:var(--muted)}
+.score{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.score .big{font-family:var(--f-num);font-weight:700;font-size:56px;line-height:1;color:var(--g);text-shadow:3px 3px 0 var(--o)}
+.miss{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.miss li{border:2px solid var(--edge);border-radius:14px;padding:10px 12px;min-width:0;background:var(--bg)}
+.miss .en{font-family:var(--f-en);font-weight:800;font-size:16px}
+.miss .en b{color:var(--ok)}
+.miss .x{font-size:13px;color:var(--muted)}
+footer{color:var(--muted);font-size:12px;text-align:center}
+@keyframes pop{0%{transform:scale(.9)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<style>
+/* 日本史用の追加：時代ごとのカラーと設問ブロック */
+:root{--ey:#B88A00;--ea:#F26A2E;--em:#0E9C8C;--ee:#E8457A;--ed:#7353F0;--ep:#2C8FE0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ea:#FF8F5C;--em:#2CC7B5;--ee:#FF7AA2;--ed:#9C85FF;--ep:#5BBEFF;--ey:#E6C340}}
+:root[data-theme="dark"]{--ea:#FF8F5C;--em:#2CC7B5;--ee:#FF7AA2;--ed:#9C85FF;--ep:#5BBEFF;--ey:#E6C340}
+[data-cat="A"]{--c:var(--ea)} [data-cat="B"]{--c:var(--em)} [data-cat="C"]{--c:var(--ee)} [data-cat="D"]{--c:var(--ed)} [data-cat="E"]{--c:var(--ep)}
+.stem{font-family:var(--f-jp);font-weight:700;font-size:18px}
+.stmts{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.stmt{display:flex;gap:10px;align-items:flex-start;background:var(--bg);border:2px solid var(--edge);border-radius:14px;padding:8px 12px;min-width:0}
+.stmt .lb{flex:none;font-family:var(--f-num);font-weight:700;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:#fff;border:2px solid var(--edge)}
+.stmt .tx{font-weight:700;min-width:0}
+.ch{font-family:var(--f-jp);font-weight:700}
+.choices.six{grid-template-columns:repeat(3,1fr)}
+@media (max-width:520px){.choices.six{grid-template-columns:1fr 1fr}}
+.choices.six .ch{white-space:nowrap;gap:8px;padding:10px}
+@media (max-width:520px){.choices.six .ch{font-size:15px;padding:10px 8px}.choices.six .oval{width:26px;height:26px;font-size:13px}}
+.fmt{display:inline-block;font-size:11px;font-weight:900;border:2px solid var(--edge);border-radius:999px;padding:0 8px;margin-left:6px;background:var(--o);color:#1B1E3A}
+.era-yr{font-family:var(--f-num);font-size:12px;color:var(--muted)}
+.subj-link{font-size:13px;font-weight:700;color:var(--ink);text-decoration:none;border:2px solid var(--edge);border-radius:999px;padding:2px 12px;background:var(--card)}
+.subj-link:hover{background:var(--o);color:#1B1E3A}
+.miss .en{font-family:var(--f-jp);font-weight:700}
+.subject h1 b{font-family:var(--f-jp);font-weight:900}
+</style>
+<style>
+/* ランク表示 */
+.rankp{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.rk-body{flex:1;min-width:200px}
+.rk-body h2{margin:0 0 2px}
+.rk-body p{margin:4px 0}
+.rk-meter i{background:linear-gradient(90deg,var(--o),var(--g))}
+.rk-badge{flex:none;width:118px;height:118px;border-radius:50%;border:4px solid var(--edge);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;box-shadow:4px 4px 0 var(--edge);transform:rotate(-6deg);text-align:center;color:#1B1E3A}
+.rk-badge .rk-en{font-family:var(--f-num);font-size:10px;letter-spacing:.12em;font-weight:700}
+.rk-badge .rk-t{font-size:22px;font-weight:900;line-height:1.2}
+.rk-badge .rk-st{font-size:12px;letter-spacing:1px}
+.rk0{background:#E4E8F2}.rk1{background:#BFE6FF}.rk2{background:#C9F2DA}.rk3{background:#FFD873}.rk4{background:#FFB3CB}
+.rk5{background:conic-gradient(#FFD873,#FFB3CB,#BFE6FF,#C9F2DA,#FFD873)}
+.rk-session{display:flex;align-items:baseline;gap:10px;margin-top:12px;flex-wrap:wrap}
+.rk-title{font-size:26px;font-weight:900;color:var(--ink);background:var(--o);border:3px solid var(--edge);border-radius:999px;padding:0 16px;box-shadow:3px 3px 0 var(--edge);transform:rotate(-2deg);display:inline-block;color:#1B1E3A}
+.rk-up{margin-top:12px;font-weight:900;font-size:18px;color:var(--g);animation:pop .5s}
+</style>
+
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* ===== 問題データ ===== */
+const D={"cats": {"A": {"name": "情報社会と法・情報モラル・セキュリティ", "k": "SOCIETY", "yr": "情報Ⅰ", "d": "著作権・産業財産権・個人情報保護法・不正アクセス禁止法、情報モラル、サイバー攻撃と情報セキュリティ対策"}, "B": {"name": "情報デザイン・メディアとコミュニケーション", "k": "DESIGN", "yr": "情報Ⅰ", "d": "メディアの特性、コミュニケーションの形態、ユニバーサルデザイン、色彩、情報の可視化とWebデザイン"}, "C": {"name": "情報のデジタル化", "k": "DIGITAL", "yr": "情報Ⅰ", "d": "2進数・16進数・補数、文字コード、画像・音声のデータ量、圧縮、論理回路"}, "D": {"name": "アルゴリズムとプログラミング", "k": "PROGRAM", "yr": "情報Ⅰ", "d": "共通テスト用プログラム表記によるトレース、変数・配列・繰り返し・分岐、探索と整列"}, "E": {"name": "ネットワーク・データベース・データの活用", "k": "NETWORK", "yr": "情報Ⅰ", "d": "IPアドレス・DNS・プロトコル、暗号と認証、データベース、代表値・散らばり・相関、表計算"}}, "q": [{"id": "A01", "c": "A", "f": "K", "q": "日本の著作権法における著作権（財産権）の保護期間として、原則的なものはどれか。", "o": ["著作者の死後70年", "著作者の死後50年", "公表後20年", "登録後10年"], "e": "2018年の法改正で、原則として著作者の死後50年から70年に延長された。"}, {"id": "A02", "c": "A", "f": "K", "q": "著作権の発生について述べた文として最も適当なものはどれか。", "o": ["著作物を創作した時点で自動的に発生する", "文化庁に登録した時点で発生する", "特許庁に出願し、審査を経て発生する", "著作物を有料で販売した時点で発生する"], "e": "著作権は申請や登録などの手続きを必要としない無方式主義をとっている。"}, {"id": "A03", "c": "A", "f": "K", "q": "産業財産権のうち、物品の形状・模様・色彩などのデザインを保護する権利はどれか。", "o": ["意匠権", "実用新案権", "商標権", "特許権"], "e": "意匠権は工業製品などのデザインを保護する。実用新案権は形状・構造の考案、商標権はマークや名称を保護する。"}, {"id": "A04", "c": "A", "f": "K", "q": "日本における特許権の存続期間（原則）として正しいものはどれか。", "o": ["出願の日から20年", "登録の日から10年", "出願の日から10年", "発明者の死後70年"], "e": "特許権の存続期間は原則として出願日から20年である。"}, {"id": "A05", "c": "A", "f": "K", "q": "産業財産権のうち、存続期間を更新することで半永久的に権利を維持できるものはどれか。", "o": ["商標権", "特許権", "実用新案権", "意匠権"], "e": "商標権は登録から10年だが、更新登録を繰り返すことで権利を維持し続けられる。"}, {"id": "A06", "c": "A", "f": "K", "q": "他人の著作物を自分のレポートに「引用」する際の条件として最も適当なものはどれか。", "o": ["自分の文章が主で、引用部分が従となる関係にある", "引用部分がレポート全体の半分以上を占めている", "引用部分を自分の意図に合わせて書き換えている", "かぎかっこで区別していれば出典は示さなくてよい"], "e": "引用には、主従関係・明瞭な区別・出所の明示・改変しないことなどの条件がある。"}, {"id": "A07", "c": "A", "f": "K", "q": "個人情報保護法における「個人情報」に該当するものとして最も適当なものはどれか。", "o": ["氏名と勤務先が記載された名刺の情報", "国が公表した都道府県別の人口の集計値", "特定の個人を識別できない売上件数の合計", "架空の人物を主人公にした小説のあらすじ"], "e": "個人情報とは、生存する個人に関する情報で、氏名などにより特定の個人を識別できるものをいう。"}, {"id": "A08", "c": "A", "f": "K", "q": "個人情報保護法で、取得や第三者提供に原則として本人の同意が必要とされるなど、特に配慮を要する「要配慮個人情報」に該当するものはどれか。", "o": ["病歴", "氏名", "メールアドレス", "商品の購入履歴"], "e": "要配慮個人情報には、人種・信条・社会的身分・病歴・犯罪の経歴などが含まれる。"}, {"id": "A09", "c": "A", "f": "K", "q": "不正アクセス禁止法で禁止されている行為として最も適当なものはどれか。", "o": ["他人のIDとパスワードを無断で入力して会員サイトにログインする", "自分のアカウントのパスワードを定期的に変更する", "一般に公開されているWebページを閲覧する", "自分のパソコンにファイアウォールを設定する"], "e": "他人の識別符号（ID・パスワード）を無断で使ってアクセス制御を突破する行為は不正アクセス行為にあたる。"}, {"id": "A10", "c": "A", "f": "K", "q": "不正アクセス禁止法で、不正アクセス行為そのものではないが禁止されている行為として最も適当なものはどれか。", "o": ["友人のIDとパスワードを本人に無断で第三者に教える", "自分のパスワードを手帳にメモしておく", "ウイルス対策ソフトを最新の状態に更新する", "二要素認証を設定する"], "e": "他人のID・パスワードを正当な理由なく第三者に提供することは、不正アクセスを助長する行為として禁止されている。"}, {"id": "A11", "c": "A", "f": "K", "q": "実在する銀行や企業を装った電子メールで偽のWebサイトに誘導し、IDやパスワード、カード番号などを入力させて盗み取る手口はどれか。", "o": ["フィッシング", "DoS攻撃", "ブルートフォース攻撃", "ランサムウェア"], "e": "フィッシングは偽のメールやサイトで利用者をだまして認証情報などを盗む詐欺の手口である。"}, {"id": "A12", "c": "A", "f": "K", "q": "コンピュータ内のファイルを勝手に暗号化して使えなくし、元に戻すことと引き換えに金銭を要求するマルウェアはどれか。", "o": ["ランサムウェア", "スパイウェア", "アドウェア", "キーロガー"], "e": "ランサムウェアは「身代金（ransom）」を要求するマルウェアで、バックアップが有効な対策となる。"}, {"id": "A13", "c": "A", "f": "K", "q": "情報セキュリティの3要素のうち、「許可された利用者が、必要なときに情報やシステムを利用できる状態」を表すものはどれか。", "o": ["可用性", "機密性", "完全性", "真正性"], "e": "情報セキュリティの3要素は機密性・完全性・可用性で、必要なときに使えることを可用性という。"}, {"id": "A14", "c": "A", "f": "K", "q": "上司や管理者を装って電話でパスワードを聞き出すなど、人間の心理的な隙や行動のミスにつけ込んで機密情報を入手する手法の総称はどれか。", "o": ["ソーシャルエンジニアリング", "SQLインジェクション", "DDoS攻撃", "クロスサイトスクリプティング"], "e": "ソーシャルエンジニアリングは技術ではなく人の心理を突く手法で、のぞき見やなりすまし電話などがある。"}, {"id": "A15", "c": "A", "f": "K", "q": "パスワードの設定・管理の方法として最も適当なものはどれか。", "o": ["英大文字・小文字・数字・記号を組み合わせた長い文字列を、サービスごとに変えて使う", "覚えやすいように自分の誕生日をそのまま使う", "強いパスワードを1つ作り、すべてのサービスで使い回す", "辞書に載っている英単語をそのまま使う"], "e": "長く複雑なパスワードをサービスごとに使い分けることで、推測や使い回しによる被害を防げる。"}, {"id": "A16", "c": "A", "f": "K", "q": "知識情報・所持情報・生体情報のうち、異なる2種類を組み合わせた認証（二要素認証）の例として最も適当なものはどれか。", "o": ["パスワードを入力した後、スマートフォンに届いた確認コードを入力する", "パスワードを入力した後、秘密の質問の答えを入力する", "同じ指で指紋認証を2回行う", "2つの異なるパスワードを続けて入力する"], "e": "パスワード（知識情報）とスマートフォン（所持情報）の組合せは二要素認証である。秘密の質問はパスワードと同じ知識情報である。"}, {"id": "A17", "c": "A", "f": "K", "q": "クリエイティブ・コモンズ・ライセンスの「CC BY-NC」が示す利用条件として正しいものはどれか。", "o": ["作者のクレジットを表示し、営利目的でなければ改変も含めて利用できる", "作者のクレジットを表示すれば営利目的でも利用できるが、改変はできない", "作者のクレジットを表示し、元と同じライセンスで公開すれば営利目的でも利用できる", "作者の許可なく一切利用できない"], "e": "BYは表示、NCは非営利を意味する。改変禁止（ND）や継承（SA）の条件は付いていない。"}, {"id": "A18", "c": "A", "f": "K", "q": "インターネットやコンピュータなどの情報技術を利用できる人とできない人との間に生じる格差を何というか。", "o": ["デジタルデバイド", "デジタルタトゥー", "フィルターバブル", "テクノストレス"], "e": "デジタルデバイド（情報格差）は、年齢・地域・経済状況などによって生じる。"}, {"id": "A19", "c": "A", "f": "K", "q": "検索サイトやSNSのアルゴリズムが利用者の好みを学習し、利用者の興味に合う情報ばかりが表示されるようになることで、異なる意見に触れにくくなる現象を何というか。", "o": ["フィルターバブル", "デジタルタトゥー", "デジタルデバイド", "チェーンメール"], "e": "フィルターバブルは、個人に最適化された情報の「泡」に包まれ、視野が狭くなる現象である。"}, {"id": "A20", "c": "A", "f": "K", "q": "有名人の氏名や肖像がもつ、商品の販売などで顧客を引きつける経済的な価値を保護する権利はどれか。", "o": ["パブリシティ権", "著作者人格権", "商標権", "意匠権"], "e": "パブリシティ権は肖像権の一種とされ、有名人の氏名・肖像の顧客吸引力を保護する。"}, {"id": "A21", "c": "A", "f": "S", "X": "著作者人格権には、公表権・氏名表示権・同一性保持権が含まれる。", "Y": "著作者人格権は、他人に譲渡することができない。", "xs": true, "ys": true, "e": "著作者人格権は著作者の人格的利益を守る権利で、一身専属のため譲渡できない。"}, {"id": "A22", "c": "A", "f": "S", "X": "実用新案権は、物品の形状・構造・組合せに関する考案を保護する。", "Y": "特許権は、特許庁に出願しなくても、発明した時点で自動的に発生する。", "xs": true, "ys": false, "e": "産業財産権は特許庁への出願・登録によって発生する。手続き不要で発生するのは著作権である。"}, {"id": "A23", "c": "A", "f": "S", "X": "暗号化されていない公衆無線LANを使った通信は、第三者に盗み見られる心配がない。", "Y": "個人情報保護法では、本人の同意を得ずに個人データを第三者に提供することは原則として禁止されている。", "xs": false, "ys": true, "e": "暗号化されていない無線LANは盗聴の危険がある。個人データの第三者提供には原則として本人の同意が必要である。"}, {"id": "A24", "c": "A", "f": "S", "X": "学校の授業で使うためであれば、市販のドリル教材を購入せずに生徒全員分コピーして配布してもよい。", "Y": "SNSに投稿した写真や文章は、投稿を削除すればインターネット上から完全に消える。", "xs": false, "ys": false, "e": "授業目的の複製でも、ドリルのように購入が前提の教材の複製は著作権者の利益を不当に害するため認められない。投稿は複製・拡散されるため削除しても残ることがある。"}, {"id": "B01", "c": "B", "f": "K", "q": "障害の有無・年齢・国籍などにかかわらず、はじめからできるだけ多くの人が利用しやすいように製品や環境をデザインする考え方を何というか。", "o": ["ユニバーサルデザイン", "バリアフリー", "インフォグラフィックス", "ユーザインタフェース"], "e": "ユニバーサルデザインは最初から多様な人を想定して設計する考え方で、既存の障壁を取り除くバリアフリーとは異なる。"}, {"id": "B02", "c": "B", "f": "K", "q": "非常口や駅のトイレの表示のように、伝えたい情報を言語に頼らず単純化した図記号で表したものを何というか。", "o": ["ピクトグラム", "フローチャート", "ヒストグラム", "タイムライン"], "e": "ピクトグラムは言語が異なる人や子どもにも情報を伝えやすい。"}, {"id": "B03", "c": "B", "f": "K", "q": "ドアに平らな金属板が付いていて「押す」ことが自然にわかるように、利用者に適切な操作を示す手がかりとなるデザイン上の工夫を何というか。", "o": ["シグニファイア", "フィードバック", "メタファー", "ブレインストーミング"], "e": "シグニファイアは、どう操作すればよいかを利用者に知らせる手がかりのことである。"}, {"id": "B04", "c": "B", "f": "K", "q": "色覚の多様性に配慮した情報デザイン（カラーユニバーサルデザイン）として最も適当なものはどれか。", "o": ["色だけに頼らず、形や模様、文字なども組み合わせて情報を区別する", "重要度の違いを赤と緑の色の違いだけで区別する", "できるだけ多くの色を使って項目を区別する", "明度の近い色どうしを隣り合わせて使う"], "e": "色の見え方は人によって異なるため、色以外の手がかり（形・模様・文字）を併用するとよい。"}, {"id": "B05", "c": "B", "f": "K", "q": "色相環で正反対の位置にある2色の組合せを何というか。", "o": ["補色", "類似色", "同系色", "無彩色"], "e": "補色どうしを並べると互いを引き立て合い、目立たせたい部分の強調に使える。"}, {"id": "B06", "c": "B", "f": "K", "q": "光の三原色（赤・緑・青）を、すべて最大の強さで重ね合わせると何色になるか。", "o": ["白", "黒", "黄", "シアン"], "e": "光の三原色による加法混色では、色を重ねるほど明るくなり、すべて重ねると白になる。"}, {"id": "B07", "c": "B", "f": "K", "q": "シアン・マゼンタ・イエローの3色を用い、色を重ねるほど暗くなる混色の方法で、主にカラー印刷に使われるものはどれか。", "o": ["減法混色", "加法混色", "光の三原色による混色", "RGB方式"], "e": "色の三原色（CMY）による混色は減法混色で、すべて重ねると理論上は黒に近くなる。"}, {"id": "B08", "c": "B", "f": "K", "q": "USBメモリやDVDは、メディアを「表現のメディア」「伝達のメディア」「記録のメディア」に分類したとき、どれにあたるか。", "o": ["記録のメディア", "表現のメディア", "伝達のメディア", "いずれにもあたらない"], "e": "USBメモリやDVDは情報を保存するための記録のメディアである。文字や音声は表現、電波や電話は伝達のメディアにあたる。"}, {"id": "B09", "c": "B", "f": "K", "q": "送り手と受け手が同時に参加していなくても成立する、非同期型のコミュニケーションの例として最も適当なものはどれか。", "o": ["電子メール", "電話", "ビデオ会議", "対面での会話"], "e": "電子メールは受信者が都合のよいときに読めるため非同期型である。電話やビデオ会議は同期型である。"}, {"id": "B10", "c": "B", "f": "K", "q": "電話での通話を、コミュニケーションの形態（人数と同期性）で分類したものとして最も適当なものはどれか。", "o": ["1対1の同期型", "1対多の同期型", "1対1の非同期型", "多対多の非同期型"], "e": "電話は特定の相手と同時にやり取りする1対1の同期型コミュニケーションである。"}, {"id": "B11", "c": "B", "f": "K", "q": "「情報は他人に伝えても、もとの持ち主から失われない」という情報の性質を何というか。", "o": ["残存性", "複製性", "伝播性", "個別性"], "e": "情報には、なくならない残存性、簡単に複製できる複製性、すぐに広まる伝播性がある。"}, {"id": "B12", "c": "B", "f": "K", "q": "トップページからカテゴリごとのページへ、さらに個別のページへと枝分かれするように情報を整理したWebサイトの構造を何というか。", "o": ["階層構造", "直線構造", "網状構造", "順次構造"], "e": "階層構造は全体を把握しやすく、多くの情報を分類して整理するのに向いている。"}, {"id": "B13", "c": "B", "f": "K", "q": "あるクラスの生徒の通学手段について、全体に占める各手段の割合を示すのに最も適したグラフはどれか。", "o": ["円グラフ", "折れ線グラフ", "散布図", "レーダーチャート"], "e": "全体に対する割合（構成比）を示すには円グラフや帯グラフが適している。"}, {"id": "B14", "c": "B", "f": "K", "q": "メディアが伝える情報を主体的に読み解き、その真偽や意図を批判的に判断したり、適切に活用・発信したりする能力を何というか。", "o": ["メディアリテラシー", "情報モラル", "メディアミックス", "ユーザビリティ"], "e": "メディアリテラシーは、情報をうのみにせず批判的に読み解く能力を含む。"}, {"id": "B15", "c": "B", "f": "K", "q": "1人の生徒について「国語・数学・英語・理科・社会」の得点のバランスを1つの図で示すのに最も適したグラフはどれか。", "o": ["レーダーチャート", "折れ線グラフ", "円グラフ", "ヒストグラム"], "e": "レーダーチャートは複数の評価項目のバランスを比較するのに適している。"}, {"id": "B16", "c": "B", "f": "K", "q": "Webページで、文字の色や大きさ、レイアウトなどの見た目（スタイル）を指定するために用いられる言語はどれか。", "o": ["CSS", "HTML", "HTTP", "URL"], "e": "HTMLで文書の構造を記述し、CSSで見た目を指定することで、構造とデザインを分離できる。"}, {"id": "B17", "c": "B", "f": "K", "q": "アイコンやボタンなどをマウスやタッチ操作で選択してコンピュータを操作するインタフェースを何というか。", "o": ["GUI", "CUI", "CPU", "DNS"], "e": "GUIはグラフィカルユーザインタフェースの略で、文字でコマンドを入力するCUIと対比される。"}, {"id": "B18", "c": "B", "f": "K", "q": "特定の利用者が特定の状況で、目的を効果的・効率的かつ満足して達成できる度合い（使いやすさ）を表す言葉はどれか。", "o": ["ユーザビリティ", "アクセシビリティ", "セキュリティ", "トレーサビリティ"], "e": "ユーザビリティは使いやすさ、アクセシビリティは障害の有無などにかかわらず利用できるかどうかを表す。"}, {"id": "B19", "c": "B", "f": "K", "q": "Webページの画像に代替テキストを設定する主な目的として最も適当なものはどれか。", "o": ["音声読み上げソフトを使う人にも画像の内容を伝えるため", "画像の表示速度を速くするため", "画像の著作権を保護するため", "画像を印刷できないようにするため"], "e": "代替テキストは、視覚障害のある人が使う読み上げソフトなどで画像の内容を伝えるためのもので、アクセシビリティの向上につながる。"}, {"id": "B20", "c": "B", "f": "K", "q": "線の太さがほぼ均一で、プレゼンテーションのスライドなど離れた位置から見る資料でも読みやすいとされる書体はどれか。", "o": ["ゴシック体", "明朝体", "行書体", "楷書体"], "e": "ゴシック体は線が均一で視認性が高く、見出しやスライドに向く。明朝体は長文の本文に向く。"}, {"id": "B21", "c": "B", "f": "S", "X": "加法混色では、赤と緑の光を重ねると黄色になる。", "Y": "減法混色では、シアン・マゼンタ・イエローを重ねるほど明るい色になる。", "xs": true, "ys": false, "e": "光の混色（加法混色）では赤＋緑＝黄。減法混色では色を重ねるほど暗くなる。"}, {"id": "B22", "c": "B", "f": "S", "X": "バリアフリーとは、はじめからすべての人が使いやすいように製品を設計する考え方である。", "Y": "非常口のマークのようなピクトグラムは、使用する言語が異なる人にも情報を伝えやすい。", "xs": false, "ys": true, "e": "はじめから多くの人を想定する考え方はユニバーサルデザインである。バリアフリーは既存の障壁を取り除く考え方である。"}, {"id": "B23", "c": "B", "f": "S", "X": "電子メールは、受信者が都合のよいときに読むことができる非同期型のコミュニケーションである。", "Y": "情報は複製が容易であり、短時間で広く伝わる性質をもつ。", "xs": true, "ys": true, "e": "電子メールは非同期型である。情報には複製性・伝播性がある。"}, {"id": "B24", "c": "B", "f": "S", "X": "帯グラフは、時間の経過にともなう連続的な変化を表すのに最も適している。", "Y": "HTMLは見た目のデザインだけを指定する言語であり、見出しや段落などの文書の構造は表せない。", "xs": false, "ys": false, "e": "時間的な変化には折れ線グラフが適している。HTMLは文書の構造を表し、見た目はCSSで指定する。"}, {"id": "C01", "c": "C", "f": "K", "q": "10進数の45を2進数で表したものはどれか。", "o": ["101101", "101011", "110101", "100101"], "e": "45＝32＋8＋4＋1 なので、2進数では101101となる。"}, {"id": "C02", "c": "C", "f": "K", "q": "2進数の11010110を10進数で表したものはどれか。", "o": ["214", "212", "218", "107"], "e": "128＋64＋16＋4＋2＝214である。"}, {"id": "C03", "c": "C", "f": "K", "q": "16進数の3Fを10進数で表したものはどれか。", "o": ["63", "62", "48", "53"], "e": "3×16＋15＝63である（Fは15を表す）。"}, {"id": "C04", "c": "C", "f": "K", "q": "2進数の10111100を16進数で表したものはどれか。", "o": ["BC", "CB", "B8", "AC"], "e": "下位から4桁ずつ区切ると1011｜1100で、それぞれB（11）とC（12）になる。"}, {"id": "C05", "c": "C", "f": "K", "q": "負の整数を8ビットの2の補数で表すとき、10進数の－5を表すビット列はどれか。", "o": ["11111011", "10000101", "11111010", "00000101"], "e": "5（00000101）の各ビットを反転して11111010とし、1を加えると11111011になる。"}, {"id": "C06", "c": "C", "f": "K", "q": "8ビットの2の補数表現で11110000と表される数を10進数で表したものはどれか。", "o": ["－16", "－112", "240", "－15"], "e": "最上位ビットが1なので負の数。反転して1を加えると00010000（16）となるので－16である。"}, {"id": "C07", "c": "C", "f": "K", "q": "2進数の1011と0110を足した結果を2進数で表したものはどれか。", "o": ["10001", "1101", "10101", "11001"], "e": "1011は11、0110は6で、和は17。17を2進数で表すと10001となる。"}, {"id": "C08", "c": "C", "f": "K", "q": "英大文字26種類（A〜Z）を、それぞれ異なるビット列で区別して表すために最低限必要なビット数はどれか。", "o": ["5ビット", "4ビット", "6ビット", "26ビット"], "e": "4ビットでは2<sup>4</sup>＝16通りで足りず、5ビットなら2<sup>5</sup>＝32通りで26種類を表せる。"}, {"id": "C09", "c": "C", "f": "K", "q": "横640画素×縦480画素で、1画素あたり24ビットのフルカラー画像のデータ量はどれか。ただし、圧縮はしないものとし、1KB＝1024バイトとする。", "o": ["900KB", "7200KB", "300KB", "1200KB"], "e": "640×480×3バイト＝921600バイトで、921600÷1024＝900KBとなる。"}, {"id": "C10", "c": "C", "f": "K", "q": "サンプリング周波数44.1kHz、量子化ビット数16ビット、ステレオ（2チャンネル）で10秒間録音した音声のデータ量は何バイトか。ただし、圧縮はしないものとする。", "o": ["1764000バイト", "882000バイト", "14112000バイト", "3528000バイト"], "e": "44100回×2バイト×2チャンネル×10秒＝1764000バイトとなる。"}, {"id": "C11", "c": "C", "f": "K", "q": "アナログの音声をデジタルデータに変換する手順として正しいものはどれか。", "o": ["標本化→量子化→符号化", "量子化→標本化→符号化", "符号化→標本化→量子化", "標本化→符号化→量子化"], "e": "一定間隔で値を取り出し（標本化）、段階的な値に近似し（量子化）、2進数で表す（符号化）。"}, {"id": "C12", "c": "C", "f": "K", "q": "量子化ビット数を3ビットにしたとき、波の大きさを何段階で表すことができるか。", "o": ["8段階", "3段階", "6段階", "16段階"], "e": "3ビットでは2<sup>3</sup>＝8通りの値を表せる。"}, {"id": "C13", "c": "C", "f": "K", "q": "文字列「AAAABBBCCD」を、文字の後に連続する個数を書く方式（例：AAB→A2B1）でランレングス圧縮したものはどれか。", "o": ["A4B3C2D1", "A4B3C2", "A3B4C2D1", "A4B3C2D2"], "e": "Aが4個、Bが3個、Cが2個、Dが1個連続しているので、A4B3C2D1となる。"}, {"id": "C14", "c": "C", "f": "K", "q": "800KBのファイルを圧縮したところ200KBになった。圧縮率を「圧縮後のデータ量÷圧縮前のデータ量×100（％）」とするとき、圧縮率はどれか。", "o": ["25％", "75％", "400％", "4％"], "e": "200÷800×100＝25％である。"}, {"id": "C15", "c": "C", "f": "K", "q": "非可逆圧縮を用いる代表的なファイル形式はどれか。", "o": ["JPEG", "ZIP", "PNG", "GIF"], "e": "JPEGは人の目に目立ちにくい情報を削って圧縮する非可逆圧縮である。ZIP・PNG・GIFは可逆圧縮である。"}, {"id": "C16", "c": "C", "f": "K", "q": "入力A・Bがともに1のときだけ出力が0になり、それ以外のときは出力が1になる論理回路はどれか。", "o": ["NAND回路", "NOR回路", "AND回路", "XOR回路"], "e": "NAND回路はAND回路の出力を反転したもので、両方1のときだけ0を出力する。"}, {"id": "C17", "c": "C", "f": "K", "q": "入力A・Bの値が異なるときだけ出力が1になる論理回路はどれか。", "o": ["XOR回路（排他的論理和）", "OR回路（論理和）", "AND回路（論理積）", "NOR回路（否定論理和）"], "e": "XOR回路は、入力が(0,1)または(1,0)のときに1を出力する。"}, {"id": "C18", "c": "C", "f": "K", "q": "1桁の2進数A・Bを足し算する半加算回路で、和S（1の位）と桁上がりC（2の位）を求める回路の組合せとして正しいものはどれか。", "o": ["和SはXOR回路、桁上がりCはAND回路", "和SはAND回路、桁上がりCはXOR回路", "和SはOR回路、桁上がりCはAND回路", "和SはXOR回路、桁上がりCはOR回路"], "e": "1＋1＝10なので、和は入力が異なるとき1（XOR）、桁上がりは両方1のとき1（AND）となる。"}, {"id": "C19", "c": "C", "f": "K", "q": "世界中のさまざまな言語の文字を1つの体系で扱うために作られた文字コードはどれか。", "o": ["Unicode", "ASCII", "Shift_JIS", "EUC-JP"], "e": "Unicodeは多言語の文字を統一的に扱う文字コードで、UTF-8などの符号化方式がある。"}, {"id": "C20", "c": "C", "f": "K", "q": "ASCIIコードでは「A」が16進数で41と表される。アルファベットは順に連続した値が割り当てられているとき、「D」を16進数で表したものはどれか。", "o": ["44", "43", "45", "4D"], "e": "DはAから3つ後なので、41＋3＝44（16進数）となる。"}, {"id": "C21", "c": "C", "f": "S", "X": "8ビットで表せる符号なし整数の最大値は255である。", "Y": "RGB各8ビット（合計24ビット）のフルカラーでは、約1677万色を表現できる。", "xs": true, "ys": true, "e": "2<sup>8</sup>－1＝255、2<sup>24</sup>＝16777216なので約1677万色となる。"}, {"id": "C22", "c": "C", "f": "S", "X": "16進数のFFを10進数で表すと256である。", "Y": "PNGは可逆圧縮の画像ファイル形式である。", "xs": false, "ys": true, "e": "FFは15×16＋15＝255である。PNGは画質を落とさずに圧縮できる可逆圧縮の形式である。"}, {"id": "C23", "c": "C", "f": "S", "X": "サンプリング周波数を高く（標本化周期を短く）すると、元の波形をより忠実に再現できる。", "Y": "量子化ビット数を1ビット増やすと、表せる段階数は1段階だけ増える。", "xs": true, "ys": false, "e": "量子化ビット数が1ビット増えると、表せる段階数は2倍になる。"}, {"id": "C24", "c": "C", "f": "S", "X": "2進数の101を左に1ビットシフトすると、10進数で元の値の半分になる。", "Y": "NOT回路は2つの入力をもち、両方が1のときに0を出力する。", "xs": false, "ys": false, "e": "左に1ビットシフトすると値は2倍（101→1010で5→10）になる。NOT回路は入力が1つで、入力を反転する。"}, {"id": "D01", "c": "D", "f": "K", "q": "次のプログラムを実行したとき、表示される値はどれか。<br>x = 3<br>y = 5<br>x = x + y<br>y = x - y<br>表示する(y)", "o": ["3", "5", "8", "－2"], "e": "x＝3＋5＝8となり、y＝8－5＝3となる。"}, {"id": "D02", "c": "D", "f": "K", "q": "次のプログラムを実行したとき、表示される値はどれか。<br>s = 0<br>i を 1 から 5 まで 1 ずつ増やしながら繰り返す：<br>　s = s + i<br>表示する(s)", "o": ["15", "10", "5", "21"], "e": "1＋2＋3＋4＋5＝15となる。終了値の5も含めて繰り返す。"}, {"id": "D03", "c": "D", "f": "K", "q": "次のプログラムを実行したとき、表示される値はどれか。<br>s = 0<br>i を 1 から 9 まで 2 ずつ増やしながら繰り返す：<br>　s = s + i<br>表示する(s)", "o": ["25", "45", "16", "20"], "e": "iは1,3,5,7,9と変化するので、1＋3＋5＋7＋9＝25となる。"}, {"id": "D04", "c": "D", "f": "K", "q": "次のプログラムを実行したとき、表示される値はどれか。<br>x = 17<br>もし x ＞ 20 ならば：<br>　y = 1<br>そうでなくもし x ＞ 10 ならば：<br>　y = 2<br>そうでなければ：<br>　y = 3<br>表示する(y)", "o": ["2", "1", "3", "17"], "e": "17＞20は偽、17＞10は真なので、y＝2となる。"}, {"id": "D05", "c": "D", "f": "K", "q": "次のプログラムを実行したとき、表示される値はどれか。<br>x = 1<br>n = 0<br>x ＜ 100 の間繰り返す：<br>　x = x * 3<br>　n = n + 1<br>表示する(n)", "o": ["5", "4", "6", "243"], "e": "xは3,9,27,81,243と変化し、243になった時点で条件が偽となって終了する。繰り返しは5回である。"}, {"id": "D06", "c": "D", "f": "K", "q": "次のプログラムを実行したとき、表示される値はどれか。（配列の添字は0から始まり、「÷」は商の整数部分、「%」は余りを表す）<br>Data = [4, 7, 1, 9, 1]<br>k = 0<br>i を 1 から 4 まで 1 ずつ増やしながら繰り返す：<br>　もし Data[i] ≦ Data[k] ならば：<br>　　k = i<br>表示する(k)", "o": ["4", "2", "1", "0"], "e": "i＝2で1≦4によりk＝2、i＝4で1≦1も真なのでk＝4となる。「≦」なので同じ値なら後の添字に更新される。"}, {"id": "D07", "c": "D", "f": "K", "q": "次のプログラムを実行したとき、表示される値はどれか。（配列の添字は0から始まり、「÷」は商の整数部分、「%」は余りを表す）<br>Data = [12, 5, 8, 21, 3, 16]<br>s = 0<br>i を 0 から 5 まで 1 ずつ増やしながら繰り返す：<br>　もし Data[i] ≧ 10 ならば：<br>　　s = s + Data[i]<br>表示する(s)", "o": ["49", "65", "3", "37"], "e": "10以上の要素は12, 21, 16で、その合計は49となる。"}, {"id": "D08", "c": "D", "f": "K", "q": "次のプログラムを実行したとき、表示される値はどれか。<br>c = 0<br>i を 1 から 3 まで 1 ずつ増やしながら繰り返す：<br>　j を i から 3 まで 1 ずつ増やしながら繰り返す：<br>　　c = c + 1<br>表示する(c)", "o": ["6", "9", "3", "5"], "e": "内側の繰り返しは i＝1で3回、i＝2で2回、i＝3で1回なので、合計6回となる。"}, {"id": "D09", "c": "D", "f": "K", "q": "次のプログラムを実行したとき、表示される値はどれか。（配列の添字は0から始まり、「÷」は商の整数部分、「%」は余りを表す）<br>Data = [5, 3, 8, 6, 2, 7]<br>x = 6<br>i = 0<br>Data[i] ≠ x の間繰り返す：<br>　i = i + 1<br>表示する(i)", "o": ["3", "4", "6", "2"], "e": "先頭から順に調べる線形探索で、6は添字3の位置にあるため3が表示される。"}, {"id": "D10", "c": "D", "f": "K", "q": "要素数15の昇順に整列されたデータに対して二分探索を行う。探索する値がデータの中に必ず含まれるとき、探索する値との比較回数は最大で何回か。ただし、毎回中央の要素と比較し、等しければ終了するものとする。", "o": ["4回", "3回", "8回", "15回"], "e": "1回の比較で探索範囲が約半分になり、15→7→3→1と絞り込まれるので最大4回である。"}, {"id": "D11", "c": "D", "f": "K", "q": "次のプログラムで二分探索を行う。x = 23 のとき、変数 aida が取る値を順に並べたものはどれか。（配列の添字は0から始まり、「÷」は商の整数部分、「%」は余りを表す）<br>Data = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]<br>x = 23<br>hidari = 0<br>migi = 9<br>hidari ≦ migi の間繰り返す：<br>　aida = (hidari + migi) ÷ 2<br>　もし Data[aida] ＝ x ならば：<br>　　表示する(aida)<br>　　繰り返しを抜ける<br>　そうでなくもし Data[aida] ＜ x ならば：<br>　　hidari = aida + 1<br>　そうでなければ：<br>　　migi = aida - 1", "o": ["4 → 7 → 5", "4 → 6 → 5", "5", "4 → 7 → 6 → 5"], "e": "aida＝4（16＜23）でhidari＝5、aida＝7（56＞23）でmigi＝6、aida＝(5＋6)÷2＝5で23が見つかる。"}, {"id": "D12", "c": "D", "f": "K", "q": "次のプログラムを実行したとき、表示される配列 Data の内容はどれか。<br>Data = [5, 2, 4, 1, 3]<br>i を 0 から 3 まで 1 ずつ増やしながら繰り返す：<br>　もし Data[i] ＞ Data[i + 1] ならば：<br>　　t = Data[i]<br>　　Data[i] = Data[i + 1]<br>　　Data[i + 1] = t<br>表示する(Data)", "o": ["[2, 4, 1, 3, 5]", "[2, 1, 3, 4, 5]", "[1, 2, 3, 4, 5]", "[2, 5, 4, 1, 3]"], "e": "隣り合う要素を左から比較・交換するバブルソートの1回目の走査で、最大値5が末尾に移動する。"}, {"id": "D13", "c": "D", "f": "K", "q": "データ [4, 3, 2, 1] をバブルソートで昇順に整列する。隣り合う2つの要素を比較し、左の方が大きいときに交換するとき、交換は全部で何回行われるか。", "o": ["6回", "3回", "4回", "12回"], "e": "完全に逆順の4要素では、すべての組（4×3÷2＝6組）が逆転しているため交換は6回となる。"}, {"id": "D14", "c": "D", "f": "K", "q": "データ [7, 3, 9, 1, 5] を選択ソートで昇順に整列する。未整列部分から最小値を探し、未整列部分の先頭と交換する。1回目の交換を行った直後のデータはどれか。", "o": ["[1, 3, 9, 7, 5]", "[1, 7, 3, 9, 5]", "[3, 7, 1, 5, 9]", "[1, 3, 5, 7, 9]"], "e": "最小値1と先頭の7を交換するので、[1, 3, 9, 7, 5]となる。"}, {"id": "D15", "c": "D", "f": "K", "q": "次のプログラムを実行したとき、表示される値はどれか。（配列の添字は0から始まり、「÷」は商の整数部分、「%」は余りを表す）<br>n = 1234<br>s = 0<br>n ＞ 0 の間繰り返す：<br>　s = s + n % 10<br>　n = n ÷ 10<br>表示する(s)", "o": ["10", "4", "24", "123"], "e": "n%10で1の位を取り出し、n÷10で1の位を取り除く。各桁の和4＋3＋2＋1＝10が求まる。"}, {"id": "D16", "c": "D", "f": "K", "q": "次のプログラムを実行したとき、表示される値はどれか。（配列の添字は0から始まり、「÷」は商の整数部分、「%」は余りを表す）<br>c = 0<br>i を 1 から 30 まで 1 ずつ増やしながら繰り返す：<br>　もし i % 3 ＝ 0 かつ i % 5 ≠ 0 ならば：<br>　　c = c + 1<br>表示する(c)", "o": ["8", "10", "12", "2"], "e": "1〜30の3の倍数は10個で、そのうち5の倍数でもある15と30を除くと8個となる。"}, {"id": "D17", "c": "D", "f": "K", "q": "次のプログラムを実行したとき、表示される値はどれか。（配列の添字は0から始まり、「÷」は商の整数部分、「%」は余りを表す）<br>Data = [1, 2, 3, 4, 5]<br>i を 1 から 4 まで 1 ずつ増やしながら繰り返す：<br>　Data[i] = Data[i] + Data[i - 1]<br>表示する(Data[4])", "o": ["15", "9", "5", "10"], "e": "Dataは[1, 3, 6, 10, 15]と累積和に更新されていくため、Data[4]は15となる。"}, {"id": "D18", "c": "D", "f": "K", "q": "次のプログラムを実行したとき、表示される値を表示された順に並べたものはどれか。（配列の添字は0から始まり、「÷」は商の整数部分、「%」は余りを表す）<br>n = 13<br>n ＞ 0 の間繰り返す：<br>　表示する(n % 2)<br>　n = n ÷ 2", "o": ["1, 0, 1, 1", "1, 1, 0, 1", "1, 0, 1", "0, 1, 1, 0"], "e": "nは13→6→3→1→0と変化し、余りは1,0,1,1の順に表示される。これは13の2進数1101を下の桁から表示したものである。"}, {"id": "D19", "c": "D", "f": "K", "q": "次のプログラムを実行したとき、表示される値はどれか。（配列の添字は0から始まり、「÷」は商の整数部分、「%」は余りを表す）<br>a = 84<br>b = 36<br>b ≠ 0 の間繰り返す：<br>　r = a % b<br>　a = b<br>　b = r<br>表示する(a)", "o": ["12", "6", "36", "4"], "e": "ユークリッドの互除法で、(84,36)→(36,12)→(12,0)となり、最大公約数12が表示される。"}, {"id": "D20", "c": "D", "f": "K", "q": "アルゴリズムの基本構造のうち、条件が成り立つかどうかによって実行する処理を分けるものはどれか。", "o": ["選択（分岐）構造", "順次構造", "反復構造", "階層構造"], "e": "アルゴリズムは順次・選択（分岐）・反復の3つの基本構造の組合せで表せる。"}, {"id": "D21", "c": "D", "f": "S", "X": "次のプログラムを実行すると、4が表示される。<br>x = 10<br>i を 1 から 3 まで 1 ずつ増やしながら繰り返す：<br>　x = x - i<br>表示する(x)", "Y": "上のプログラムで、繰り返しの中の処理「x = x - i」は4回実行される。", "xs": true, "ys": false, "e": "iは1,2,3の3回変化し、x＝10－1－2－3＝4となる。処理は3回実行される。"}, {"id": "D22", "c": "D", "f": "S", "X": "二分探索は、データが整列されていなくても正しく探索できる。", "Y": "線形探索では、要素数がnのとき、比較回数は最大でn回となる。", "xs": false, "ys": true, "e": "二分探索はデータが整列済みであることが前提である。線形探索は最悪の場合すべての要素と比較する。"}, {"id": "D23", "c": "D", "f": "S", "X": "a = 5、b = 3 のとき、「t = a」「a = b」「b = t」を順に実行すると、a は3、b は5になる。", "Y": "「i を 2 から 10 まで 2 ずつ増やしながら繰り返す：」では、繰り返しの中の処理が5回実行される。", "xs": true, "ys": true, "e": "作業用変数tを使うと値を入れ替えられる。iは2,4,6,8,10と5回変化する。"}, {"id": "D24", "c": "D", "f": "S", "X": "x = 5 のとき、「x ＜ 5 の間繰り返す：」の中の処理は1回だけ実行される。", "Y": "バブルソートで要素数nのデータを整列するとき、比較回数は常にn回である。", "xs": false, "ys": false, "e": "最初に条件が偽なので処理は1回も実行されない。基本的なバブルソートの比較回数はn(n－1)÷2回である。"}, {"id": "E01", "c": "E", "f": "K", "q": "IPv4のIPアドレスは何ビットで表されるか。", "o": ["32ビット", "128ビット", "48ビット", "64ビット"], "e": "IPv4は32ビットで、8ビットずつ4つに区切って10進数で表記する。IPv6は128ビット、MACアドレスは48ビットである。"}, {"id": "E02", "c": "E", "f": "K", "q": "「www.example.jp」のようなドメイン名とIPアドレスを対応させる仕組みはどれか。", "o": ["DNS", "DHCP", "HTTP", "SMTP"], "e": "DNSはドメイン名からIPアドレスを調べる（名前解決を行う）仕組みである。"}, {"id": "E03", "c": "E", "f": "K", "q": "ネットワークに接続したコンピュータに、IPアドレスなどの設定を自動的に割り当てるプロトコルはどれか。", "o": ["DHCP", "DNS", "FTP", "POP"], "e": "DHCPは、IPアドレスやデフォルトゲートウェイなどを自動で割り当てる。"}, {"id": "E04", "c": "E", "f": "K", "q": "電子メールをメールサーバへ送信したり、メールサーバ間で転送したりするときに使われるプロトコルはどれか。", "o": ["SMTP", "POP", "IMAP", "HTTP"], "e": "送信・転送にはSMTPを使い、受信（サーバからの取り出し・閲覧）にはPOPやIMAPを使う。"}, {"id": "E05", "c": "E", "f": "K", "q": "TCP/IPの4階層モデルで、IPが属する階層はどれか。", "o": ["インターネット層", "アプリケーション層", "トランスポート層", "ネットワークインタフェース層"], "e": "IPはインターネット層で宛先までの経路選択（ルーティング）を担う。TCPはトランスポート層である。"}, {"id": "E06", "c": "E", "f": "K", "q": "ネットワークアドレスが192.168.1.0/24のネットワークで、コンピュータなどのホストに割り当てられるIPアドレスは最大何個か。", "o": ["254個", "256個", "255個", "24個"], "e": "ホスト部は32－24＝8ビットで256通りあるが、ネットワークアドレスとブロードキャストアドレスを除くので254個となる。"}, {"id": "E07", "c": "E", "f": "K", "q": "2進数で 11000000.10101000.00000001.00001010 と表されるIPv4アドレスを10進数で表記したものはどれか。", "o": ["192.168.1.10", "192.168.1.5", "193.168.1.10", "192.168.2.10"], "e": "各8ビットを10進数に直すと、192・168・1・10となる。"}, {"id": "E08", "c": "E", "f": "K", "q": "通信速度100Mbpsの回線で、500MBのファイルを転送するのにかかる時間はどれか。ただし、1MB＝8Mビットとし、伝送効率は100％とする。", "o": ["40秒", "5秒", "50秒", "400秒"], "e": "500MB＝4000Mビットなので、4000÷100＝40秒となる。"}, {"id": "E09", "c": "E", "f": "K", "q": "10人が互いに秘密の通信を行うために共通鍵暗号方式を用いる。2人ずつの組ごとに異なる鍵を用意するとき、必要な鍵の数はどれか。", "o": ["45個", "20個", "10個", "90個"], "e": "10人から2人を選ぶ組合せの数は10×9÷2＝45である。公開鍵暗号方式なら1人2個で20個となる。"}, {"id": "E10", "c": "E", "f": "K", "q": "公開鍵暗号方式で、AさんがBさんに内容を第三者に知られないようにデータを送るときの方法として正しいものはどれか。", "o": ["Bさんの公開鍵で暗号化し、Bさんは自分の秘密鍵で復号する", "Aさんの公開鍵で暗号化し、BさんはAさんの秘密鍵で復号する", "Bさんの秘密鍵で暗号化し、Bさんは自分の公開鍵で復号する", "Aさんの秘密鍵で暗号化し、BさんはAさんの公開鍵で復号する"], "e": "受信者の公開鍵で暗号化すると、対になる受信者の秘密鍵でしか復号できない。"}, {"id": "E11", "c": "E", "f": "K", "q": "デジタル署名によって確認できることとして最も適当なものはどれか。", "o": ["送信者が本人であることと、データが改ざんされていないこと", "通信内容が第三者に盗聴されていないこと", "受信者がデータを確実に受け取ったこと", "データが圧縮されていること"], "e": "送信者の秘密鍵で作った署名を送信者の公開鍵で検証することで、なりすましと改ざんを検出できる。"}, {"id": "E12", "c": "E", "f": "K", "q": "アルファベットを一定の文字数だけ後ろにずらすシーザー暗号で、「JOHO」を3文字後ろにずらして暗号化したものはどれか。", "o": ["MRKR", "GLEL", "KPIP", "MRKS"], "e": "J→M、O→R、H→K、O→Rとなるので「MRKR」である。"}, {"id": "E13", "c": "E", "f": "K", "q": "次のデータの中央値はどれか。<br>3, 7, 7, 2, 9, 4, 10, 6", "o": ["6.5", "6", "7", "8"], "e": "小さい順に並べると2,3,4,6,7,7,9,10で、データが8個なので4番目と5番目の平均(6＋7)÷2＝6.5となる。"}, {"id": "E14", "c": "E", "f": "K", "q": "極端に大きい値や小さい値（外れ値）の影響を受けにくい代表値はどれか。", "o": ["中央値", "平均値", "最大値", "範囲"], "e": "中央値は順位で決まるため外れ値の影響を受けにくい。平均値は外れ値に引っ張られやすい。"}, {"id": "E15", "c": "E", "f": "K", "q": "次のデータの標準偏差はどれか。ただし、分散は「偏差の2乗の平均」とし、標準偏差は分散の正の平方根とする。<br>2, 4, 4, 4, 5, 5, 7, 9", "o": ["2", "4", "5", "32"], "e": "平均は5、偏差の2乗の合計は32で、分散は32÷8＝4、標準偏差は4の平方根で2となる。"}, {"id": "E16", "c": "E", "f": "K", "q": "2つの変量の相関係数が－0.9であるときの説明として最も適当なものはどれか。", "o": ["一方が大きいほど他方が小さくなる傾向が強い", "一方が大きいほど他方も大きくなる傾向が強い", "2つの変量の間にはほとんど関係がない", "一方が他方の原因であることが証明される"], "e": "相関係数が－1に近いほど強い負の相関がある。相関があっても因果関係があるとは限らない。"}, {"id": "E17", "c": "E", "f": "K", "q": "表計算ソフトで、セルA1〜A5にそれぞれ3, 8, 5, 10, 4が入力されている。セルB1に「=MAX(A1:A5)-MIN(A1:A5)」と入力したとき、B1に表示される値はどれか。", "o": ["7", "10", "3", "6"], "e": "最大値10から最小値3を引いて7となる。これはデータの範囲を表す。"}, {"id": "E18", "c": "E", "f": "K", "q": "表計算ソフトで、セルB1に「=A1*$C$1」と入力し、それをセルB2に複写した。セルB2の式はどれか。", "o": ["=A2*$C$1", "=A1*$C$1", "=A2*$C$2", "=A1*$C$2"], "e": "相対参照のA1は1行下にずれてA2になり、絶対参照の$C$1は変化しない。"}, {"id": "E19", "c": "E", "f": "K", "q": "関係データベースの操作のうち、表から条件に合う行（レコード）だけを取り出す操作はどれか。", "o": ["選択", "射影", "結合", "整列"], "e": "選択は行を、射影は列（フィールド）を取り出す操作で、結合は複数の表を共通の項目でつなぐ操作である。"}, {"id": "E20", "c": "E", "f": "K", "q": "関係データベースで、表の中の各レコードを一意に識別するために設定する項目はどれか。", "o": ["主キー", "外部キー", "フィールド名", "メタデータ"], "e": "主キーの値は重複せず、空にもできない。外部キーは他の表の主キーを参照する項目である。"}, {"id": "E21", "c": "E", "f": "S", "X": "IPv6のIPアドレスは128ビットで表される。", "Y": "HTTPSは、Webページのデータを暗号化しないで送受信するためのプロトコルである。", "xs": true, "ys": false, "e": "IPv6は128ビットである。HTTPSはSSL/TLSにより通信を暗号化したHTTPである。"}, {"id": "E22", "c": "E", "f": "S", "X": "共通鍵暗号方式では、暗号化と復号に異なる鍵を用いる。", "Y": "パケット交換方式では、1本の回線を複数の通信で共有できる。", "xs": false, "ys": true, "e": "共通鍵暗号方式は暗号化と復号に同じ鍵を使う。パケット交換方式はデータを小さく分割して送るため回線を共有できる。"}, {"id": "E23", "c": "E", "f": "S", "X": "データ 1, 2, 3, 4, 100 では、平均値が中央値より大きい。", "Y": "2つの変量の間に強い相関関係があっても、因果関係があるとは限らない。", "xs": true, "ys": true, "e": "平均値は22、中央値は3である。相関は因果関係を意味しない。"}, {"id": "E24", "c": "E", "f": "S", "X": "同じネットワーク内の異なるコンピュータに、同じIPアドレスを割り当てて使うのが一般的である。", "Y": "散布図で点が右下がりの直線状に並ぶとき、相関係数は1に近い正の値になる。", "xs": false, "ys": false, "e": "IPアドレスはネットワーク内で重複してはならない。右下がりは負の相関で、相関係数は－1に近くなる。"}]};
+const CATS=D.cats;const Q=D.q;
+const FMT={K:"4択",S:"正誤",N:"整序"};
+const SO=["X 正　Y 正","X 正　Y 誤","X 誤　Y 正","X 誤　Y 誤"];
+const NO=["Ⅰ－Ⅱ－Ⅲ","Ⅰ－Ⅲ－Ⅱ","Ⅱ－Ⅰ－Ⅲ","Ⅱ－Ⅲ－Ⅰ","Ⅲ－Ⅰ－Ⅱ","Ⅲ－Ⅱ－Ⅰ"];
+const NK=["123","132","213","231","312","321"];
+Q.forEach(q=>{if(q.f==="S"){q.o=SO;q.a=(q.xs?0:2)+(q.ys?0:1)}else if(q.f==="N"){q.o=NO;q.a=NK.indexOf(q.ord)}else{q.a=0}});
+const FSEG=[["ALL","すべて"]].concat(["K","S","N"].filter(f=>Q.some(q=>q.f===f)).map(f=>[f,FMT[f]]));
+
+/* ===== 記録（このブラウザのみ） ===== */
+const KEY="kyotsu-joho-v1";
+let rec={};
+try{rec=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){rec={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(rec))}catch(e){}}
+function mark(id,ok){const r=rec[id]||{c:0,w:0};ok?r.c++:r.w++;r.last=ok;rec[id]=r;save()}
+/* ===== ランク（習得度：正解済み問題の割合） ===== */
+const RANKS=[
+  {t:"新入生",en:"FRESHMAN",min:0},
+  {t:"学士",en:"BACHELOR",min:15},
+  {t:"修士",en:"MASTER",min:35},
+  {t:"博士",en:"DOCTOR",min:55},
+  {t:"教授",en:"PROFESSOR",min:75},
+  {t:"名誉教授",en:"EMERITUS",min:90}
+];
+function mastery(){let ok=0;Q.forEach(q=>{const r=rec[q.id];if(r&&r.last)ok++});return{ok,n:Q.length,pct:Q.length?ok/Q.length*100:0}}
+function rankOf(pct){let i=0;RANKS.forEach((r,k)=>{if(pct>=r.min)i=k});return i}
+function stars(i){return "★".repeat(i)+"☆".repeat(RANKS.length-1-i)}
+function rankPanel(){
+  const m=mastery(),i=rankOf(m.pct),r=RANKS[i],nx=RANKS[i+1];
+  const need=nx?Math.max(1,Math.ceil(nx.min/100*m.n)-m.ok):0;
+  const lo=r.min,hi=nx?nx.min:100,prog=nx?Math.min(100,Math.max(0,(m.pct-lo)/(hi-lo)*100)):100;
+  return `<div class="panel rankp"><div class="rk-badge rk${i}" aria-hidden="true"><span class="rk-en">${r.en}</span><span class="rk-t">${r.t}</span><span class="rk-st">${stars(i)}</span></div>
+    <div class="rk-body"><h2>あなたのランク：${r.t}</h2>
+    <p class="kbd num">正解済み ${m.ok} / ${m.n} 問（${Math.floor(m.pct)}%）</p>
+    <div class="meter rk-meter"><i style="width:${prog}%"></i></div>
+    <p class="kbd">${nx?`次の「${nx.t}」まで、あと <b class="num">${need}</b> 問正解`:"最高ランクに到達しました！"}</p></div></div>`;
+}
+const TITLES=[[100,"名誉教授級"],[90,"教授級"],[75,"博士級"],[60,"修士級"],[40,"学士級"],[0,"新入生級"]];
+function sessionRank(ok,n,r0){
+  const p=n?ok/n*100:0;const t=TITLES.find(x=>p>=x[0])[1];
+  const r1=rankOf(mastery().pct);
+  const up=r1>r0?`<div class="rk-up">ランクアップ！ ${RANKS[r0].t} → <b>${RANKS[r1].t}</b></div>`:"";
+  return `<div class="rk-session"><span class="kbd">今回の称号</span><span class="rk-title">${t}</span></div>${up}`;
+}
+
+/* ===== 状態 ===== */
+const app=document.getElementById("app");
+let S={view:"home",size:10,fmt:"ALL"};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const rich=s=>esc(s).replace(/&lt;(\/?)(sup|sub|u)&gt;/g,"<$1$2>").replace(/&lt;br&gt;/g,"<br>");
+const ROM=["Ⅰ","Ⅱ","Ⅲ"];
+
+function header(){return `<header class="top"><div class="subject"><h1><b>情報</b> ドリル</h1><span class="tag">共通テスト対策</span></div>
+  <div class="row"><a class="subj-link" href="index.html">メニュー</a><small class="num">全${Q.length}問</small></div></header>`}
+const fmtOK=q=>S.fmt==="ALL"||q.f===S.fmt;
+function stats(cat){const qs=Q.filter(q=>!cat||q.c===cat);let done=0,ok=0;qs.forEach(q=>{const r=rec[q.id];if(r){done++;if(r.last)ok++}});return{n:qs.length,done,ok}}
+
+function home(){
+  delete app.dataset.cat;
+  const missN=Q.filter(q=>rec[q.id]&&rec[q.id].last===false&&fmtOK(q)).length;
+  const all=stats();
+  app.innerHTML=header()+`
+  <p class="lead">分野を選んで始めてください。1問ごとに正誤と解説が出ます。正解を増やすとランクが上がります。記録はこの端末に保存されます。</p>
+  <div class="row"><span class="kbd" ${FSEG.length<3?"hidden":""}>形式</span>
+    <div class="seg" role="group" aria-label="形式" ${FSEG.length<3?"hidden":""}>${FSEG.map(([k,l])=>`<button id="fm${k}" aria-pressed="${S.fmt===k}" data-fmt="${k}">${l}</button>`).join("")}</div>
+    <span class="kbd">出題数</span>
+    <div class="seg" role="group" aria-label="出題数">${[10,20,0].map(n=>`<button id="sz${n}" aria-pressed="${S.size===n}" data-size="${n}">${n?n+"問":"全問"}</button>`).join("")}</div></div>
+  <div class="cats">${Object.entries(CATS).map(([k,c])=>{const s=stats(k);const pct=s.n?Math.round(s.ok/s.n*100):0;
+    return `<button class="cat" id="cat${k}" data-cat="${k}"><span class="k">${c.k}　<span class="era-yr">${c.yr}</span></span><span class="t">${c.name}</span><span class="d">${c.d}</span>
+    <span class="meter" aria-hidden="true"><i style="width:${pct}%"></i></span><span class="s num">正解済 ${s.ok} / ${s.n}　解答済 ${s.done}</span></button>`}).join("")}</div>
+  <div class="row">
+    <button class="btn primary" id="mix" data-cat="ALL">全分野ミックス</button>
+    <button class="btn" id="review" data-cat="MISS" ${missN?"":"disabled"}>間違えた問題を復習（${missN}問）</button>
+  </div>
+  ${rankPanel()}
+  <div class="panel"><h2>これまでの成績</h2>
+    <div class="score"><span class="big">${all.done?Math.round(all.ok/all.done*100):0}<small style="font-size:18px">%</small></span>
+    <span class="kbd num">直近の正答率（解答済 ${all.done} 問中 ${all.ok} 問正解）</span></div>
+    <div class="row" style="margin-top:10px"><button class="btn" id="reset" ${all.done?"":"disabled"}>記録を消す</button><span class="kbd" id="resetMsg"></span></div>
+  </div>
+  <footer>操作：選択肢は数字キー（1〜6）、次へは Enter キーでも進めます。</footer>`;
+  app.querySelectorAll("[data-size]").forEach(b=>b.onclick=()=>{S.size=+b.dataset.size;home()});
+  app.querySelectorAll("[data-fmt]").forEach(b=>b.onclick=()=>{S.fmt=b.dataset.fmt;home()});
+  app.querySelectorAll("button[data-cat]").forEach(b=>b.onclick=()=>start(b.dataset.cat));
+  let armed=false;const rb=document.getElementById("reset");
+  rb.onclick=()=>{if(!armed){armed=true;rb.textContent="本当に消す";document.getElementById("resetMsg").textContent="もう一度押すと全記録を消去します";return}rec={};save();home()};
+}
+
+function start(cat){
+  let pool=Q.filter(fmtOK);
+  pool=cat==="ALL"?pool:cat==="MISS"?pool.filter(q=>rec[q.id]&&rec[q.id].last===false):pool.filter(q=>q.c===cat);
+  if(!pool.length){home();return}
+  pool=shuffle(pool);if(S.size&&cat!=="MISS")pool=pool.slice(0,S.size);
+  S={...S,view:"quiz",r0:rankOf(mastery().pct),cat,list:pool,i:0,res:[],done:false};
+  question();
+}
+
+function body(q){
+  if(q.f==="S")return `<p class="stem">次の文X・Yについて、その正誤の組合せとして正しいものを選べ。</p>
+    <div class="stmts"><div class="stmt"><span class="lb">X</span><span class="tx">${rich(q.X)}</span></div><div class="stmt"><span class="lb">Y</span><span class="tx">${rich(q.Y)}</span></div></div>`;
+  if(q.f==="N")return `<p class="stem">${rich(q.p||"次のⅠ〜Ⅲについて、古いものから年代順に正しく配列したものを選べ。")}</p>
+    <div class="stmts">${q.i.map((t,k)=>`<div class="stmt"><span class="lb">${ROM[k]}</span><span class="tx">${rich(t)}</span></div>`).join("")}</div>`;
+  return `<p class="stem">${rich(q.q)}</p>`;
+}
+
+function question(){
+  const q=S.list[S.i];S.done=false;app.dataset.cat=q.c;
+  const label=S.cat==="ALL"?"全分野ミックス":S.cat==="MISS"?"復習":CATS[S.cat].name;
+  S.opts=(q.f==="K"?shuffle(q.o.map((t,k)=>({t,k}))):q.o.map((t,k)=>({t,k})));
+  app.innerHTML=`${header()}<div class="qhead"><span>${label}　<span class="num">${S.i+1} / ${S.list.length}</span></span><button class="btn" id="quit" style="padding:4px 12px;font-size:13px">やめる</button></div>
+  <div class="bar"><i style="width:${S.i/S.list.length*100}%"></i></div>
+  <div class="panel"><div><span class="qno">${q.id}</span><span class="kbd">${CATS[q.c].name}</span><span class="fmt">${FMT[q.f]}</span></div>
+    ${body(q)}
+    <div class="choices ${q.f==="N"?"six":""}">${S.opts.map((o,n)=>`<button class="ch" id="ch${n}" data-n="${n}"><span class="oval">${n+1}</span><span>${rich(o.t)}</span></button>`).join("")}</div>
+    <div id="fb"></div></div>`;
+  app.querySelectorAll(".ch").forEach(b=>b.onclick=()=>choose(+b.dataset.n));
+  document.getElementById("quit").onclick=()=>{S.view="home";home()};
+}
+
+function answerText(q){
+  if(q.f==="N"){const o=q.ord.split("").map(d=>+d-1);return `${NO[q.a]}（${o.map(k=>`${rich(q.i[k])}${q.yr?`〈${rich(q.yr[k])}〉`:""}`).join(" → ")}）`}
+  return rich(q.o[q.a]);
+}
+function choose(n){
+  if(S.done)return;S.done=true;
+  const q=S.list[S.i];const ok=S.opts[n].k===q.a;
+  app.querySelectorAll(".ch").forEach((b,m)=>{b.disabled=true;if(S.opts[m].k===q.a)b.classList.add("right")});
+  const b=document.getElementById("ch"+n);b.classList.add("sel");if(!ok)b.classList.add("wrong");
+  mark(q.id,ok);S.res.push({q,ok,your:S.opts[n].t});
+  const last=S.i===S.list.length-1;
+  document.getElementById("fb").innerHTML=`<div class="fb ${ok?"ok":"ng"}" role="status">
+    <div class="v"><span class="mark">${ok?"○":"×"}</span>${ok?"正解！":"おしい！"}</div>
+    <p>正解：<b>${answerText(q)}</b></p><p>${rich(q.e)}</p></div>
+    <div class="row" style="margin-top:14px"><button class="btn primary" id="next">${last?"結果を見る":"次の問題へ"}</button></div>`;
+  const nx=document.getElementById("next");nx.focus({preventScroll:true});
+  nx.onclick=()=>{if(last){result()}else{S.i++;question();window.scrollTo({top:0})}};
+}
+
+function qSummary(q){
+  if(q.f==="S")return `X：${rich(q.X)}<br>Y：${rich(q.Y)}`;
+  if(q.f==="N")return q.i.map((t,k)=>`${ROM[k]} ${rich(t)}`).join("　");
+  return rich(q.q);
+}
+function result(){
+  S.view="result";delete app.dataset.cat;
+  const n=S.res.length,ok=S.res.filter(r=>r.ok).length,miss=S.res.filter(r=>!r.ok);
+  app.innerHTML=header()+`<div class="panel"><h2>結果</h2>
+    <div class="score"><span class="big">${ok}</span><span class="num" style="font-size:20px">/ ${n}</span><span class="kbd">正答率 ${Math.round(ok/n*100)}%</span></div>${sessionRank(ok,n,S.r0)}
+    ${miss.length?`<ul class="miss">${miss.map(r=>`<li data-cat="${r.q.c}"><div class="kbd"><span class="qno">${r.q.id}</span>${CATS[r.q.c].name}<span class="fmt">${FMT[r.q.f]}</span></div>
+      <div class="en">${qSummary(r.q)}</div>
+      <div class="x">正解：<b>${answerText(r.q)}</b>　／　あなたの解答：${rich(r.your)}</div><div class="x">${rich(r.q.e)}</div></li>`).join("")}</ul>`:`<p style="font-size:18px;font-weight:900">全問正解！すばらしい！</p>`}
+    <div class="row" style="margin-top:16px"><button class="btn primary" id="again">同じ条件でもう一度</button><button class="btn" id="back">トップへ戻る</button></div></div>`;
+  document.getElementById("again").onclick=()=>start(S.cat);
+  document.getElementById("back").onclick=home;
+}
+
+document.addEventListener("keydown",e=>{
+  if(S.view!=="quiz")return;
+  const n=S.list[S.i].o.length;
+  if(/^[1-6]$/.test(e.key)&&!S.done&&+e.key<=n){choose(+e.key-1)}
+  else if(e.key==="Enter"&&S.done){const nx=document.getElementById("next");if(nx&&document.activeElement!==nx){e.preventDefault();nx.click()}}
+});
+home();
+</script>
+
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
+</body>
+</html>

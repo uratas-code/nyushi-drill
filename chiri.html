@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EAF4FF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161A2E" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="入試ドリル">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}</style>
+<title>地理ドリル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Nunito:wght@600;800;900&family=Fredoka:wght@600;700&display=swap">
+<style>
+/* Layout: ステッカー風のポップな一列カラム。太いフチ＋ずらした影、分野ごとにカラー */
+:root{
+  --bg:#EAF4FF; --dot:#CFE3FA; --card:#FFFFFF; --ink:#1B1E3A; --muted:#5C6385; --edge:#1B1E3A;
+  --g:#FF5C8A; --v:#2FA8FF; --o:#FFB800; --c:var(--g);
+  --c-soft:#FFE3EC;
+  --ok:#14B06A; --ok-soft:#DDF7EA; --ng:#FF4D4D; --ng-soft:#FFE4E4;
+  --btn-ink:#FFFFFF;
+  --f-jp:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  --f-en:"Nunito","Segoe UI",system-ui,sans-serif;
+  --f-num:"Fredoka","Nunito",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#161A2E; --dot:#22284A; --card:#232945; --ink:#F2F4FF; --muted:#A9B0D4; --edge:#060815;
+  --g:#FF7AA2; --v:#5BBEFF; --o:#FFC933; --c-soft:#3A2440;
+  --ok:#3DD68C; --ok-soft:#173829; --ng:#FF6F6F; --ng-soft:#3E1D22; --btn-ink:#161A2E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161A2E; --dot:#22284A; --card:#232945; --ink:#F2F4FF; --muted:#A9B0D4; --edge:#060815;
+  --g:#FF7AA2; --v:#5BBEFF; --o:#FFC933; --c-soft:#3A2440;
+  --ok:#3DD68C; --ok-soft:#173829; --ng:#FF6F6F; --ng-soft:#3E1D22; --btn-ink:#161A2E; color-scheme:dark}
+[data-cat="G"]{--c:var(--g)} [data-cat="V"]{--c:var(--v)} [data-cat="O"]{--c:var(--o)}
+*{box-sizing:border-box}
+body{background-color:var(--bg);background-image:radial-gradient(var(--dot) 2px,transparent 2.5px);background-size:22px 22px;
+  color:var(--ink);font-family:var(--f-jp);font-weight:500;font-size:15px;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--v);outline-offset:3px}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.subject{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.subject h1{margin:0;font-size:30px;font-weight:900;letter-spacing:.02em;text-wrap:balance;
+  text-shadow:3px 3px 0 var(--g)}
+.subject h1 b{font-family:var(--f-num);font-weight:700;color:var(--v);text-shadow:3px 3px 0 var(--o)}
+.tag{font-size:12px;font-weight:900;background:var(--o);color:#1B1E3A;border:2px solid var(--edge);border-radius:999px;padding:2px 12px;transform:rotate(-4deg);box-shadow:2px 2px 0 var(--edge)}
+.top small{font-family:var(--f-num);font-size:14px;background:var(--card);border:2px solid var(--edge);border-radius:999px;padding:2px 12px}
+.lead{color:var(--muted);margin:0}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.cat{background:var(--card);border:3px solid var(--edge);border-radius:20px;padding:16px 16px 14px;text-align:left;display:flex;flex-direction:column;gap:6px;min-width:0;
+  box-shadow:5px 5px 0 var(--c);transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}
+.cat::after{content:"";position:absolute;right:-24px;top:-24px;width:80px;height:80px;border-radius:50%;background:var(--c);opacity:.25}
+.cat:hover{transform:translate(-2px,-3px) rotate(-.6deg);box-shadow:8px 8px 0 var(--c)}
+.cat:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--c)}
+.cat .k{font-family:var(--f-num);font-size:12px;font-weight:700;color:var(--c);letter-spacing:.12em;filter:brightness(.85)}
+.cat .t{font-size:20px;font-weight:900}
+.cat .d{font-size:13px;color:var(--muted)}
+.meter{height:12px;background:var(--bg);border:2px solid var(--edge);border-radius:999px;position:relative;margin-top:6px;overflow:hidden}
+.meter i{position:absolute;inset:0 auto 0 0;background:var(--c);border-radius:999px}
+.cat .s{font-size:12px;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{background:var(--card);border:3px solid var(--edge);border-radius:999px;padding:8px 20px;font-weight:700;box-shadow:3px 3px 0 var(--edge);transition:transform .1s,box-shadow .1s}
+.btn:hover:not([disabled]){transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--edge)}
+.btn:active:not([disabled]){transform:translate(3px,3px);box-shadow:0 0 0 var(--edge)}
+.btn.primary{background:var(--g);color:#fff}
+#mix.primary{background:linear-gradient(90deg,var(--g),var(--v))}
+.btn[disabled]{opacity:.4;cursor:default;box-shadow:none}
+.seg{display:inline-flex;border:3px solid var(--edge);border-radius:999px;overflow:hidden;box-shadow:3px 3px 0 var(--edge)}
+.seg button{background:var(--card);border:0;padding:5px 16px;font-size:13px;font-weight:700}
+.seg button+button{border-left:2px solid var(--edge)}
+.seg button[aria-pressed="true"]{background:var(--o);color:#1B1E3A}
+.panel{background:var(--card);border:3px solid var(--edge);border-radius:24px;padding:20px;box-shadow:6px 6px 0 var(--edge)}
+.panel h2{margin:0 0 8px;font-size:18px;font-weight:900}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;font-weight:700}
+.bar{height:14px;background:var(--card);border:3px solid var(--edge);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:repeating-linear-gradient(45deg,var(--c) 0 10px,color-mix(in srgb,var(--c) 70%,#fff) 10px 20px);transition:width .35s cubic-bezier(.3,1.6,.5,1)}
+.qno{display:inline-block;background:var(--c);color:#fff;font-family:var(--f-num);font-weight:700;padding:1px 10px;margin-right:8px;font-size:13px;border-radius:999px;border:2px solid var(--edge)}
+[data-cat="O"] .qno{color:#1B1E3A}
+.stem{font-family:var(--f-en);font-weight:800;font-size:21px;line-height:1.6;margin:14px 0 6px}
+.stem .blank{display:inline-block;min-width:5.5em;background:var(--c-soft);border:2px dashed var(--c);border-radius:10px;text-align:center;font-family:var(--f-num);font-size:14px;color:var(--ink);line-height:1.8}
+.ja{color:var(--muted);font-size:14px;margin:0}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+@media (max-width:520px){.choices{grid-template-columns:1fr}}
+.ch{display:flex;align-items:center;gap:12px;background:var(--card);border:3px solid var(--edge);border-radius:16px;padding:10px 14px;text-align:left;font-family:var(--f-en);font-weight:800;font-size:17px;
+  box-shadow:3px 3px 0 var(--edge);transition:transform .12s,box-shadow .12s;min-width:0}
+.ch:hover:not([disabled]){transform:translate(-1px,-2px);box-shadow:4px 5px 0 var(--c)}
+.oval{flex:none;width:30px;height:30px;border:2px solid var(--edge);border-radius:50%;display:grid;place-items:center;font-family:var(--f-num);font-size:14px;font-weight:700;background:var(--c);color:#fff}
+[data-cat="O"] .oval{color:#1B1E3A}
+.ch.right{background:var(--ok-soft);border-color:var(--ok);box-shadow:3px 3px 0 var(--ok)}
+.ch.right .oval{background:var(--ok)}
+.ch.wrong{background:var(--ng-soft);border-color:var(--ng);box-shadow:3px 3px 0 var(--ng);animation:shake .35s}
+.ch.wrong .oval{background:var(--ng)}
+.ch.sel.right{animation:pop .4s}
+.ch[disabled]{cursor:default}
+.ch[disabled]:not(.right):not(.wrong){opacity:.55}
+.fb{margin-top:18px;border:3px solid var(--ok);border-radius:18px;background:var(--ok-soft);padding:12px 16px;animation:pop .35s}
+.fb.ng{border-color:var(--ng);background:var(--ng-soft)}
+.fb .v{font-weight:900;font-size:20px;display:flex;align-items:center;gap:8px}
+.fb.ok .v{color:var(--ok)} .fb.ng .v{color:var(--ng)}
+.fb p{margin:6px 0 0}
+.fb .en{font-family:var(--f-en);font-weight:800;font-size:16px}
+.mark{font-family:var(--f-num);font-size:26px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;border:2px solid var(--edge)}
+.fb.ok .mark{background:var(--ok)} .fb.ng .mark{background:var(--ng)}
+/* 並べ替え */
+.build{min-height:60px;border:3px dashed var(--c);border-radius:16px;background:var(--bg);padding:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;font-family:var(--f-en);font-weight:800;font-size:17px}
+.build .fix{color:var(--muted)}
+.build .ph{color:var(--muted);font-family:var(--f-jp);font-size:13px}
+.pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{border:2px solid var(--edge);border-radius:12px;background:var(--card);padding:4px 14px;font-family:var(--f-en);font-weight:800;font-size:17px;box-shadow:2px 2px 0 var(--edge);transition:transform .1s}
+.chip:hover:not([disabled]){transform:translateY(-2px) rotate(-2deg)}
+.chip.used{opacity:.2;cursor:default;box-shadow:none}
+.build .chip{background:var(--c);color:#fff;animation:pop .25s}
+[data-cat="O"] .build .chip{color:#1B1E3A}
+.kbd{font-size:12px;color:var(--muted)}
+.score{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.score .big{font-family:var(--f-num);font-weight:700;font-size:56px;line-height:1;color:var(--g);text-shadow:3px 3px 0 var(--o)}
+.miss{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.miss li{border:2px solid var(--edge);border-radius:14px;padding:10px 12px;min-width:0;background:var(--bg)}
+.miss .en{font-family:var(--f-en);font-weight:800;font-size:16px}
+.miss .en b{color:var(--ok)}
+.miss .x{font-size:13px;color:var(--muted)}
+footer{color:var(--muted);font-size:12px;text-align:center}
+@keyframes pop{0%{transform:scale(.9)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<style>
+/* 日本史用の追加：時代ごとのカラーと設問ブロック */
+:root{--ey:#B88A00;--ea:#F26A2E;--em:#0E9C8C;--ee:#E8457A;--ed:#7353F0;--ep:#2C8FE0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ea:#FF8F5C;--em:#2CC7B5;--ee:#FF7AA2;--ed:#9C85FF;--ep:#5BBEFF;--ey:#E6C340}}
+:root[data-theme="dark"]{--ea:#FF8F5C;--em:#2CC7B5;--ee:#FF7AA2;--ed:#9C85FF;--ep:#5BBEFF;--ey:#E6C340}
+[data-cat="A"]{--c:var(--ea)} [data-cat="B"]{--c:var(--em)} [data-cat="C"]{--c:var(--ee)} [data-cat="D"]{--c:var(--ed)} [data-cat="E"]{--c:var(--ep)}
+.stem{font-family:var(--f-jp);font-weight:700;font-size:18px}
+.stmts{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.stmt{display:flex;gap:10px;align-items:flex-start;background:var(--bg);border:2px solid var(--edge);border-radius:14px;padding:8px 12px;min-width:0}
+.stmt .lb{flex:none;font-family:var(--f-num);font-weight:700;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:#fff;border:2px solid var(--edge)}
+.stmt .tx{font-weight:700;min-width:0}
+.ch{font-family:var(--f-jp);font-weight:700}
+.choices.six{grid-template-columns:repeat(3,1fr)}
+@media (max-width:520px){.choices.six{grid-template-columns:1fr 1fr}}
+.choices.six .ch{white-space:nowrap;gap:8px;padding:10px}
+@media (max-width:520px){.choices.six .ch{font-size:15px;padding:10px 8px}.choices.six .oval{width:26px;height:26px;font-size:13px}}
+.fmt{display:inline-block;font-size:11px;font-weight:900;border:2px solid var(--edge);border-radius:999px;padding:0 8px;margin-left:6px;background:var(--o);color:#1B1E3A}
+.era-yr{font-family:var(--f-num);font-size:12px;color:var(--muted)}
+.subj-link{font-size:13px;font-weight:700;color:var(--ink);text-decoration:none;border:2px solid var(--edge);border-radius:999px;padding:2px 12px;background:var(--card)}
+.subj-link:hover{background:var(--o);color:#1B1E3A}
+.miss .en{font-family:var(--f-jp);font-weight:700}
+.subject h1 b{font-family:var(--f-jp);font-weight:900}
+</style>
+<style>
+/* ランク表示 */
+.rankp{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.rk-body{flex:1;min-width:200px}
+.rk-body h2{margin:0 0 2px}
+.rk-body p{margin:4px 0}
+.rk-meter i{background:linear-gradient(90deg,var(--o),var(--g))}
+.rk-badge{flex:none;width:118px;height:118px;border-radius:50%;border:4px solid var(--edge);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;box-shadow:4px 4px 0 var(--edge);transform:rotate(-6deg);text-align:center;color:#1B1E3A}
+.rk-badge .rk-en{font-family:var(--f-num);font-size:10px;letter-spacing:.12em;font-weight:700}
+.rk-badge .rk-t{font-size:22px;font-weight:900;line-height:1.2}
+.rk-badge .rk-st{font-size:12px;letter-spacing:1px}
+.rk0{background:#E4E8F2}.rk1{background:#BFE6FF}.rk2{background:#C9F2DA}.rk3{background:#FFD873}.rk4{background:#FFB3CB}
+.rk5{background:conic-gradient(#FFD873,#FFB3CB,#BFE6FF,#C9F2DA,#FFD873)}
+.rk-session{display:flex;align-items:baseline;gap:10px;margin-top:12px;flex-wrap:wrap}
+.rk-title{font-size:26px;font-weight:900;color:var(--ink);background:var(--o);border:3px solid var(--edge);border-radius:999px;padding:0 16px;box-shadow:3px 3px 0 var(--edge);transform:rotate(-2deg);display:inline-block;color:#1B1E3A}
+.rk-up{margin-top:12px;font-weight:900;font-size:18px;color:var(--g);animation:pop .5s}
+</style>
+
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* ===== 問題データ ===== */
+const D={"cats": {"A": {"name": "地形・気候・植生", "k": "NATURE", "yr": "系統地理", "d": "プレートと地形の成因、ケッペン気候区分、植生と土壌"}, "B": {"name": "農林水産業・食料", "k": "AGRICULTURE", "yr": "系統地理", "d": "農業区分、主要作物と家畜、漁業・林業、食料問題"}, "C": {"name": "鉱工業・エネルギー・資源", "k": "INDUSTRY", "yr": "系統地理", "d": "鉱産資源の分布、工業立地、エネルギーの利用と転換"}, "D": {"name": "人口・都市・村落・生活文化", "k": "POPULATION", "yr": "系統地理", "d": "人口転換と人口構成、都市問題、村落、宗教・言語・住居"}, "E": {"name": "世界の地誌", "k": "REGIONS", "yr": "地誌", "d": "アジア・ヨーロッパ・アフリカ・南北アメリカ・オセアニアの特色"}}, "q": [{"id": "A01", "c": "A", "f": "K", "q": "海洋プレートが大陸プレートの下に沈み込む、プレートの狭まる境界に形成される海底地形はどれか。", "o": ["海溝", "海嶺", "リフトヴァレー（地溝帯）", "トランスフォーム断層"], "e": "海洋プレートが沈み込む場所には細長く深い海溝ができる。海嶺とリフトヴァレーは広がる境界、トランスフォーム断層はずれる境界にみられる。"}, {"id": "A02", "c": "A", "f": "K", "q": "扇状地の扇端部に集落が立地しやすい主な理由として最も適当なものはどれか。", "o": ["扇央で伏流していた水が湧き出し、水が得やすいから", "扇頂より標高が高く、洪水を避けやすいから", "砂礫層が厚く地下水位が深いため、地盤が乾燥しているから", "火山灰が厚く堆積し、肥沃な土壌が広がるから"], "e": "扇央では河川が伏流して水が得にくいが、扇端では湧水があるため集落や水田が立地しやすい。扇端は扇頂より標高が低い。"}, {"id": "A03", "c": "A", "f": "K", "q": "河川の侵食によってできたV字谷が沈水して形成された、出入りの多い海岸地形はどれか。", "o": ["リアス海岸", "フィヨルド", "エスチュアリー（三角江）", "海岸段丘"], "e": "V字谷の沈水でできるのがリアス海岸である。フィヨルドは氷河のU字谷の沈水、エスチュアリーは河口部の沈水でラッパ状になった地形、海岸段丘は隆起でできる。"}, {"id": "A04", "c": "A", "f": "K", "q": "ドリーネやウバーレ、鍾乳洞などのカルスト地形がつくられる岩石はどれか。", "o": ["石灰岩", "花崗岩", "玄武岩", "砂岩"], "e": "カルスト地形は、石灰岩が二酸化炭素を含む雨水や地下水に溶食されてできる。"}, {"id": "A05", "c": "A", "f": "K", "q": "ケッペンの気候区分で、最寒月平均気温が18℃以上で、年中降水量が多く明瞭な乾季がみられない気候はどれか。", "o": ["熱帯雨林気候（Af）", "サバナ気候（Aw）", "温暖湿潤気候（Cfa）", "地中海性気候（Cs）"], "e": "年中高温多雨なのはAfである。Awは雨季と乾季が明瞭で、Cfa・Csは最寒月平均気温が18℃未満の温帯である。"}, {"id": "A06", "c": "A", "f": "K", "q": "夏に乾燥し冬に降水が多く、オリーブやぶどうの栽培が盛んな気候区はどれか。", "o": ["地中海性気候（Cs）", "西岸海洋性気候（Cfb）", "温暖冬季少雨気候（Cw）", "温暖湿潤気候（Cfa）"], "e": "夏に亜熱帯高圧帯の影響で乾燥するのがCsである。Cwは逆に冬に乾燥し、Cfa・Cfbは年中降水がある。"}, {"id": "A07", "c": "A", "f": "K", "q": "西ヨーロッパが高緯度のわりに冬が温暖である主な理由として最も適当なものはどれか。", "o": ["暖流の北大西洋海流の上を吹く偏西風の影響を受けるから", "赤道付近から吹く貿易風が暖気を運ぶから", "沖合を流れる寒流が気温の低下を防ぐから", "冬に大陸内部から季節風が吹き出すから"], "e": "暖流の北大西洋海流で暖められた大気を偏西風が運ぶため、西ヨーロッパの冬は温暖になる。貿易風は低緯度の風で、冬の大陸からの季節風は寒冷をもたらす。"}, {"id": "A08", "c": "A", "f": "K", "q": "南アメリカの太平洋岸に位置するアタカマ砂漠の形成に強く関わる要因として最も適当なものはどれか。", "o": ["沖合を流れる寒流（ペルー海流）", "沖合を流れる暖流（黒潮）", "一年中赤道低圧帯の影響を受けること", "冬に大陸内部から吹き出す季節風"], "e": "寒流で下層の大気が冷やされて上昇気流が生じにくく、海岸砂漠が形成される。黒潮は日本近海の暖流で、赤道低圧帯は多雨をもたらす。"}, {"id": "A09", "c": "A", "f": "K", "q": "亜寒帯（冷帯）の針葉樹林下に分布する、灰白色でやせた酸性の土壌はどれか。", "o": ["ポドゾル", "ラトソル", "チェルノーゼム", "テラロッサ"], "e": "ポドゾルは冷涼な針葉樹林下の酸性土壌である。ラトソルは熱帯の赤色土、チェルノーゼムはステップの肥沃な黒色土、テラロッサは地中海沿岸の石灰岩風化土。"}, {"id": "A10", "c": "A", "f": "K", "q": "シベリアやカナダに広く分布する、樹種の少ない針葉樹林を何というか。", "o": ["タイガ", "セルバ", "リャノ", "パンパ"], "e": "亜寒帯の針葉樹林をタイガという。セルバはアマゾン川流域の熱帯雨林、リャノはオリノコ川流域のサバナ、パンパはアルゼンチンの草原である。"}, {"id": "A11", "c": "A", "f": "K", "q": "河川が運んだ土砂が河口付近に堆積して形成される低平な地形はどれか。", "o": ["三角州", "扇状地", "河岸段丘", "海岸段丘"], "e": "河口に土砂が堆積してできるのが三角州である。扇状地は山地から平地に出る谷口に形成され、段丘は土地の隆起や侵食基準面の変化で形成される。"}, {"id": "A12", "c": "A", "f": "K", "q": "氷河の侵食によって形成された地形はどれか。", "o": ["カール（圏谷）", "ドリーネ", "バルハン", "ワジ"], "e": "カールは山頂付近を氷河が削ってできた半椀状の谷である。ドリーネはカルスト地形、バルハンは三日月形の砂丘、ワジは乾燥地域の涸れ川。"}, {"id": "A13", "c": "A", "f": "K", "q": "北インド洋やベンガル湾などで発生する熱帯低気圧の呼び名はどれか。", "o": ["サイクロン", "ハリケーン", "台風（タイフーン）", "ブリザード"], "e": "インド洋で発生する熱帯低気圧はサイクロンと呼ばれる。ハリケーンは北大西洋など、台風は北西太平洋のもの、ブリザードは猛吹雪のことである。"}, {"id": "A14", "c": "A", "f": "K", "q": "冬に日本海側で降雪が多くなる主な理由として最も適当なものはどれか。", "o": ["北西の季節風が日本海で水蒸気を補給し、山地にぶつかって雪を降らせるから", "南東の季節風が太平洋から湿った空気を運ぶから", "オホーツク海高気圧から冷たいやませが吹き込むから", "梅雨前線が日本海側に停滞し続けるから"], "e": "冬の北西季節風は暖流の対馬海流が流れる日本海上で水蒸気を得て、脊梁山脈にぶつかり大雪をもたらす。やませや梅雨前線は夏の現象である。"}, {"id": "A15", "c": "A", "f": "K", "q": "プレートの広がる境界に位置し、海嶺が陸上に現れている島はどれか。", "o": ["アイスランド", "ニュージーランド", "日本列島", "スリランカ"], "e": "アイスランドは大西洋中央海嶺の上にあり、ギャオと呼ばれる割れ目がみられる。ニュージーランドや日本列島は狭まる境界付近、スリランカは安定した地域にある。"}, {"id": "A16", "c": "A", "f": "K", "q": "先カンブリア時代の岩盤からなる安定陸塊の特徴として最も適当なものはどれか。", "o": ["長期間の侵食により平坦な地形が広がり、鉄鉱石の産出が多い", "高く険しい山脈が連なり、地震や火山活動が活発である", "古生代の造山運動によるなだらかな山地で、石炭の産出が多い", "海洋プレートの沈み込みにより弧状列島が形成されている"], "e": "安定陸塊には楯状地や卓状地が広がり、鉄鉱石の大規模な産地が多い。険しい山脈は新期造山帯、石炭の多いなだらかな山地は古期造山帯の特徴である。"}, {"id": "A17", "c": "A", "f": "S", "X": "ラトソルは、温帯の落葉広葉樹林下に分布する肥沃な褐色の土壌である。", "Y": "テラロッサは、地中海沿岸などの石灰岩地域に分布する赤色の土壌である。", "xs": false, "ys": true, "e": "X：ラトソルは熱帯に分布する赤色のやせた土壌で、温帯の落葉広葉樹林下に分布するのは褐色森林土である。Yは正しい。"}, {"id": "A18", "c": "A", "f": "S", "X": "海岸段丘は、海岸付近の土地が沈降することによって形成される階段状の地形である。", "Y": "砂嘴が成長して対岸とつながり、湾が海から切り離されてできた湖をカルデラ湖という。", "xs": false, "ys": false, "e": "X：海岸段丘は土地の隆起や海面低下によって形成される。Y：そのような湖は潟湖（ラグーン）で、カルデラ湖は火山の陥没地にできる湖である。"}, {"id": "A19", "c": "A", "f": "S", "X": "ツンドラ気候（ET）の地域では、最暖月平均気温が10℃以上となり、針葉樹林が広がる。", "Y": "氷雪気候（EF）は最暖月平均気温が0℃未満の気候で、南極大陸やグリーンランド内陸部にみられる。", "xs": false, "ys": true, "e": "X：ETは最暖月平均気温が0℃以上10℃未満で樹木は育たず、短い夏にこけ類などが生える。Yは正しい。"}, {"id": "A20", "c": "A", "f": "S", "X": "自然堤防は、洪水時に河道からあふれた土砂が河道沿いに堆積してできた微高地で、集落や畑に利用されることが多い。", "Y": "後背湿地は自然堤防の背後に広がる低湿地で、水田に利用されることが多い。", "xs": true, "ys": true, "e": "氾濫原では、水はけのよい微高地の自然堤防に集落や畑が、水はけの悪い後背湿地に水田が立地する。いずれも正しい。"}, {"id": "A21", "c": "A", "f": "S", "X": "ステップ気候（BS）の地域には短草草原が広がり、肥沃な黒色土のチェルノーゼムがみられる地域もある。", "Y": "サバナ気候（Aw）は雨季と乾季が明瞭で、疎林と長草草原がみられる。", "xs": true, "ys": true, "e": "X：ウクライナなどのステップにはチェルノーゼムが分布する。Y：サバナには疎林と丈の長い草原が広がる。いずれも正しい。"}, {"id": "A22", "c": "A", "f": "S", "X": "季節風（モンスーン）は、夏は大陸から海洋へ、冬は海洋から大陸へ吹く傾向がある。", "Y": "貿易風は、中緯度高圧帯（亜熱帯高圧帯）から高緯度低圧帯（亜寒帯低圧帯）に向かって吹く風である。", "xs": false, "ys": false, "e": "X：季節風は夏に海洋から大陸へ、冬に大陸から海洋へ吹く。Y：これは偏西風の説明で、貿易風は亜熱帯高圧帯から赤道低圧帯へ向かって吹く。"}, {"id": "A23", "c": "A", "f": "S", "X": "フィヨルドは、氷河によって削られたU字谷に海水が入り込んでできた湾である。", "Y": "エスチュアリー（三角江）は、土砂の堆積が盛んな河口に形成されやすい。", "xs": true, "ys": false, "e": "Y：エスチュアリーは土砂の堆積が少ない河口が沈水してできたラッパ状の入り江で、土砂の堆積が盛んな河口には三角州ができやすい。"}, {"id": "A24", "c": "A", "f": "S", "X": "サンゴ礁は、水温が高く透明度の高い浅い海で発達する。", "Y": "環礁は、陸地の周囲に裾礁が発達した後、陸地が隆起することで形成される。", "xs": true, "ys": false, "e": "Y：環礁は、島が沈降しサンゴ礁だけが環状に残って形成される（裾礁→堡礁→環礁）。隆起ではない。"}, {"id": "B01", "c": "B", "f": "K", "q": "大型機械を用いて小麦などを大規模に栽培し、主に輸出向けに生産する農業はどれか。", "o": ["企業的穀物農業", "混合農業", "園芸農業", "集約的稲作農業"], "e": "北アメリカやオーストラリア、アルゼンチンなどの企業的穀物農業は、労働生産性が高く輸出向けの小麦生産が中心である。"}, {"id": "B02", "c": "B", "f": "K", "q": "穀物や飼料作物の栽培と肉牛・豚などの家畜飼育を組み合わせた、ヨーロッパで発達した農業はどれか。", "o": ["混合農業", "地中海式農業", "遊牧", "焼畑農業"], "e": "作物栽培と家畜飼育を組み合わせるのが混合農業である。地中海式農業は樹木作物と小麦、遊牧は移動牧畜、焼畑農業は熱帯の移動式耕作。"}, {"id": "B03", "c": "B", "f": "K", "q": "地中海式農業の特徴として最も適当なものはどれか。", "o": ["夏にオリーブやぶどうなどの樹木作物、冬に小麦を栽培する", "夏に稲、冬に小麦を栽培する二毛作を中心とする", "乳牛を飼育し、牧草や飼料作物を栽培する", "焼き払った森林でキャッサバなどのいも類を栽培する"], "e": "夏の乾燥に強い樹木作物と、降水のある冬の小麦栽培を組み合わせるのが地中海式農業である。乳牛中心は酪農、いも類の移動耕作は焼畑農業。"}, {"id": "B04", "c": "B", "f": "K", "q": "東南アジアで植民地時代にプランテーションで栽培が広まり、マレーシアなどでは油やし（パーム油）への転換が進んだ作物はどれか。", "o": ["天然ゴム", "茶", "コーヒー", "カカオ"], "e": "マレーシアでは天然ゴム園から、より収益性の高い油やし園への転換が進んだ。"}, {"id": "B05", "c": "B", "f": "K", "q": "近年、生産量の上位をコートジボワールやガーナなどギニア湾岸の国々が占める作物はどれか。", "o": ["カカオ", "茶", "天然ゴム", "なつめやし"], "e": "カカオは高温多雨の熱帯で栽培され、ギニア湾岸のコートジボワールやガーナが主産地である。なつめやしは乾燥地域のオアシスで栽培される。"}, {"id": "B06", "c": "B", "f": "K", "q": "モンゴル高原などの乾燥地域で、組立式の住居を用い、家畜とともに水と草を求めて移動する牧畜はどれか。", "o": ["遊牧", "企業的牧畜", "酪農", "園芸農業"], "e": "乾燥地域で羊・ヤギ・馬などとともに移動するのが遊牧で、モンゴルではゲルと呼ばれる組立式住居が使われる。"}, {"id": "B07", "c": "B", "f": "K", "q": "森林や草原を焼き払い、その灰を肥料としていも類などを栽培し、地力が衰えると別の土地へ移る農業はどれか。", "o": ["焼畑農業", "オアシス農業", "混合農業", "集約的畑作農業"], "e": "焼畑農業は熱帯で伝統的に行われ、キャッサバやタロいも・ヤムいもなどを栽培する。"}, {"id": "B08", "c": "B", "f": "K", "q": "イランでみられる、山麓の地下水を地下水路で耕地や集落に導く灌漑施設はどれか。", "o": ["カナート", "センターピボット", "ポルダー", "フィードロット"], "e": "地下水路による灌漑はイランでカナート、北アフリカでフォガラ、アフガニスタンなどでカレーズと呼ばれる。ポルダーはオランダの干拓地、フィードロットは肉牛の肥育場。"}, {"id": "B09", "c": "B", "f": "K", "q": "地下水をくみ上げ、回転するアームのスプリンクラーで円形に散水する灌漑方式はどれか。", "o": ["センターピボット方式", "カナート", "棚田", "輪中"], "e": "アメリカ合衆国のグレートプレーンズなどで普及しており、円形の耕地がみられる。輪中は濃尾平野の堤防で囲まれた集落・耕地である。"}, {"id": "B10", "c": "B", "f": "K", "q": "アメリカ合衆国の中西部に広がり、とうもろこしや大豆の栽培と豚・肉牛の飼育が盛んな地域はどれか。", "o": ["コーンベルト", "サンベルト", "ラストベルト", "コットンベルト"], "e": "とうもろこし・大豆と家畜飼育を組み合わせた地域がコーンベルトである。サンベルトは南部の温暖な工業地域、ラストベルトは衰退した工業地域、コットンベルトはかつての綿花地帯。"}, {"id": "B11", "c": "B", "f": "K", "q": "五大湖周辺やデンマークなど、冷涼で穀物栽培に不向きなやせ地で発達した、乳牛を飼育し乳製品を生産する農業はどれか。", "o": ["酪農", "地中海式農業", "企業的穀物農業", "プランテーション農業"], "e": "氷河に削られたやせ地で冷涼な地域では、牧草を育てて乳牛を飼う酪農が発達した。"}, {"id": "B12", "c": "B", "f": "K", "q": "三陸沖が好漁場となっている主な理由として最も適当なものはどれか。", "o": ["暖流と寒流がぶつかる潮目（潮境）があり、プランクトンが豊富だから", "沖合に深い海溝が続き、海水温が年中一定だから", "大河川が運ぶ土砂で海水の透明度が高く保たれるから", "赤道付近から流れてくる暖流だけが沿岸を流れているから"], "e": "黒潮（日本海流）と親潮（千島海流）がぶつかる潮目では栄養分が豊富でプランクトンが多く、魚が集まる。"}, {"id": "B13", "c": "B", "f": "K", "q": "ペルー沖で漁獲が多く、飼料などに用いるフィッシュミールに加工される魚はどれか。", "o": ["アンチョビー（カタクチイワシの一種）", "タラ", "サケ", "マグロ"], "e": "ペルー沖では寒流と湧昇流により栄養分が豊富で、アンチョビーの漁獲が多い。エルニーニョ現象が起こると不漁になりやすい。"}, {"id": "B14", "c": "B", "f": "K", "q": "米の特徴として最も適当なものはどれか。", "o": ["生産量に比べて国際的な貿易量が少なく、生産国内で消費される割合が高い", "小麦よりも冷涼で乾燥した気候に適し、高緯度地域で多く栽培される", "主な生産地はヨーロッパと北アメリカに集中している", "主に家畜の飼料として利用されている"], "e": "米は高温多雨のアジアで多く生産され、自給的な性格が強いため貿易量の割合は小麦より小さい。冷涼・乾燥に強いのは小麦である。"}, {"id": "B15", "c": "B", "f": "K", "q": "近年、ブラジルとアメリカ合衆国が生産・輸出の上位を占め、中国が最大の輸入国となっている作物はどれか。", "o": ["大豆", "米", "茶", "カカオ"], "e": "大豆は食用油や飼料に利用され、ブラジルとアメリカ合衆国が二大輸出国、中国が最大の輸入国である。"}, {"id": "B16", "c": "B", "f": "K", "q": "亜寒帯（冷帯）の針葉樹林が林業に適している理由として最も適当なものはどれか。", "o": ["樹種が少なく同じ種類の樹木がまとまって分布するため、伐採・搬出が効率的だから", "樹種が多く、多様な用材を一か所で得られるから", "樹木の成長が非常に速く、毎年同じ場所で伐採できるから", "常緑広葉樹が中心で、硬く重い木材が得られるから"], "e": "冷帯林は単一樹種の純林が多く、パルプ用材などとして効率よく伐採できる。樹種が多く有用材が分散するのは熱帯林の特徴である。"}, {"id": "B17", "c": "B", "f": "S", "X": "茶は、高温多雨の地域よりも乾燥した地域の平地での栽培に適している。", "Y": "なつめやしは、主に熱帯雨林気候の地域で栽培される樹木作物である。", "xs": false, "ys": false, "e": "X：茶は高温多雨で排水のよい丘陵地での栽培に適する。Y：なつめやしは西アジアや北アフリカの乾燥地域のオアシスで栽培される。"}, {"id": "B18", "c": "B", "f": "S", "X": "園芸農業は大都市から遠く離れた地域でのみ行われ、近郊での栽培はみられない。", "Y": "オランダでは、干拓地（ポルダー）などで花卉や野菜の栽培が盛んである。", "xs": false, "ys": true, "e": "X：園芸農業には大都市周辺で行う近郊農業と、遠隔地から輸送する輸送園芸の両方がある。Yは正しい。"}, {"id": "B19", "c": "B", "f": "S", "X": "ロシアのチェルノーゼム（黒土）地帯は、主に北極海沿岸のツンドラ地域に広がっている。", "Y": "アルゼンチンのパンパは熱帯雨林が広がる地域で、カカオ栽培が農業の中心である。", "xs": false, "ys": false, "e": "X：チェルノーゼムはウクライナからロシア南部のステップに分布する。Y：パンパは温帯の草原で、小麦栽培や牛の放牧が盛んである。"}, {"id": "B20", "c": "B", "f": "S", "X": "ニュージーランドでは羊や乳牛の飼育が盛んで、乳製品や肉類が重要な輸出品となっている。", "Y": "タイの稲作は、ほとんどが乾燥地域で地下水をくみ上げる灌漑によって行われている。", "xs": true, "ys": false, "e": "Y：タイの稲作はチャオプラヤ川流域などの湿潤な平野で行われ、雨季の降水に頼る天水田も多い。"}, {"id": "B21", "c": "B", "f": "S", "X": "日本の食料自給率（カロリーベース）は、近年はおよそ80％前後である。", "Y": "日本は、小麦や大豆の多くを輸入に依存している。", "xs": false, "ys": true, "e": "X：近年の日本のカロリーベース食料自給率は40％を下回る水準で推移している。Y：小麦・大豆の自給率は低く、多くを輸入している。"}, {"id": "B22", "c": "B", "f": "S", "X": "企業的牧畜は、アメリカ合衆国のグレートプレーンズやオーストラリアなどで広くみられる。", "Y": "フィードロットは、肉牛を出荷前に穀物などの濃厚飼料で集中的に肥育する施設である。", "xs": true, "ys": true, "e": "X：新大陸の広大な土地で大規模に肉牛や羊を飼育するのが企業的牧畜である。Y：フィードロットはアメリカ合衆国などでみられる肥育場。いずれも正しい。"}, {"id": "B23", "c": "B", "f": "S", "X": "移牧は、アルプス地方などで、夏は高地の牧場、冬は山麓の村で家畜を飼育する牧畜である。", "Y": "アンデス地方の高地では、リャマやアルパカが飼育されている。", "xs": true, "ys": true, "e": "X：季節によって垂直的に移動するのが移牧である。Y：アンデスの高地では荷役や毛をとるためにリャマ・アルパカが飼育される。いずれも正しい。"}, {"id": "B24", "c": "B", "f": "S", "X": "緑の革命は、高収量品種の導入などにより、アジアの米や小麦の生産量を増加させた。", "Y": "緑の革命の高収量品種は灌漑設備や化学肥料をほとんど必要としなかったため、貧しい農家ほど恩恵を受けた。", "xs": true, "ys": false, "e": "Y：高収量品種は灌漑や化学肥料・農薬を必要としたため、資金のある農家ほど導入しやすく、経済格差が広がる面もあった。"}, {"id": "C01", "c": "C", "f": "K", "q": "近年、輸出量の上位をオーストラリアとブラジルが占める鉱産資源はどれか。", "o": ["鉄鉱石", "原油", "天然ガス", "銅鉱"], "e": "鉄鉱石は安定陸塊に多く、オーストラリアとブラジルが二大輸出国である。銅鉱はチリなど、原油・天然ガスは西アジアなどが主産地。"}, {"id": "C02", "c": "C", "f": "K", "q": "近年、チリが世界最大の生産国となっている鉱産資源はどれか。", "o": ["銅鉱", "鉄鉱石", "ボーキサイト", "ダイヤモンド"], "e": "チリはアンデス山脈沿いに大規模な銅山があり、銅鉱の生産・輸出が世界最大である。"}, {"id": "C03", "c": "C", "f": "K", "q": "古期造山帯の周辺で多く産出する傾向がある資源はどれか。", "o": ["石炭", "鉄鉱石", "原油", "ボーキサイト"], "e": "石炭は古生代の植物が堆積してできたものが多く、アパラチア山脈など古期造山帯の周辺に炭田が多い。鉄鉱石は安定陸塊、原油は新期造山帯の周辺や堆積盆地、ボーキサイトは熱帯に多い。"}, {"id": "C04", "c": "C", "f": "K", "q": "原料の重量が製品になると大きく減少するため、原料産地に立地しやすい工業はどれか。", "o": ["セメント工業", "ビール工業", "印刷・出版業", "集積回路（IC）工業"], "e": "石灰石を原料とするセメント工業は原料指向型である。ビールは水などどこでも得られる原料を使う市場指向型、印刷・出版は情報の集まる大都市に立地し、ICは空港近くなどに立地する。"}, {"id": "C05", "c": "C", "f": "K", "q": "製品が小型・軽量で高価なため航空機輸送に適し、空港や高速道路の近くに立地しやすい工業はどれか。", "o": ["集積回路（IC）工業", "鉄鋼業", "セメント工業", "石油化学工業"], "e": "ICは付加価値が高く輸送費の負担が小さいため、臨空港型の立地がみられる。鉄鋼・石油化学は臨海部、セメントは原料産地に立地しやすい。"}, {"id": "C06", "c": "C", "f": "K", "q": "日本の製鉄所が臨海部に多く立地している主な理由として最も適当なものはどれか。", "o": ["原料の鉄鉱石や石炭の大部分を海外から船で輸入しているから", "国内の鉄鉱山の多くが沿岸部に分布しているから", "製品の大部分を航空機で輸出するため、空港に近い必要があるから", "高温多湿な気候が製鉄に不可欠だから"], "e": "日本は鉄鉱石・石炭をほぼ全量輸入しており、大型船が接岸できる臨海部に製鉄所が立地する。"}, {"id": "C07", "c": "C", "f": "K", "q": "ライン川の水運と大規模な炭田を背景に発達したドイツの重工業地域はどれか。", "o": ["ルール工業地域", "ランカシャー地方", "ロレーヌ地方", "シリコンヴァレー"], "e": "ルール工業地域はルール炭田とライン川の水運により鉄鋼業などが発達した。ランカシャーはイギリス、ロレーヌはフランス、シリコンヴァレーはアメリカ合衆国。"}, {"id": "C08", "c": "C", "f": "K", "q": "火山活動が活発な地域で利用しやすく、アイスランドやニュージーランドで発電に利用されている再生可能エネルギーはどれか。", "o": ["地熱", "風力", "太陽光", "バイオマス"], "e": "地下のマグマの熱を利用する地熱発電は、火山の多い地域に適している。"}, {"id": "C09", "c": "C", "f": "K", "q": "発電量に占める水力発電の割合が非常に高い国はどれか。", "o": ["ノルウェー", "フランス", "サウジアラビア", "ポーランド"], "e": "ノルウェーは山がちで降水が多く、発電の大部分を水力が占める。フランスは原子力、サウジアラビアは石油・天然ガス、ポーランドは石炭の割合が高い。"}, {"id": "C10", "c": "C", "f": "K", "q": "発電量に占める原子力発電の割合が、主要国の中で特に高い国はどれか。", "o": ["フランス", "ノルウェー", "ドイツ", "オーストラリア"], "e": "フランスは発電量の多くを原子力に依存している。ドイツは原子力発電から撤退し、オーストラリアは原子力発電所をもたない。"}, {"id": "C11", "c": "C", "f": "K", "q": "1960年に産油国が結成し、原油の生産や価格に影響力をもつ組織はどれか。", "o": ["OPEC（石油輸出国機構）", "APEC（アジア太平洋経済協力）", "ASEAN（東南アジア諸国連合）", "OECD（経済協力開発機構）"], "e": "OPECは産油国が国際石油資本に対抗して結成した組織である。APECは環太平洋の経済協力、OECDは先進国中心の経済協力機構。"}, {"id": "C12", "c": "C", "f": "K", "q": "レアメタルの一つで、電気自動車などのバッテリーに用いられ、近年オーストラリアやチリなどで生産が多いものはどれか。", "o": ["リチウム", "ボーキサイト", "石炭", "天然ガス"], "e": "リチウムはリチウムイオン電池の材料となるレアメタルである。ボーキサイトはアルミニウムの原料鉱石、石炭・天然ガスは化石燃料でレアメタルではない。"}, {"id": "C13", "c": "C", "f": "K", "q": "アメリカ合衆国のサンフランシスコ南東部に位置し、ICT（情報通信技術）産業が集積する地域はどれか。", "o": ["シリコンヴァレー", "シリコンプレーン", "リサーチトライアングル", "デトロイト"], "e": "シリコンヴァレーはカリフォルニア州にある先端技術産業の集積地である。シリコンプレーンはテキサス州、リサーチトライアングルはノースカロライナ州、デトロイトは自動車工業の都市。"}, {"id": "C14", "c": "C", "f": "K", "q": "1980年前後に中国が外国の資本や技術を導入するため、南部沿岸に設けた経済特区のひとつはどれか。", "o": ["シェンチェン（深圳）", "ペキン（北京）", "ウルムチ", "ラサ"], "e": "経済特区はシェンチェン・チューハイ・スワトウ・アモイ、のちに海南島に設けられた。ペキンは首都、ウルムチとラサは内陸部の都市。"}, {"id": "C15", "c": "C", "f": "K", "q": "国内の企業が生産拠点を海外へ移転することで、国内の製造業が衰退する現象を何というか。", "o": ["産業の空洞化", "ドーナツ化現象", "スプロール現象", "ジェントリフィケーション"], "e": "生産拠点の海外移転による国内製造業の縮小を産業の空洞化という。他の選択肢はいずれも都市の現象である。"}, {"id": "C16", "c": "C", "f": "K", "q": "アルミナを精錬する際に大量の電力を必要とするため、電力が安価に得られる地域に立地しやすい工業はどれか。", "o": ["アルミニウム工業", "繊維工業", "自動車工業", "印刷業"], "e": "アルミニウムの精錬は電力多消費型で、水力発電などで電力が安い地域に立地する傾向がある。"}, {"id": "C17", "c": "C", "f": "S", "X": "日本は、原油の大部分を南アメリカから輸入している。", "Y": "日本の石炭の輸入先は、近年は西アジア（中東）諸国が最大である。", "xs": false, "ys": false, "e": "X：日本の原油輸入はサウジアラビアやアラブ首長国連邦など中東に大きく依存している。Y：石炭の最大の輸入先はオーストラリアである。"}, {"id": "C18", "c": "C", "f": "S", "X": "BRICSは、ブラジル・ロシア・インド・中国・南アフリカ共和国の英語の頭文字に由来する呼称である。", "Y": "インドのベンガルール（バンガロール）は、ソフトウェア産業などICT産業の集積地として知られる。", "xs": true, "ys": true, "e": "X：BRICSは経済成長の著しい新興国の頭文字に由来する。Y：ベンガルールはインドのICT産業の中心地である。いずれも正しい。"}, {"id": "C19", "c": "C", "f": "S", "X": "ボーキサイトは、主に亜寒帯（冷帯）の針葉樹林地域での風化によって生成される鉱石である。", "Y": "アルミニウムをリサイクルして再生する場合、新たに精錬するよりもはるかに少ない電力で済む。", "xs": false, "ys": true, "e": "X：ボーキサイトは高温多雨の熱帯などで岩石が風化して生成され、オーストラリアやギニアなどで産出が多い。Yは正しい。"}, {"id": "C20", "c": "C", "f": "S", "X": "マキラドーラは、メキシコのアメリカ合衆国との国境付近を中心に発達した、輸出向けの保税加工制度である。", "Y": "アメリカ合衆国のサンベルトは北緯37度付近より北の地域を指し、1970年代以降工業が衰退した。", "xs": true, "ys": false, "e": "Y：サンベルトは北緯37度付近より南の温暖な地域で、1970年代以降に先端技術産業などが発達した。衰退したのは北部のスノーベルト（フロストベルト）である。"}, {"id": "C21", "c": "C", "f": "S", "X": "天然ガスは、冷却して液化天然ガス（LNG）にし、専用船で輸送されることがある。", "Y": "天然ガスは、石炭に比べて燃焼時の二酸化炭素排出量が多い。", "xs": true, "ys": false, "e": "Y：天然ガスは化石燃料のなかでは燃焼時の二酸化炭素排出量が少なく、石炭より少ない。"}, {"id": "C22", "c": "C", "f": "S", "X": "原油の埋蔵量は、西アジアのペルシア湾岸に多い。", "Y": "シェール革命によって、アメリカ合衆国の原油や天然ガスの生産量が増加した。", "xs": true, "ys": true, "e": "X：ペルシア湾岸には大規模な油田が集中する。Y：頁岩層から原油・天然ガスを採掘する技術が普及し、アメリカ合衆国の生産が増えた。いずれも正しい。"}, {"id": "C23", "c": "C", "f": "S", "X": "太陽光発電は、天候や昼夜に関係なく常に一定の発電量が得られる。", "Y": "デンマークは偏西風が安定して吹くにもかかわらず、風力発電がほとんど普及していない。", "xs": false, "ys": false, "e": "X：太陽光発電は夜間や悪天候時に発電量が落ち、出力が不安定である。Y：デンマークは発電量に占める風力発電の割合が高い国として知られる。"}, {"id": "C24", "c": "C", "f": "S", "X": "イギリスの産業革命は、主に石油を燃料とする工業から始まった。", "Y": "第二次世界大戦後、主要なエネルギー源が石炭から石油へ移ったことをエネルギー革命という。", "xs": false, "ys": true, "e": "X：18世紀後半のイギリスの産業革命は、石炭を燃料とする蒸気機関の利用によって進んだ。Yは正しい。"}, {"id": "D01", "c": "D", "f": "K", "q": "人口転換の過程で、多産多死から少産少死へ移行する途中にみられ、人口が急増する段階はどれか。", "o": ["多産少死", "多産多死", "少産少死", "少産多死"], "e": "医療や衛生の改善で死亡率が先に低下し、出生率が高いままの多産少死の段階で人口が急増する。"}, {"id": "D02", "c": "D", "f": "K", "q": "出生率が低下し続け、年少人口の割合が老年人口や生産年齢人口に比べて小さくなった国でみられる人口ピラミッドの型はどれか。", "o": ["つぼ型", "富士山型（ピラミッド型）", "星型", "ひょうたん型"], "e": "少子高齢化が進むと底辺がすぼまったつぼ型になる。富士山型は多産多死などの発展途上国、星型は若年層が流入する都市、ひょうたん型は若年層が流出する農村にみられる。"}, {"id": "D03", "c": "D", "f": "K", "q": "国内で人口第2位の都市と比べて人口が著しく多く、政治・経済機能が集中している都市を何というか。", "o": ["プライメートシティ（首位都市）", "メガロポリス", "コナベーション", "ニュータウン"], "e": "発展途上国の首都などに多く、例としてタイのバンコクがあげられる。メガロポリスは複数の大都市が帯状に連なった地域である。"}, {"id": "D04", "c": "D", "f": "K", "q": "複数の都市の市街地が拡大して連続し、一体化した都市域を何というか。", "o": ["コナベーション（連接都市）", "プライメートシティ", "CBD（中心業務地区）", "衛星都市"], "e": "ドイツのルール地方などにみられる。衛星都市は大都市の周辺にあって機能を分担する都市で、市街地の連続を意味する語ではない。"}, {"id": "D05", "c": "D", "f": "K", "q": "都市の周辺部で、計画性がないまま虫食い状に宅地化が進む現象を何というか。", "o": ["スプロール現象", "ドーナツ化現象", "インナーシティ問題", "ジェントリフィケーション"], "e": "無秩序な郊外の市街地化をスプロール現象という。ドーナツ化現象は都心の人口が減り郊外が増える現象である。"}, {"id": "D06", "c": "D", "f": "K", "q": "衰退した都心周辺の地区が再開発され、比較的所得の高い層が流入して地区の性格が変わる現象を何というか。", "o": ["ジェントリフィケーション", "スプロール現象", "スラム化", "郊外化"], "e": "ジェントリフィケーションでは、再開発で地価や家賃が上がり、もとの低所得の住民が転出を余儀なくされることもある。"}, {"id": "D07", "c": "D", "f": "K", "q": "新たに計画的に建設された首都はどれか。", "o": ["ブラジリア", "ロンドン", "カイロ", "バンコク"], "e": "ブラジリアは内陸開発を目的に1960年に遷都された計画都市である。他の都市は古くから発達した都市である。"}, {"id": "D08", "c": "D", "f": "K", "q": "豚肉を食べることを禁じ、ラマダーン（断食月）がある宗教はどれか。", "o": ["イスラーム（イスラム教）", "ヒンドゥー教", "仏教", "キリスト教"], "e": "イスラームでは豚肉や飲酒が禁じられ、教えに従った食品はハラールと呼ばれる。ヒンドゥー教は牛を神聖視する。"}, {"id": "D09", "c": "D", "f": "K", "q": "インドで信者が多く、牛を神聖視し、ガンジス川での沐浴が重要な宗教的行為とされる宗教はどれか。", "o": ["ヒンドゥー教", "イスラーム（イスラム教）", "ユダヤ教", "上座仏教"], "e": "ヒンドゥー教徒は牛肉を食べず、ヴァラナシなどでガンジス川の沐浴が行われる。"}, {"id": "D10", "c": "D", "f": "K", "q": "国民の多数がキリスト教（カトリック）を信仰する東南アジアの国はどれか。", "o": ["フィリピン", "タイ", "インドネシア", "ミャンマー"], "e": "フィリピンは旧スペイン領でカトリックが多数を占める。タイとミャンマーは上座仏教、インドネシアはイスラームが多数である。"}, {"id": "D11", "c": "D", "f": "K", "q": "降水が少なく樹木が乏しい乾燥地域で、伝統的な住居に多く用いられる建材はどれか。", "o": ["日干しれんが", "豊富な針葉樹の丸太", "竹やヤシの葉", "湿地に生える葦（あし）"], "e": "乾燥地域では土をこねて乾かした日干しれんがが使われる。木材・竹・葦は植物が豊富な地域の建材である。"}, {"id": "D12", "c": "D", "f": "K", "q": "シベリアの永久凍土地域で、建物を高床にする主な理由として最も適当なものはどれか。", "o": ["建物から出る熱で凍土が融け、建物が傾くのを防ぐため", "河川の洪水による浸水を防ぐため", "風通しをよくして室内の湿気を逃がすため", "強い日差しによる室温の上昇を防ぐため"], "e": "暖房の熱が地面に伝わると永久凍土が融けて地盤が沈下するため、床を地面から離す。風通しや湿気対策の高床は熱帯でみられる。"}, {"id": "D13", "c": "D", "f": "K", "q": "富山県の砺波平野にみられる、家屋が1戸ずつ散らばって分布する村落形態はどれか。", "o": ["散村", "路村", "街村", "円村"], "e": "散村は家屋の周囲に耕地を配置でき、砺波平野では屋敷林に囲まれた家屋が点在する。路村・街村は道路沿い、円村は広場を囲む集村である。"}, {"id": "D14", "c": "D", "f": "K", "q": "大都市の中心部にあり、企業の本社や官公庁、銀行などが集まる地区を何というか。", "o": ["CBD（中心業務地区）", "インナーシティ", "ニュータウン", "スラム"], "e": "CBDは中枢管理機能が集積し、昼間人口が多く夜間人口が少ない。"}, {"id": "D15", "c": "D", "f": "K", "q": "英語とフランス語をともに公用語とし、ケベック州でフランス語系住民が多数を占める国はどれか。", "o": ["カナダ", "オーストラリア", "ベルギー", "スイス"], "e": "カナダは英語とフランス語が公用語で、ケベック州ではフランス語系住民が多い。ベルギーはオランダ語・フランス語・ドイツ語、スイスはドイツ語・フランス語・イタリア語・ロマンシュ語が公用語。"}, {"id": "D16", "c": "D", "f": "K", "q": "65歳以上人口の割合が21％を超えた社会を、一般に何というか。", "o": ["超高齢社会", "高齢化社会", "高齢社会", "少子社会"], "e": "一般に65歳以上人口の割合が7％を超えると高齢化社会、14％を超えると高齢社会、21％を超えると超高齢社会と呼ばれる。"}, {"id": "D17", "c": "D", "f": "S", "X": "ベルギーでは、北部で主にフランス語、南部で主にオランダ語が使われている。", "Y": "スイスの公用語は、ドイツ語のみである。", "xs": false, "ys": false, "e": "X：ベルギーは北部がオランダ語（フラマン語）、南部がフランス語の地域で、記述は逆である。Y：スイスはドイツ語・フランス語・イタリア語・ロマンシュ語の4つが公用語である。"}, {"id": "D18", "c": "D", "f": "S", "X": "インドでは、ヒンドゥー教徒が人口の多数を占める。", "Y": "パキスタンやバングラデシュでは、仏教徒が人口の多数を占める。", "xs": true, "ys": false, "e": "Y：パキスタンとバングラデシュはイスラーム（イスラム教）の信者が多数を占める。"}, {"id": "D19", "c": "D", "f": "S", "X": "ドーナツ化現象とは、郊外の人口が減少し、都心部の人口が増加する現象である。", "Y": "都心回帰とは、地価の下落や再開発などにより都心部の人口が再び増加する現象である。", "xs": false, "ys": true, "e": "X：ドーナツ化現象は都心部の人口が減少し郊外の人口が増加する現象で、記述は逆である。Yは正しい。"}, {"id": "D20", "c": "D", "f": "S", "X": "シンガポールは、中国系住民が多数を占める多民族国家である。", "Y": "マレーシアのブミプトラ政策は、中国系住民を経済的に優遇する政策である。", "xs": true, "ys": false, "e": "Y：ブミプトラ政策はマレー系住民を教育や雇用などで優遇する政策である。"}, {"id": "D21", "c": "D", "f": "S", "X": "城下町は、主に鉄道駅を中心として近代に発達した都市である。", "Y": "門前町は、主要な街道沿いの旅人の宿泊施設を中心に発達した町である。", "xs": false, "ys": false, "e": "X：城下町は近世に大名の城を中心に形成された都市である。Y：門前町は寺社の門前に発達した町で、街道の宿泊施設を中心に発達したのは宿場町である。"}, {"id": "D22", "c": "D", "f": "S", "X": "中国では1979年ごろから一人っ子政策が実施されたが、その後廃止された。", "Y": "中国では近年、少子高齢化が進んでいる。", "xs": true, "ys": true, "e": "X：一人っ子政策は2015年に廃止が決まった。Y：出生数の減少と高齢化が進み、人口も減少に転じている。いずれも正しい。"}, {"id": "D23", "c": "D", "f": "S", "X": "ヨーロッパの多くの国では、合計特殊出生率が人口置換水準（約2.1）を大きく上回っている。", "Y": "アフリカのサハラ以南の国々では、全体として人口増加率が高い。", "xs": false, "ys": true, "e": "X：ヨーロッパの多くの国では合計特殊出生率が人口置換水準を下回っている。Yは正しい。"}, {"id": "D24", "c": "D", "f": "S", "X": "発展途上国の大都市では、農村からの人口流入によりスラムが形成されることがある。", "Y": "先進国の大都市では、都心周辺部の居住環境の悪化などによるインナーシティ問題がみられる。", "xs": true, "ys": true, "e": "X：仕事を求めて流入した人々が都市に集まり、劣悪な住宅地域が形成される。Y：高所得層の郊外転出で都心周辺部が衰退する。いずれも正しい。"}, {"id": "E01", "c": "E", "f": "K", "q": "1967年に結成された、東南アジアの地域協力機構はどれか。", "o": ["ASEAN（東南アジア諸国連合）", "MERCOSUR（南米南部共同市場）", "EU（ヨーロッパ連合）", "AU（アフリカ連合）"], "e": "ASEANはタイ・インドネシアなど5か国で発足し、その後加盟国を拡大した。"}, {"id": "E02", "c": "E", "f": "K", "q": "南アメリカのブラジルやアルゼンチンなどが結成した関税同盟はどれか。", "o": ["MERCOSUR（南米南部共同市場）", "ASEAN（東南アジア諸国連合）", "EU（ヨーロッパ連合）", "APEC（アジア太平洋経済協力）"], "e": "MERCOSURはブラジル・アルゼンチン・ウルグアイ・パラグアイで発足し、域内関税の撤廃と対外共通関税をめざしている。"}, {"id": "E03", "c": "E", "f": "K", "q": "特定の一次産品の生産や輸出に依存する経済を何というか。", "o": ["モノカルチャー経済", "計画経済", "混合経済", "知識経済"], "e": "アフリカなどの発展途上国にみられ、国際価格の変動や天候の影響を受けやすく経済が不安定になりやすい。"}, {"id": "E04", "c": "E", "f": "K", "q": "エジプトのナイル川に建設され、洪水の防止や灌漑・発電に役立つ一方、下流での土壌の肥沃度低下などの問題も指摘されるダムはどれか。", "o": ["アスワンハイダム", "サンシャ（三峡）ダム", "フーヴァーダム", "イタイプダム"], "e": "アスワンハイダムの完成で定期的な洪水がなくなり、上流から肥沃な土砂が運ばれにくくなった。三峡ダムは中国、フーヴァーダムはアメリカ合衆国、イタイプダムはブラジル・パラグアイ国境にある。"}, {"id": "E05", "c": "E", "f": "K", "q": "ニュージーランドの先住民はどれか。", "o": ["マオリ", "アボリジニー", "イヌイット", "サーミ"], "e": "マオリはニュージーランドの先住民である。アボリジニーはオーストラリア、イヌイットはカナダ北部など、サーミはスカンディナヴィア半島北部の先住民。"}, {"id": "E06", "c": "E", "f": "K", "q": "オーストラリアがかつて行っていた、白人以外の移民を制限する政策はどれか。", "o": ["白豪主義", "アパルトヘイト", "ブミプトラ政策", "一人っ子政策"], "e": "白豪主義は1970年代に撤廃され、その後オーストラリアは多文化主義へ転換し、アジアからの移民が増えた。"}, {"id": "E07", "c": "E", "f": "K", "q": "1990年代初めに撤廃された、南アフリカ共和国の人種隔離政策はどれか。", "o": ["アパルトヘイト", "白豪主義", "ブミプトラ政策", "ドイモイ"], "e": "アパルトヘイトは白人以外の人々を居住地や職業などで差別する政策で、1991年に関連法が廃止された。"}, {"id": "E08", "c": "E", "f": "K", "q": "1986年からベトナムで進められた、市場経済の導入などを柱とする刷新政策はどれか。", "o": ["ドイモイ", "ペレストロイカ", "改革開放政策", "ルックイースト政策"], "e": "ドイモイはベトナム語で刷新の意味である。ペレストロイカはソ連、改革開放政策は中国、ルックイースト政策はマレーシアの政策。"}, {"id": "E09", "c": "E", "f": "K", "q": "ラテンアメリカに多い、ヨーロッパ系と先住民との混血の人々を何というか。", "o": ["メスチーソ", "ムラート", "アボリジニー", "マオリ"], "e": "メスチーソはヨーロッパ系と先住民の混血である。ムラートはヨーロッパ系とアフリカ系の混血を指す。"}, {"id": "E10", "c": "E", "f": "K", "q": "アメリカ合衆国で、メキシコなどラテンアメリカからの移民とその子孫で、スペイン語を母語とする人々を何というか。", "o": ["ヒスパニック", "アボリジニー", "イヌイット", "サーミ"], "e": "ヒスパニックはアメリカ合衆国南西部やフロリダ州などに多く、人口に占める割合が増加している。"}, {"id": "E11", "c": "E", "f": "K", "q": "EU加盟国間などで、国境での出入国審査を廃止する取り決めはどれか。", "o": ["シェンゲン協定", "マーストリヒト条約", "パリ協定", "ラムサール条約"], "e": "シェンゲン協定により域内の人の移動が自由化された。マーストリヒト条約はEUの発足を定めた条約、パリ協定は気候変動、ラムサール条約は湿地保全に関する取り決め。"}, {"id": "E12", "c": "E", "f": "K", "q": "中国で、チンリン（秦嶺）山脈とホワイ川（淮河）を結ぶ線より北の地域で中心となる農業として最も適当なものはどれか。", "o": ["小麦やとうもろこしなどを中心とする畑作", "水田での稲作", "丘陵地での茶の栽培", "天然ゴムのプランテーション"], "e": "チンリン山脈とホワイ川を結ぶ線は気候や農業の境界とされ、降水量の少ない北は畑作、多い南は稲作が中心となる。"}, {"id": "E13", "c": "E", "f": "K", "q": "インドのデカン高原に分布し、綿花の栽培に適した黒色の土壌はどれか。", "o": ["レグール", "テラロッサ", "ラトソル", "ポドゾル"], "e": "レグールは玄武岩が風化した肥沃な黒色土で、綿花栽培に利用される。"}, {"id": "E14", "c": "E", "f": "K", "q": "サハラ砂漠の南縁に広がり、過放牧や過耕作などによる砂漠化が深刻な地域はどれか。", "o": ["サヘル", "マグレブ", "パンパ", "プレーリー"], "e": "サヘルは半乾燥地域で、干ばつと人口増加にともなう過放牧・過耕作などにより砂漠化が進んだ。マグレブはアフリカ北西部の地域名。"}, {"id": "E15", "c": "E", "f": "K", "q": "流域面積が世界最大の河川はどれか。", "o": ["アマゾン川", "ナイル川", "長江（チャンチヤン）", "ミシシッピ川"], "e": "アマゾン川は赤道付近の多雨地域を流れ、流域面積が世界最大である。ナイル川は長さで世界最長とされることが多い。"}, {"id": "E16", "c": "E", "f": "K", "q": "近年、輸出額の大部分を原油が占めるアフリカの国はどれか。", "o": ["ナイジェリア", "エチオピア", "ケニア", "ザンビア"], "e": "ギニア湾岸のナイジェリアはアフリカ有数の産油国で、輸出は原油に大きく依存する。エチオピアはコーヒー、ケニアは茶や切り花、ザンビアは銅が主要な輸出品。"}, {"id": "E17", "c": "E", "f": "S", "X": "ブラジルの公用語はポルトガル語である。", "Y": "アルゼンチンでは、ヨーロッパ系の住民が多数を占める。", "xs": true, "ys": true, "e": "X：ブラジルは旧ポルトガル領である。Y：アルゼンチンはスペインやイタリアなどからの移民が多く、ヨーロッパ系住民が多数を占める。いずれも正しい。"}, {"id": "E18", "c": "E", "f": "S", "X": "アメリカ合衆国の五大湖周辺は地中海性気候で、オリーブの栽培が盛んである。", "Y": "アメリカ合衆国のカリフォルニア州の沿岸部には、地中海性気候がみられる。", "xs": false, "ys": true, "e": "X：五大湖周辺は亜寒帯（冷帯）湿潤気候などで、酪農などが盛んである。Y：カリフォルニア州沿岸は地中海性気候で、果樹栽培が盛ん。"}, {"id": "E19", "c": "E", "f": "S", "X": "アフリカ大陸の国境線には、経線や緯線を利用した直線的なものはみられない。", "Y": "アフリカには、旧宗主国の言語を公用語としている国はない。", "xs": false, "ys": false, "e": "X：植民地時代に引かれた経線・緯線に沿う直線的な国境が多くみられる。Y：英語やフランス語など旧宗主国の言語を公用語とする国が多い。"}, {"id": "E20", "c": "E", "f": "S", "X": "ノルウェーの西岸には、フィヨルドが発達している。", "Y": "北海油田は、主にイタリアとギリシャが開発している。", "xs": true, "ys": false, "e": "Y：北海油田はイギリスとノルウェーなどが開発している。"}, {"id": "E21", "c": "E", "f": "S", "X": "チベット高原やアンデス山脈などの高地では、標高が高くなるほど気温が高くなる。", "Y": "ヒマラヤ山脈は、古期造山帯に属するなだらかな山脈である。", "xs": false, "ys": false, "e": "X：気温は標高が100m上がるごとに約0.6℃下がる。Y：ヒマラヤ山脈は新期造山帯（アルプス・ヒマラヤ造山帯）に属する険しい山脈である。"}, {"id": "E22", "c": "E", "f": "S", "X": "東南アジアのインドシナ半島には、メコン川が流れている。", "Y": "インドネシアは、国民の大多数がヒンドゥー教徒である。", "xs": true, "ys": false, "e": "Y：インドネシアは国民の大多数がイスラーム（イスラム教）を信仰しており、ヒンドゥー教徒が多いのはバリ島である。"}, {"id": "E23", "c": "E", "f": "S", "X": "EUでは、加盟国の多くで共通通貨ユーロが導入されている。", "Y": "イギリスは、2020年にEUを離脱した。", "xs": true, "ys": true, "e": "X：ユーロは多くの加盟国で導入されているが、導入していない加盟国もある。Y：イギリスは2020年1月末にEUを離脱した。いずれも正しい。"}, {"id": "E24", "c": "E", "f": "S", "X": "オーストラリアの人口は、主に内陸部の乾燥地域に集中している。", "Y": "オーストラリアは近年、中国などアジア諸国との貿易の結びつきが強い。", "xs": false, "ys": true, "e": "X：オーストラリアの人口は南東部などの沿岸部に集中し、内陸の乾燥地域は人口が希薄である。Yは正しい。"}]};
+const CATS=D.cats;const Q=D.q;
+const FMT={K:"4択",S:"正誤",N:"整序"};
+const SO=["X 正　Y 正","X 正　Y 誤","X 誤　Y 正","X 誤　Y 誤"];
+const NO=["Ⅰ－Ⅱ－Ⅲ","Ⅰ－Ⅲ－Ⅱ","Ⅱ－Ⅰ－Ⅲ","Ⅱ－Ⅲ－Ⅰ","Ⅲ－Ⅰ－Ⅱ","Ⅲ－Ⅱ－Ⅰ"];
+const NK=["123","132","213","231","312","321"];
+Q.forEach(q=>{if(q.f==="S"){q.o=SO;q.a=(q.xs?0:2)+(q.ys?0:1)}else if(q.f==="N"){q.o=NO;q.a=NK.indexOf(q.ord)}else{q.a=0}});
+const FSEG=[["ALL","すべて"]].concat(["K","S","N"].filter(f=>Q.some(q=>q.f===f)).map(f=>[f,FMT[f]]));
+
+/* ===== 記録（このブラウザのみ） ===== */
+const KEY="kyotsu-chiri-v1";
+let rec={};
+try{rec=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){rec={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(rec))}catch(e){}}
+function mark(id,ok){const r=rec[id]||{c:0,w:0};ok?r.c++:r.w++;r.last=ok;rec[id]=r;save()}
+/* ===== ランク（習得度：正解済み問題の割合） ===== */
+const RANKS=[
+  {t:"新入生",en:"FRESHMAN",min:0},
+  {t:"学士",en:"BACHELOR",min:15},
+  {t:"修士",en:"MASTER",min:35},
+  {t:"博士",en:"DOCTOR",min:55},
+  {t:"教授",en:"PROFESSOR",min:75},
+  {t:"名誉教授",en:"EMERITUS",min:90}
+];
+function mastery(){let ok=0;Q.forEach(q=>{const r=rec[q.id];if(r&&r.last)ok++});return{ok,n:Q.length,pct:Q.length?ok/Q.length*100:0}}
+function rankOf(pct){let i=0;RANKS.forEach((r,k)=>{if(pct>=r.min)i=k});return i}
+function stars(i){return "★".repeat(i)+"☆".repeat(RANKS.length-1-i)}
+function rankPanel(){
+  const m=mastery(),i=rankOf(m.pct),r=RANKS[i],nx=RANKS[i+1];
+  const need=nx?Math.max(1,Math.ceil(nx.min/100*m.n)-m.ok):0;
+  const lo=r.min,hi=nx?nx.min:100,prog=nx?Math.min(100,Math.max(0,(m.pct-lo)/(hi-lo)*100)):100;
+  return `<div class="panel rankp"><div class="rk-badge rk${i}" aria-hidden="true"><span class="rk-en">${r.en}</span><span class="rk-t">${r.t}</span><span class="rk-st">${stars(i)}</span></div>
+    <div class="rk-body"><h2>あなたのランク：${r.t}</h2>
+    <p class="kbd num">正解済み ${m.ok} / ${m.n} 問（${Math.floor(m.pct)}%）</p>
+    <div class="meter rk-meter"><i style="width:${prog}%"></i></div>
+    <p class="kbd">${nx?`次の「${nx.t}」まで、あと <b class="num">${need}</b> 問正解`:"最高ランクに到達しました！"}</p></div></div>`;
+}
+const TITLES=[[100,"名誉教授級"],[90,"教授級"],[75,"博士級"],[60,"修士級"],[40,"学士級"],[0,"新入生級"]];
+function sessionRank(ok,n,r0){
+  const p=n?ok/n*100:0;const t=TITLES.find(x=>p>=x[0])[1];
+  const r1=rankOf(mastery().pct);
+  const up=r1>r0?`<div class="rk-up">ランクアップ！ ${RANKS[r0].t} → <b>${RANKS[r1].t}</b></div>`:"";
+  return `<div class="rk-session"><span class="kbd">今回の称号</span><span class="rk-title">${t}</span></div>${up}`;
+}
+
+/* ===== 状態 ===== */
+const app=document.getElementById("app");
+let S={view:"home",size:10,fmt:"ALL"};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const rich=s=>esc(s).replace(/&lt;(\/?)(sup|sub|u)&gt;/g,"<$1$2>").replace(/&lt;br&gt;/g,"<br>");
+const ROM=["Ⅰ","Ⅱ","Ⅲ"];
+
+function header(){return `<header class="top"><div class="subject"><h1><b>地理</b> ドリル</h1><span class="tag">共通テスト対策</span></div>
+  <div class="row"><a class="subj-link" href="index.html">メニュー</a><small class="num">全${Q.length}問</small></div></header>`}
+const fmtOK=q=>S.fmt==="ALL"||q.f===S.fmt;
+function stats(cat){const qs=Q.filter(q=>!cat||q.c===cat);let done=0,ok=0;qs.forEach(q=>{const r=rec[q.id];if(r){done++;if(r.last)ok++}});return{n:qs.length,done,ok}}
+
+function home(){
+  delete app.dataset.cat;
+  const missN=Q.filter(q=>rec[q.id]&&rec[q.id].last===false&&fmtOK(q)).length;
+  const all=stats();
+  app.innerHTML=header()+`
+  <p class="lead">分野を選んで始めてください。1問ごとに正誤と解説が出ます。正解を増やすとランクが上がります。記録はこの端末に保存されます。</p>
+  <div class="row"><span class="kbd" ${FSEG.length<3?"hidden":""}>形式</span>
+    <div class="seg" role="group" aria-label="形式" ${FSEG.length<3?"hidden":""}>${FSEG.map(([k,l])=>`<button id="fm${k}" aria-pressed="${S.fmt===k}" data-fmt="${k}">${l}</button>`).join("")}</div>
+    <span class="kbd">出題数</span>
+    <div class="seg" role="group" aria-label="出題数">${[10,20,0].map(n=>`<button id="sz${n}" aria-pressed="${S.size===n}" data-size="${n}">${n?n+"問":"全問"}</button>`).join("")}</div></div>
+  <div class="cats">${Object.entries(CATS).map(([k,c])=>{const s=stats(k);const pct=s.n?Math.round(s.ok/s.n*100):0;
+    return `<button class="cat" id="cat${k}" data-cat="${k}"><span class="k">${c.k}　<span class="era-yr">${c.yr}</span></span><span class="t">${c.name}</span><span class="d">${c.d}</span>
+    <span class="meter" aria-hidden="true"><i style="width:${pct}%"></i></span><span class="s num">正解済 ${s.ok} / ${s.n}　解答済 ${s.done}</span></button>`}).join("")}</div>
+  <div class="row">
+    <button class="btn primary" id="mix" data-cat="ALL">全分野ミックス</button>
+    <button class="btn" id="review" data-cat="MISS" ${missN?"":"disabled"}>間違えた問題を復習（${missN}問）</button>
+  </div>
+  ${rankPanel()}
+  <div class="panel"><h2>これまでの成績</h2>
+    <div class="score"><span class="big">${all.done?Math.round(all.ok/all.done*100):0}<small style="font-size:18px">%</small></span>
+    <span class="kbd num">直近の正答率（解答済 ${all.done} 問中 ${all.ok} 問正解）</span></div>
+    <div class="row" style="margin-top:10px"><button class="btn" id="reset" ${all.done?"":"disabled"}>記録を消す</button><span class="kbd" id="resetMsg"></span></div>
+  </div>
+  <footer>操作：選択肢は数字キー（1〜6）、次へは Enter キーでも進めます。</footer>`;
+  app.querySelectorAll("[data-size]").forEach(b=>b.onclick=()=>{S.size=+b.dataset.size;home()});
+  app.querySelectorAll("[data-fmt]").forEach(b=>b.onclick=()=>{S.fmt=b.dataset.fmt;home()});
+  app.querySelectorAll("button[data-cat]").forEach(b=>b.onclick=()=>start(b.dataset.cat));
+  let armed=false;const rb=document.getElementById("reset");
+  rb.onclick=()=>{if(!armed){armed=true;rb.textContent="本当に消す";document.getElementById("resetMsg").textContent="もう一度押すと全記録を消去します";return}rec={};save();home()};
+}
+
+function start(cat){
+  let pool=Q.filter(fmtOK);
+  pool=cat==="ALL"?pool:cat==="MISS"?pool.filter(q=>rec[q.id]&&rec[q.id].last===false):pool.filter(q=>q.c===cat);
+  if(!pool.length){home();return}
+  pool=shuffle(pool);if(S.size&&cat!=="MISS")pool=pool.slice(0,S.size);
+  S={...S,view:"quiz",r0:rankOf(mastery().pct),cat,list:pool,i:0,res:[],done:false};
+  question();
+}
+
+function body(q){
+  if(q.f==="S")return `<p class="stem">次の文X・Yについて、その正誤の組合せとして正しいものを選べ。</p>
+    <div class="stmts"><div class="stmt"><span class="lb">X</span><span class="tx">${rich(q.X)}</span></div><div class="stmt"><span class="lb">Y</span><span class="tx">${rich(q.Y)}</span></div></div>`;
+  if(q.f==="N")return `<p class="stem">${rich(q.p||"次のⅠ〜Ⅲについて、古いものから年代順に正しく配列したものを選べ。")}</p>
+    <div class="stmts">${q.i.map((t,k)=>`<div class="stmt"><span class="lb">${ROM[k]}</span><span class="tx">${rich(t)}</span></div>`).join("")}</div>`;
+  return `<p class="stem">${rich(q.q)}</p>`;
+}
+
+function question(){
+  const q=S.list[S.i];S.done=false;app.dataset.cat=q.c;
+  const label=S.cat==="ALL"?"全分野ミックス":S.cat==="MISS"?"復習":CATS[S.cat].name;
+  S.opts=(q.f==="K"?shuffle(q.o.map((t,k)=>({t,k}))):q.o.map((t,k)=>({t,k})));
+  app.innerHTML=`${header()}<div class="qhead"><span>${label}　<span class="num">${S.i+1} / ${S.list.length}</span></span><button class="btn" id="quit" style="padding:4px 12px;font-size:13px">やめる</button></div>
+  <div class="bar"><i style="width:${S.i/S.list.length*100}%"></i></div>
+  <div class="panel"><div><span class="qno">${q.id}</span><span class="kbd">${CATS[q.c].name}</span><span class="fmt">${FMT[q.f]}</span></div>
+    ${body(q)}
+    <div class="choices ${q.f==="N"?"six":""}">${S.opts.map((o,n)=>`<button class="ch" id="ch${n}" data-n="${n}"><span class="oval">${n+1}</span><span>${rich(o.t)}</span></button>`).join("")}</div>
+    <div id="fb"></div></div>`;
+  app.querySelectorAll(".ch").forEach(b=>b.onclick=()=>choose(+b.dataset.n));
+  document.getElementById("quit").onclick=()=>{S.view="home";home()};
+}
+
+function answerText(q){
+  if(q.f==="N"){const o=q.ord.split("").map(d=>+d-1);return `${NO[q.a]}（${o.map(k=>`${rich(q.i[k])}${q.yr?`〈${rich(q.yr[k])}〉`:""}`).join(" → ")}）`}
+  return rich(q.o[q.a]);
+}
+function choose(n){
+  if(S.done)return;S.done=true;
+  const q=S.list[S.i];const ok=S.opts[n].k===q.a;
+  app.querySelectorAll(".ch").forEach((b,m)=>{b.disabled=true;if(S.opts[m].k===q.a)b.classList.add("right")});
+  const b=document.getElementById("ch"+n);b.classList.add("sel");if(!ok)b.classList.add("wrong");
+  mark(q.id,ok);S.res.push({q,ok,your:S.opts[n].t});
+  const last=S.i===S.list.length-1;
+  document.getElementById("fb").innerHTML=`<div class="fb ${ok?"ok":"ng"}" role="status">
+    <div class="v"><span class="mark">${ok?"○":"×"}</span>${ok?"正解！":"おしい！"}</div>
+    <p>正解：<b>${answerText(q)}</b></p><p>${rich(q.e)}</p></div>
+    <div class="row" style="margin-top:14px"><button class="btn primary" id="next">${last?"結果を見る":"次の問題へ"}</button></div>`;
+  const nx=document.getElementById("next");nx.focus({preventScroll:true});
+  nx.onclick=()=>{if(last){result()}else{S.i++;question();window.scrollTo({top:0})}};
+}
+
+function qSummary(q){
+  if(q.f==="S")return `X：${rich(q.X)}<br>Y：${rich(q.Y)}`;
+  if(q.f==="N")return q.i.map((t,k)=>`${ROM[k]} ${rich(t)}`).join("　");
+  return rich(q.q);
+}
+function result(){
+  S.view="result";delete app.dataset.cat;
+  const n=S.res.length,ok=S.res.filter(r=>r.ok).length,miss=S.res.filter(r=>!r.ok);
+  app.innerHTML=header()+`<div class="panel"><h2>結果</h2>
+    <div class="score"><span class="big">${ok}</span><span class="num" style="font-size:20px">/ ${n}</span><span class="kbd">正答率 ${Math.round(ok/n*100)}%</span></div>${sessionRank(ok,n,S.r0)}
+    ${miss.length?`<ul class="miss">${miss.map(r=>`<li data-cat="${r.q.c}"><div class="kbd"><span class="qno">${r.q.id}</span>${CATS[r.q.c].name}<span class="fmt">${FMT[r.q.f]}</span></div>
+      <div class="en">${qSummary(r.q)}</div>
+      <div class="x">正解：<b>${answerText(r.q)}</b>　／　あなたの解答：${rich(r.your)}</div><div class="x">${rich(r.q.e)}</div></li>`).join("")}</ul>`:`<p style="font-size:18px;font-weight:900">全問正解！すばらしい！</p>`}
+    <div class="row" style="margin-top:16px"><button class="btn primary" id="again">同じ条件でもう一度</button><button class="btn" id="back">トップへ戻る</button></div></div>`;
+  document.getElementById("again").onclick=()=>start(S.cat);
+  document.getElementById("back").onclick=home;
+}
+
+document.addEventListener("keydown",e=>{
+  if(S.view!=="quiz")return;
+  const n=S.list[S.i].o.length;
+  if(/^[1-6]$/.test(e.key)&&!S.done&&+e.key<=n){choose(+e.key-1)}
+  else if(e.key==="Enter"&&S.done){const nx=document.getElementById("next");if(nx&&document.activeElement!==nx){e.preventDefault();nx.click()}}
+});
+home();
+</script>
+
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
+</body>
+</html>

@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EAF4FF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161A2E" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="入試ドリル">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}</style>
+<title>生物ドリル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Nunito:wght@600;800;900&family=Fredoka:wght@600;700&display=swap">
+<style>
+/* Layout: ステッカー風のポップな一列カラム。太いフチ＋ずらした影、分野ごとにカラー */
+:root{
+  --bg:#EAF4FF; --dot:#CFE3FA; --card:#FFFFFF; --ink:#1B1E3A; --muted:#5C6385; --edge:#1B1E3A;
+  --g:#FF5C8A; --v:#2FA8FF; --o:#FFB800; --c:var(--g);
+  --c-soft:#FFE3EC;
+  --ok:#14B06A; --ok-soft:#DDF7EA; --ng:#FF4D4D; --ng-soft:#FFE4E4;
+  --btn-ink:#FFFFFF;
+  --f-jp:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  --f-en:"Nunito","Segoe UI",system-ui,sans-serif;
+  --f-num:"Fredoka","Nunito",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#161A2E; --dot:#22284A; --card:#232945; --ink:#F2F4FF; --muted:#A9B0D4; --edge:#060815;
+  --g:#FF7AA2; --v:#5BBEFF; --o:#FFC933; --c-soft:#3A2440;
+  --ok:#3DD68C; --ok-soft:#173829; --ng:#FF6F6F; --ng-soft:#3E1D22; --btn-ink:#161A2E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161A2E; --dot:#22284A; --card:#232945; --ink:#F2F4FF; --muted:#A9B0D4; --edge:#060815;
+  --g:#FF7AA2; --v:#5BBEFF; --o:#FFC933; --c-soft:#3A2440;
+  --ok:#3DD68C; --ok-soft:#173829; --ng:#FF6F6F; --ng-soft:#3E1D22; --btn-ink:#161A2E; color-scheme:dark}
+[data-cat="G"]{--c:var(--g)} [data-cat="V"]{--c:var(--v)} [data-cat="O"]{--c:var(--o)}
+*{box-sizing:border-box}
+body{background-color:var(--bg);background-image:radial-gradient(var(--dot) 2px,transparent 2.5px);background-size:22px 22px;
+  color:var(--ink);font-family:var(--f-jp);font-weight:500;font-size:15px;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--v);outline-offset:3px}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.subject{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.subject h1{margin:0;font-size:30px;font-weight:900;letter-spacing:.02em;text-wrap:balance;
+  text-shadow:3px 3px 0 var(--g)}
+.subject h1 b{font-family:var(--f-num);font-weight:700;color:var(--v);text-shadow:3px 3px 0 var(--o)}
+.tag{font-size:12px;font-weight:900;background:var(--o);color:#1B1E3A;border:2px solid var(--edge);border-radius:999px;padding:2px 12px;transform:rotate(-4deg);box-shadow:2px 2px 0 var(--edge)}
+.top small{font-family:var(--f-num);font-size:14px;background:var(--card);border:2px solid var(--edge);border-radius:999px;padding:2px 12px}
+.lead{color:var(--muted);margin:0}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.cat{background:var(--card);border:3px solid var(--edge);border-radius:20px;padding:16px 16px 14px;text-align:left;display:flex;flex-direction:column;gap:6px;min-width:0;
+  box-shadow:5px 5px 0 var(--c);transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}
+.cat::after{content:"";position:absolute;right:-24px;top:-24px;width:80px;height:80px;border-radius:50%;background:var(--c);opacity:.25}
+.cat:hover{transform:translate(-2px,-3px) rotate(-.6deg);box-shadow:8px 8px 0 var(--c)}
+.cat:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--c)}
+.cat .k{font-family:var(--f-num);font-size:12px;font-weight:700;color:var(--c);letter-spacing:.12em;filter:brightness(.85)}
+.cat .t{font-size:20px;font-weight:900}
+.cat .d{font-size:13px;color:var(--muted)}
+.meter{height:12px;background:var(--bg);border:2px solid var(--edge);border-radius:999px;position:relative;margin-top:6px;overflow:hidden}
+.meter i{position:absolute;inset:0 auto 0 0;background:var(--c);border-radius:999px}
+.cat .s{font-size:12px;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{background:var(--card);border:3px solid var(--edge);border-radius:999px;padding:8px 20px;font-weight:700;box-shadow:3px 3px 0 var(--edge);transition:transform .1s,box-shadow .1s}
+.btn:hover:not([disabled]){transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--edge)}
+.btn:active:not([disabled]){transform:translate(3px,3px);box-shadow:0 0 0 var(--edge)}
+.btn.primary{background:var(--g);color:#fff}
+#mix.primary{background:linear-gradient(90deg,var(--g),var(--v))}
+.btn[disabled]{opacity:.4;cursor:default;box-shadow:none}
+.seg{display:inline-flex;border:3px solid var(--edge);border-radius:999px;overflow:hidden;box-shadow:3px 3px 0 var(--edge)}
+.seg button{background:var(--card);border:0;padding:5px 16px;font-size:13px;font-weight:700}
+.seg button+button{border-left:2px solid var(--edge)}
+.seg button[aria-pressed="true"]{background:var(--o);color:#1B1E3A}
+.panel{background:var(--card);border:3px solid var(--edge);border-radius:24px;padding:20px;box-shadow:6px 6px 0 var(--edge)}
+.panel h2{margin:0 0 8px;font-size:18px;font-weight:900}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;font-weight:700}
+.bar{height:14px;background:var(--card);border:3px solid var(--edge);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:repeating-linear-gradient(45deg,var(--c) 0 10px,color-mix(in srgb,var(--c) 70%,#fff) 10px 20px);transition:width .35s cubic-bezier(.3,1.6,.5,1)}
+.qno{display:inline-block;background:var(--c);color:#fff;font-family:var(--f-num);font-weight:700;padding:1px 10px;margin-right:8px;font-size:13px;border-radius:999px;border:2px solid var(--edge)}
+[data-cat="O"] .qno{color:#1B1E3A}
+.stem{font-family:var(--f-en);font-weight:800;font-size:21px;line-height:1.6;margin:14px 0 6px}
+.stem .blank{display:inline-block;min-width:5.5em;background:var(--c-soft);border:2px dashed var(--c);border-radius:10px;text-align:center;font-family:var(--f-num);font-size:14px;color:var(--ink);line-height:1.8}
+.ja{color:var(--muted);font-size:14px;margin:0}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+@media (max-width:520px){.choices{grid-template-columns:1fr}}
+.ch{display:flex;align-items:center;gap:12px;background:var(--card);border:3px solid var(--edge);border-radius:16px;padding:10px 14px;text-align:left;font-family:var(--f-en);font-weight:800;font-size:17px;
+  box-shadow:3px 3px 0 var(--edge);transition:transform .12s,box-shadow .12s;min-width:0}
+.ch:hover:not([disabled]){transform:translate(-1px,-2px);box-shadow:4px 5px 0 var(--c)}
+.oval{flex:none;width:30px;height:30px;border:2px solid var(--edge);border-radius:50%;display:grid;place-items:center;font-family:var(--f-num);font-size:14px;font-weight:700;background:var(--c);color:#fff}
+[data-cat="O"] .oval{color:#1B1E3A}
+.ch.right{background:var(--ok-soft);border-color:var(--ok);box-shadow:3px 3px 0 var(--ok)}
+.ch.right .oval{background:var(--ok)}
+.ch.wrong{background:var(--ng-soft);border-color:var(--ng);box-shadow:3px 3px 0 var(--ng);animation:shake .35s}
+.ch.wrong .oval{background:var(--ng)}
+.ch.sel.right{animation:pop .4s}
+.ch[disabled]{cursor:default}
+.ch[disabled]:not(.right):not(.wrong){opacity:.55}
+.fb{margin-top:18px;border:3px solid var(--ok);border-radius:18px;background:var(--ok-soft);padding:12px 16px;animation:pop .35s}
+.fb.ng{border-color:var(--ng);background:var(--ng-soft)}
+.fb .v{font-weight:900;font-size:20px;display:flex;align-items:center;gap:8px}
+.fb.ok .v{color:var(--ok)} .fb.ng .v{color:var(--ng)}
+.fb p{margin:6px 0 0}
+.fb .en{font-family:var(--f-en);font-weight:800;font-size:16px}
+.mark{font-family:var(--f-num);font-size:26px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;border:2px solid var(--edge)}
+.fb.ok .mark{background:var(--ok)} .fb.ng .mark{background:var(--ng)}
+/* 並べ替え */
+.build{min-height:60px;border:3px dashed var(--c);border-radius:16px;background:var(--bg);padding:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;font-family:var(--f-en);font-weight:800;font-size:17px}
+.build .fix{color:var(--muted)}
+.build .ph{color:var(--muted);font-family:var(--f-jp);font-size:13px}
+.pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{border:2px solid var(--edge);border-radius:12px;background:var(--card);padding:4px 14px;font-family:var(--f-en);font-weight:800;font-size:17px;box-shadow:2px 2px 0 var(--edge);transition:transform .1s}
+.chip:hover:not([disabled]){transform:translateY(-2px) rotate(-2deg)}
+.chip.used{opacity:.2;cursor:default;box-shadow:none}
+.build .chip{background:var(--c);color:#fff;animation:pop .25s}
+[data-cat="O"] .build .chip{color:#1B1E3A}
+.kbd{font-size:12px;color:var(--muted)}
+.score{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.score .big{font-family:var(--f-num);font-weight:700;font-size:56px;line-height:1;color:var(--g);text-shadow:3px 3px 0 var(--o)}
+.miss{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.miss li{border:2px solid var(--edge);border-radius:14px;padding:10px 12px;min-width:0;background:var(--bg)}
+.miss .en{font-family:var(--f-en);font-weight:800;font-size:16px}
+.miss .en b{color:var(--ok)}
+.miss .x{font-size:13px;color:var(--muted)}
+footer{color:var(--muted);font-size:12px;text-align:center}
+@keyframes pop{0%{transform:scale(.9)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<style>
+/* 日本史用の追加：時代ごとのカラーと設問ブロック */
+:root{--ey:#B88A00;--ea:#F26A2E;--em:#0E9C8C;--ee:#E8457A;--ed:#7353F0;--ep:#2C8FE0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ea:#FF8F5C;--em:#2CC7B5;--ee:#FF7AA2;--ed:#9C85FF;--ep:#5BBEFF;--ey:#E6C340}}
+:root[data-theme="dark"]{--ea:#FF8F5C;--em:#2CC7B5;--ee:#FF7AA2;--ed:#9C85FF;--ep:#5BBEFF;--ey:#E6C340}
+[data-cat="A"]{--c:var(--ea)} [data-cat="B"]{--c:var(--em)} [data-cat="C"]{--c:var(--ee)} [data-cat="D"]{--c:var(--ed)} [data-cat="E"]{--c:var(--ep)}
+.stem{font-family:var(--f-jp);font-weight:700;font-size:18px}
+.stmts{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.stmt{display:flex;gap:10px;align-items:flex-start;background:var(--bg);border:2px solid var(--edge);border-radius:14px;padding:8px 12px;min-width:0}
+.stmt .lb{flex:none;font-family:var(--f-num);font-weight:700;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:#fff;border:2px solid var(--edge)}
+.stmt .tx{font-weight:700;min-width:0}
+.ch{font-family:var(--f-jp);font-weight:700}
+.choices.six{grid-template-columns:repeat(3,1fr)}
+@media (max-width:520px){.choices.six{grid-template-columns:1fr 1fr}}
+.choices.six .ch{white-space:nowrap;gap:8px;padding:10px}
+@media (max-width:520px){.choices.six .ch{font-size:15px;padding:10px 8px}.choices.six .oval{width:26px;height:26px;font-size:13px}}
+.fmt{display:inline-block;font-size:11px;font-weight:900;border:2px solid var(--edge);border-radius:999px;padding:0 8px;margin-left:6px;background:var(--o);color:#1B1E3A}
+.era-yr{font-family:var(--f-num);font-size:12px;color:var(--muted)}
+.subj-link{font-size:13px;font-weight:700;color:var(--ink);text-decoration:none;border:2px solid var(--edge);border-radius:999px;padding:2px 12px;background:var(--card)}
+.subj-link:hover{background:var(--o);color:#1B1E3A}
+.miss .en{font-family:var(--f-jp);font-weight:700}
+.subject h1 b{font-family:var(--f-jp);font-weight:900}
+</style>
+<style>
+/* ランク表示 */
+.rankp{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.rk-body{flex:1;min-width:200px}
+.rk-body h2{margin:0 0 2px}
+.rk-body p{margin:4px 0}
+.rk-meter i{background:linear-gradient(90deg,var(--o),var(--g))}
+.rk-badge{flex:none;width:118px;height:118px;border-radius:50%;border:4px solid var(--edge);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;box-shadow:4px 4px 0 var(--edge);transform:rotate(-6deg);text-align:center;color:#1B1E3A}
+.rk-badge .rk-en{font-family:var(--f-num);font-size:10px;letter-spacing:.12em;font-weight:700}
+.rk-badge .rk-t{font-size:22px;font-weight:900;line-height:1.2}
+.rk-badge .rk-st{font-size:12px;letter-spacing:1px}
+.rk0{background:#E4E8F2}.rk1{background:#BFE6FF}.rk2{background:#C9F2DA}.rk3{background:#FFD873}.rk4{background:#FFB3CB}
+.rk5{background:conic-gradient(#FFD873,#FFB3CB,#BFE6FF,#C9F2DA,#FFD873)}
+.rk-session{display:flex;align-items:baseline;gap:10px;margin-top:12px;flex-wrap:wrap}
+.rk-title{font-size:26px;font-weight:900;color:var(--ink);background:var(--o);border:3px solid var(--edge);border-radius:999px;padding:0 16px;box-shadow:3px 3px 0 var(--edge);transform:rotate(-2deg);display:inline-block;color:#1B1E3A}
+.rk-up{margin-top:12px;font-weight:900;font-size:18px;color:var(--g);animation:pop .5s}
+</style>
+
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* ===== 問題データ ===== */
+const D={"cats": {"A": {"name": "細胞と代謝", "k": "CELL & METABOLISM", "yr": "生物基礎・生物", "d": "細胞の構造、呼吸・光合成、酵素の性質"}, "B": {"name": "遺伝情報とその発現", "k": "GENETICS", "yr": "生物基礎・生物", "d": "DNAの構造と複製、遺伝子発現、バイオテクノロジー、遺伝の法則"}, "C": {"name": "体内環境と恒常性・免疫・神経", "k": "HOMEOSTASIS", "yr": "生物基礎・生物", "d": "体液・ホルモン・自律神経、免疫、ニューロンと行動"}, "D": {"name": "生殖と発生・植物の環境応答", "k": "DEVELOPMENT & PLANTS", "yr": "生物", "d": "配偶子形成と受精、動物の発生、植物ホルモンと環境応答"}, "E": {"name": "生態系・進化と系統", "k": "ECOLOGY & EVOLUTION", "yr": "生物基礎・生物", "d": "植生と遷移、生態系と物質循環、進化のしくみ、生物の系統"}}, "q": [{"id": "A01", "c": "A", "f": "K", "q": "真核生物の呼吸において、クエン酸回路が行われる場所はどこか。", "o": ["ミトコンドリアのマトリックス", "ミトコンドリアの内膜", "細胞質基質", "葉緑体のストロマ"], "e": "クエン酸回路はミトコンドリアのマトリックスで進む。電子伝達系は内膜、解糖系は細胞質基質で行われる。"}, {"id": "A02", "c": "A", "f": "K", "q": "呼吸の解糖系が行われる場所はどこか。", "o": ["細胞質基質", "ミトコンドリアのマトリックス", "ミトコンドリアの内膜", "葉緑体のチラコイド"], "e": "解糖系は細胞質基質で行われ、グルコースがピルビン酸に分解される。"}, {"id": "A03", "c": "A", "f": "K", "q": "解糖系で1分子のグルコースがピルビン酸に分解されるとき、差し引きで得られるATPは何分子か。", "o": ["2分子", "4分子", "34分子", "38分子"], "e": "解糖系では2分子のATPを消費して4分子を合成するため、差し引き2分子のATPが得られる。"}, {"id": "A04", "c": "A", "f": "K", "q": "呼吸の電子伝達系が行われる場所はどこか。", "o": ["ミトコンドリアの内膜", "ミトコンドリアのマトリックス", "ミトコンドリアの外膜", "細胞質基質"], "e": "電子伝達系はミトコンドリア内膜で行われ、H<sup>+</sup>の濃度勾配を利用してATP合成酵素がATPを合成する。"}, {"id": "A05", "c": "A", "f": "K", "q": "カルビン回路でCO<sub>2</sub>をRuBPに結合させる反応を触媒する酵素はどれか。", "o": ["ルビスコ（RuBPカルボキシラーゼ/オキシゲナーゼ）", "ATP合成酵素", "DNAポリメラーゼ", "カタラーゼ"], "e": "ルビスコがCO<sub>2</sub>をRuBPに固定し、PGA（ホスホグリセリン酸）が生じる。"}, {"id": "A06", "c": "A", "f": "K", "q": "光合成で発生する酸素O<sub>2</sub>は、何に由来するか。", "o": ["水（H<sub>2</sub>O）", "二酸化炭素（CO<sub>2</sub>）", "グルコース", "RuBP"], "e": "光化学系Ⅱで水が分解されて酸素が発生する。発生するO<sub>2</sub>はH<sub>2</sub>Oに由来する。"}, {"id": "A07", "c": "A", "f": "K", "q": "葉緑体のチラコイド膜で起こる反応として最も適当なものはどれか。", "o": ["水の分解", "カルビン回路によるCO<sub>2</sub>の固定", "解糖系", "クエン酸回路"], "e": "チラコイド膜では光エネルギーの吸収、水の分解、電子伝達によるATP・NADPHの生成が起こる。カルビン回路はストロマで行われる。"}, {"id": "A08", "c": "A", "f": "K", "q": "酵素の主成分として最も適当なものはどれか。", "o": ["タンパク質", "脂質", "炭水化物", "核酸"], "e": "酵素は主にタンパク質からなる生体触媒である。そのため高温などで立体構造が変化すると失活する。"}, {"id": "A09", "c": "A", "f": "K", "q": "酵素が特定の物質（基質）にのみ作用する性質を何というか。", "o": ["基質特異性", "最適温度", "失活", "競争的阻害"], "e": "酵素の活性部位は特定の立体構造をもつため、それに適合する基質にのみ作用する。これを基質特異性という。"}, {"id": "A10", "c": "A", "f": "K", "q": "酵母が行うアルコール発酵で生じる物質の組合せとして正しいものはどれか。", "o": ["エタノールと二酸化炭素", "乳酸のみ", "エタノールと酸素", "乳酸と二酸化炭素"], "e": "アルコール発酵ではグルコースからエタノールと二酸化炭素が生じる。乳酸発酵では乳酸が生じ、二酸化炭素は発生しない。"}, {"id": "A11", "c": "A", "f": "K", "q": "原核細胞がもたない構造はどれか。", "o": ["核膜", "細胞膜", "リボソーム", "DNA"], "e": "原核細胞は核膜をもたず、DNAは細胞質中に存在する。細胞膜やリボソームはもつ。"}, {"id": "A12", "c": "A", "f": "K", "q": "ATPの化学エネルギーが主に蓄えられているのはどの結合か。", "o": ["リン酸どうしの結合", "アデニンとリボースの結合", "塩基どうしの水素結合", "アミノ酸どうしのペプチド結合"], "e": "ATPはアデノシンに3つのリン酸が結合した物質で、リン酸どうしの結合（高エネルギーリン酸結合）にエネルギーが蓄えられている。"}, {"id": "A13", "c": "A", "f": "K", "q": "細胞内共生説において、ミトコンドリアの起源と考えられている生物はどれか。", "o": ["好気性細菌", "シアノバクテリア", "ウイルス", "菌類"], "e": "ミトコンドリアは好気性細菌が、葉緑体はシアノバクテリアが宿主細胞に共生して生じたと考えられている。"}, {"id": "A14", "c": "A", "f": "K", "q": "細胞内共生説において、葉緑体の起源と考えられている生物はどれか。", "o": ["シアノバクテリア", "好気性細菌", "酵母", "ゾウリムシ"], "e": "葉緑体は光合成を行うシアノバクテリアが共生して生じたと考えられている。独自のDNAをもつことが根拠の一つである。"}, {"id": "A15", "c": "A", "f": "K", "q": "競争的阻害について述べた文として最も適当なものはどれか。", "o": ["基質濃度を高くすると、阻害の効果は小さくなる", "阻害物質は酵素の活性部位以外の部分に結合する", "基質濃度に関係なく、阻害の効果は一定である", "酵素が熱によって変性することで起こる"], "e": "競争的阻害では、基質に似た阻害物質が活性部位を奪い合う。基質濃度を高くすると基質が結合する割合が増え、阻害の効果は小さくなる。"}, {"id": "A16", "c": "A", "f": "K", "q": "無機物の酸化で得られる化学エネルギーを利用して炭酸同化を行う化学合成細菌はどれか。", "o": ["硝化菌（亜硝酸菌・硝酸菌）", "紅色硫黄細菌", "シアノバクテリア", "乳酸菌"], "e": "亜硝酸菌や硝酸菌はアンモニウムイオンや亜硝酸イオンの酸化で得たエネルギーで炭酸同化を行う。紅色硫黄細菌やシアノバクテリアは光合成を行う。"}, {"id": "A17", "c": "A", "f": "S", "X": "呼吸の電子伝達系では、最終的な電子の受容体は酸素である。", "Y": "乳酸発酵では、二酸化炭素が発生する。", "xs": true, "ys": false, "e": "電子伝達系の最後に電子はO<sub>2</sub>に渡され水が生じる。乳酸発酵ではピルビン酸が乳酸に還元され、CO<sub>2</sub>は発生しない。"}, {"id": "A18", "c": "A", "f": "S", "X": "植物細胞は葉緑体をもつため、ミトコンドリアをもたない。", "Y": "植物細胞の細胞壁の主成分はセルロースである。", "xs": false, "ys": true, "e": "植物細胞は葉緑体とミトコンドリアの両方をもち、呼吸も行う。細胞壁の主成分はセルロースである。"}, {"id": "A19", "c": "A", "f": "S", "X": "酵素は反応の前後で変化せず、繰り返し作用することができる。", "Y": "酵素は化学反応の活性化エネルギーを小さくする。", "xs": true, "ys": true, "e": "酵素は触媒として活性化エネルギーを下げて反応を促進し、自身は反応の前後で変化しないので繰り返し働く。"}, {"id": "A20", "c": "A", "f": "S", "X": "カルビン回路は葉緑体のチラコイド膜で行われる。", "Y": "クロロフィルは主に緑色の光をよく吸収する。", "xs": false, "ys": false, "e": "カルビン回路はストロマで行われる。クロロフィルは主に青紫色光と赤色光をよく吸収し、緑色光はあまり吸収しないため葉は緑に見える。"}, {"id": "A21", "c": "A", "f": "S", "X": "大腸菌などの原核細胞もリボソームをもつ。", "Y": "原核細胞のDNAは、核膜に包まれずに細胞質中に存在する。", "xs": true, "ys": true, "e": "原核細胞もリボソームをもちタンパク質を合成する。核膜がないため、DNAは細胞質中に存在する。"}, {"id": "A22", "c": "A", "f": "N", "p": "次のⅠ〜Ⅲを、起こる順に正しく並べたものを選べ。", "i": ["クエン酸回路", "解糖系", "電子伝達系"], "ord": "213", "e": "呼吸は、細胞質基質での解糖系、マトリックスでのクエン酸回路、内膜での電子伝達系の順に進む。"}, {"id": "A23", "c": "A", "f": "N", "p": "次のⅠ〜Ⅲを、起こる順に正しく並べたものを選べ。", "i": ["カルビン回路でCO<sub>2</sub>が固定され有機物が合成される", "クロロフィルなどの光合成色素が光エネルギーを吸収する", "電子伝達によってATPとNADPHが生成される"], "ord": "231", "e": "光エネルギーの吸収→電子伝達によるATP・NADPHの生成→それらを用いたカルビン回路でのCO<sub>2</sub>固定、の順に進む。"}, {"id": "A24", "c": "A", "f": "N", "p": "分泌タンパク質がつくられて細胞外へ出るまでの過程について、次のⅠ〜Ⅲを起こる順に正しく並べたものを選べ。", "i": ["ゴルジ体で加工・濃縮される", "粗面小胞体に付着したリボソームで合成される", "分泌小胞が細胞膜と融合して細胞外へ放出される"], "ord": "213", "e": "分泌タンパク質は、粗面小胞体上のリボソームで合成され、ゴルジ体で加工された後、分泌小胞によって細胞外へ放出される。"}, {"id": "B01", "c": "B", "f": "K", "q": "DNAを構成するヌクレオチドに含まれる糖はどれか。", "o": ["デオキシリボース", "リボース", "グルコース", "スクロース"], "e": "DNAの糖はデオキシリボース、RNAの糖はリボースである。"}, {"id": "B02", "c": "B", "f": "K", "q": "ある二本鎖DNAで、全塩基に占めるアデニンの割合が30%であった。グアニンの割合は何%か。", "o": ["20%", "30%", "40%", "70%"], "e": "AとT、GとCがそれぞれ等量なので、A＝T＝30%、G＋C＝40%となり、G＝20%である。"}, {"id": "B03", "c": "B", "f": "K", "q": "DNAには含まれるが、RNAには含まれない塩基はどれか。", "o": ["チミン", "ウラシル", "アデニン", "シトシン"], "e": "DNAの塩基はA・T・G・C、RNAの塩基はA・U・G・Cである。チミンはDNAのみに含まれる。"}, {"id": "B04", "c": "B", "f": "K", "q": "DNAの塩基配列をもとにRNAを合成する転写を行う酵素はどれか。", "o": ["RNAポリメラーゼ", "DNAポリメラーゼ", "DNAリガーゼ", "制限酵素"], "e": "転写はRNAポリメラーゼがDNAの鋳型鎖に相補的なRNAを合成する過程である。"}, {"id": "B05", "c": "B", "f": "K", "q": "メセルソンとスタールの実験によって明らかにされたDNAの複製方式はどれか。", "o": ["半保存的複製", "保存的複製", "分散的複製", "逆転写"], "e": "窒素の同位体を用いた実験で、複製後の各DNAがもとの鎖を1本ずつ受け継ぐ半保存的複製であることが示された。"}, {"id": "B06", "c": "B", "f": "K", "q": "真核生物で、mRNA前駆体からスプライシングによって取り除かれる部分はどれか。", "o": ["イントロン", "エキソン", "プロモーター", "コドン"], "e": "スプライシングではイントロンに相当する部分が除かれ、エキソンに相当する部分がつながってmRNAとなる。"}, {"id": "B07", "c": "B", "f": "K", "q": "mRNAの連続した3つの塩基で1つのアミノ酸を指定する単位を何というか。", "o": ["コドン", "アンチコドン", "イントロン", "オペレーター"], "e": "mRNAの3つの塩基の並びをコドンという。tRNAがもつ相補的な3塩基はアンチコドンという。"}, {"id": "B08", "c": "B", "f": "K", "q": "mRNAの情報をもとにアミノ酸をつなげる翻訳が行われる場所はどこか。", "o": ["リボソーム", "ゴルジ体", "リソソーム", "核小体"], "e": "翻訳はリボソームで行われ、tRNAが運んだアミノ酸がペプチド結合でつながる。"}, {"id": "B09", "c": "B", "f": "K", "q": "PCR法でDNAを増幅する際に用いられる酵素はどれか。", "o": ["耐熱性のDNAポリメラーゼ", "RNAポリメラーゼ", "逆転写酵素", "DNAリガーゼ"], "e": "PCR法では高温での変性の工程を繰り返すため、好熱菌由来などの耐熱性DNAポリメラーゼを用いる。"}, {"id": "B10", "c": "B", "f": "K", "q": "DNAの特定の塩基配列を認識して切断する酵素はどれか。", "o": ["制限酵素", "DNAリガーゼ", "RNAポリメラーゼ", "アミラーゼ"], "e": "制限酵素は特定の塩基配列を認識してDNAを切断する。切断したDNA断片どうしをつなぐのはDNAリガーゼである。"}, {"id": "B11", "c": "B", "f": "K", "q": "遺伝子組換えで、目的の遺伝子を大腸菌に導入するベクターとしてよく用いられる小型の環状DNAはどれか。", "o": ["プラスミド", "ヒストン", "セントロメア", "リボソーム"], "e": "プラスミドは細菌の染色体DNAとは別に存在する小型の環状DNAで、遺伝子の運び手（ベクター）として利用される。"}, {"id": "B12", "c": "B", "f": "K", "q": "遺伝子型Aaの個体どうしを交配したとき、子の表現型の分離比はどれか。ただしAはaに対して顕性とする。", "o": ["顕性形質：潜性形質＝3：1", "顕性形質：潜性形質＝1：1", "1：2：1", "9：3：3：1"], "e": "子の遺伝子型はAA：Aa：aa＝1：2：1となり、AAとAaはともに顕性形質を示すので表現型は3：1になる。"}, {"id": "B13", "c": "B", "f": "K", "q": "独立して遺伝する2対の対立遺伝子について、AaBbの個体を自家受精させたとき、子の表現型の分離比はどれか（A、Bはそれぞれ顕性）。", "o": ["9：3：3：1", "3：1", "1：1：1：1", "1：2：1"], "e": "2対の遺伝子が独立に遺伝する場合、それぞれ3：1に分離するので、表現型は(3：1)×(3：1)＝9：3：3：1となる。"}, {"id": "B14", "c": "B", "f": "K", "q": "検定交雑において、遺伝子型を調べたい個体と交配させる相手はどれか。", "o": ["潜性ホモ接合体", "顕性ホモ接合体", "ヘテロ接合体", "調べたい個体と同じ表現型の個体"], "e": "潜性ホモ接合体と交配すると、子の表現型の分離比が調べたい個体の配偶子の遺伝子型の比をそのまま表す。"}, {"id": "B15", "c": "B", "f": "K", "q": "ヒトの体細胞に含まれる染色体の数はどれか。", "o": ["46本", "23本", "44本", "48本"], "e": "ヒトの体細胞は2n＝46で、常染色体44本と性染色体2本からなる。"}, {"id": "B16", "c": "B", "f": "K", "q": "大腸菌のラクトースオペロンで、リプレッサー（抑制因子）が結合して転写を抑制するDNA領域はどれか。", "o": ["オペレーター", "プロモーター", "イントロン", "エキソン"], "e": "リプレッサーがオペレーターに結合すると、RNAポリメラーゼがプロモーターから転写を進められなくなる。"}, {"id": "B17", "c": "B", "f": "S", "X": "DNAの二重らせんでは、AとT、GとCが水素結合で対をなしている。", "Y": "転写で合成されたmRNAの塩基配列は、鋳型鎖の塩基配列と同じである。", "xs": true, "ys": false, "e": "DNAではAとT、GとCが相補的に対をなす。mRNAは鋳型鎖に相補的な配列であり、鋳型鎖と同じではない。"}, {"id": "B18", "c": "B", "f": "S", "X": "同じ個体の体細胞は、基本的に同じ遺伝情報をもっている。", "Y": "細胞ごとに異なる遺伝子が発現することで、細胞の分化が起こる。", "xs": true, "ys": true, "e": "多細胞生物の体細胞は受精卵の体細胞分裂で生じるため同じ遺伝情報をもつ。発現する遺伝子が細胞ごとに異なることで分化が起こる。"}, {"id": "B19", "c": "B", "f": "S", "X": "一遺伝子雑種において、潜性形質を示す個体はヘテロ接合体である。", "Y": "同じ染色体上にある連鎖した遺伝子間でも、乗換えによって組換えが起こることがある。", "xs": false, "ys": true, "e": "潜性形質を示すのは潜性ホモ接合体である。連鎖していても減数分裂時の乗換えによって組換えが起こりうる。"}, {"id": "B20", "c": "B", "f": "S", "X": "原核生物の遺伝子発現では、一般にスプライシングが行われる。", "Y": "逆転写酵素は、DNAを鋳型にしてRNAを合成する。", "xs": false, "ys": false, "e": "原核生物では一般にスプライシングは行われない。逆転写酵素はRNAを鋳型にしてDNAを合成する酵素である。"}, {"id": "B21", "c": "B", "f": "S", "X": "減数分裂の第一分裂では、相同染色体どうしが対合する。", "Y": "組換え価が大きいほど、2つの遺伝子間の距離は近い。", "xs": true, "ys": false, "e": "第一分裂前期に相同染色体が対合して二価染色体をつくる。組換え価は遺伝子間の距離が遠いほど大きくなる。"}, {"id": "B22", "c": "B", "f": "N", "p": "PCR法の1サイクルについて、次のⅠ〜Ⅲを起こる順に正しく並べたものを選べ。", "i": ["プライマーが一本鎖DNAに結合する", "加熱して二本鎖DNAを一本鎖に解離させる", "DNAポリメラーゼがヌクレオチド鎖を伸長させる"], "ord": "213", "e": "PCR法の1サイクルは、約95℃での解離→温度を下げてプライマーの結合→約72℃でのDNA合成の順である。"}, {"id": "B23", "c": "B", "f": "N", "p": "真核生物の遺伝子発現について、次のⅠ〜Ⅲを起こる順に正しく並べたものを選べ。", "i": ["スプライシング", "翻訳", "転写"], "ord": "312", "e": "真核生物では、核内で転写されたmRNA前駆体がスプライシングを受けてmRNAとなり、細胞質のリボソームで翻訳される。"}, {"id": "B24", "c": "B", "f": "N", "p": "減数分裂について、次のⅠ〜Ⅲを起こる順に正しく並べたものを選べ。", "i": ["相同染色体が対合して二価染色体ができる", "姉妹染色分体が分離して両極へ移動する", "相同染色体が分離して両極へ移動する"], "ord": "132", "e": "減数分裂では、第一分裂で相同染色体が対合した後に分離し、第二分裂で姉妹染色分体が分離する。"}, {"id": "C01", "c": "C", "f": "K", "q": "血糖値を低下させるはたらきをもつホルモンはどれか。", "o": ["インスリン", "グルカゴン", "アドレナリン", "糖質コルチコイド"], "e": "インスリンは細胞へのグルコースの取り込みやグリコーゲンの合成を促進し、血糖値を下げる。他の3つは血糖値を上げる。"}, {"id": "C02", "c": "C", "f": "K", "q": "インスリンを分泌する細胞はどれか。", "o": ["すい臓のランゲルハンス島B細胞", "すい臓のランゲルハンス島A細胞", "副腎髄質", "甲状腺"], "e": "インスリンはランゲルハンス島のB細胞から分泌される。A細胞はグルカゴンを分泌する。"}, {"id": "C03", "c": "C", "f": "K", "q": "甲状腺刺激ホルモンを分泌する内分泌腺はどれか。", "o": ["脳下垂体前葉", "脳下垂体後葉", "副腎皮質", "副甲状腺"], "e": "甲状腺刺激ホルモンは脳下垂体前葉から分泌され、甲状腺からのチロキシン分泌を促進する。"}, {"id": "C04", "c": "C", "f": "K", "q": "バソプレシンのはたらきとして最も適当なものはどれか。", "o": ["腎臓の集合管での水の再吸収を促進する", "血糖値を上昇させる", "腎臓でのNa<sup>+</sup>の再吸収を促進する", "代謝を促進し体温を上昇させる"], "e": "バソプレシンは脳下垂体後葉から分泌され、集合管での水の再吸収を促進して体液の浸透圧を下げる。Na<sup>+</sup>の再吸収促進は鉱質コルチコイドのはたらきである。"}, {"id": "C05", "c": "C", "f": "K", "q": "自律神経系と内分泌系を統合的に調節している中枢はどこか。", "o": ["間脳の視床下部", "小脳", "中脳", "大脳皮質"], "e": "間脳の視床下部は自律神経系の中枢であり、脳下垂体を介して内分泌系も調節している。"}, {"id": "C06", "c": "C", "f": "K", "q": "交感神経がはたらいたときに起こる変化として最も適当なものはどれか。", "o": ["心臓の拍動が促進される", "瞳孔が縮小する", "胃腸のぜん動運動が促進される", "気管支が収縮する"], "e": "交感神経は心臓の拍動促進、瞳孔拡大、消化管運動の抑制、気管支の拡張などを引き起こす。"}, {"id": "C07", "c": "C", "f": "K", "q": "体液性免疫で、抗体を産生・分泌する細胞はどれか。", "o": ["形質細胞（抗体産生細胞）", "キラーT細胞", "ヘルパーT細胞", "マクロファージ"], "e": "活性化したB細胞が増殖して形質細胞（抗体産生細胞）に分化し、抗体を分泌する。"}, {"id": "C08", "c": "C", "f": "K", "q": "抗体を構成するタンパク質はどれか。", "o": ["免疫グロブリン", "ヘモグロビン", "アルブミン", "フィブリン"], "e": "抗体は免疫グロブリンというタンパク質からなり、特定の抗原と特異的に結合する。"}, {"id": "C09", "c": "C", "f": "K", "q": "細胞性免疫で、ウイルスに感染した細胞を直接攻撃して破壊する細胞はどれか。", "o": ["キラーT細胞", "B細胞", "形質細胞", "赤血球"], "e": "キラーT細胞は、抗原を提示する感染細胞を認識して直接攻撃し破壊する。"}, {"id": "C10", "c": "C", "f": "K", "q": "予防接種（ワクチン）が感染症の予防に有効である理由として最も適当なものはどれか。", "o": ["記憶細胞がつくられ、再侵入時に速く強い二次応答が起こるため", "他の動物でつくった抗体を体内に注射するため", "好中球の食作用だけが強化されるため", "血液凝固が起こりやすくなるため"], "e": "ワクチンにより獲得免疫がはたらき記憶細胞が残るため、病原体が侵入した際に速やかに強い二次応答が起こる。他の動物の抗体を注射するのは血清療法である。"}, {"id": "C11", "c": "C", "f": "K", "q": "HIV（ヒト免疫不全ウイルス）が主に感染して破壊する細胞はどれか。", "o": ["ヘルパーT細胞", "赤血球", "血小板", "形質細胞"], "e": "HIVはヘルパーT細胞に感染して破壊するため、獲得免疫全体がはたらかなくなりエイズ（後天性免疫不全症候群）を発症する。"}, {"id": "C12", "c": "C", "f": "K", "q": "静止状態のニューロンの膜電位（静止電位）について正しいものはどれか。", "o": ["細胞内は細胞外に対して負（－）である", "細胞内は細胞外に対して正（＋）である", "細胞内と細胞外の電位差はない", "細胞内外の電位が周期的に逆転している"], "e": "静止時は主にK<sup>+</sup>が細胞外に流出することにより、細胞内は外に対して負の電位を保っている。"}, {"id": "C13", "c": "C", "f": "K", "q": "運動神経の末端から放出され、骨格筋に興奮を伝える神経伝達物質はどれか。", "o": ["アセチルコリン", "ノルアドレナリン", "インスリン", "チロキシン"], "e": "運動神経と骨格筋の接合部ではアセチルコリンが放出される。ノルアドレナリンは主に交感神経の末端から放出される。"}, {"id": "C14", "c": "C", "f": "K", "q": "腎臓で、血液中の成分がろ過されて原尿が生じる場所はどこか。", "o": ["糸球体", "集合管", "腎う", "輸尿管"], "e": "糸球体の血液からボーマンのうへ、血球やタンパク質以外の成分がろ過されて原尿となる。"}, {"id": "C15", "c": "C", "f": "K", "q": "健康なヒトの腎臓で、原尿中に含まれるがふつうほぼ全量が再吸収される物質はどれか。", "o": ["グルコース", "尿素", "イヌリン", "タンパク質"], "e": "グルコースは細尿管（腎細管）でほぼ全量が再吸収される。タンパク質はふつうろ過されず、イヌリンは再吸収されない。"}, {"id": "C16", "c": "C", "f": "K", "q": "アメフラシの水管に繰り返し接触刺激を与えると、えらを引っ込める反応がしだいに起こらなくなる。この学習を何というか。", "o": ["慣れ", "鋭敏化", "刷込み", "試行錯誤学習"], "e": "同じ刺激の繰り返しで反応が弱まる単純な学習を慣れという。シナプスでの伝達物質の放出量が減少することで起こる。"}, {"id": "C17", "c": "C", "f": "S", "X": "ヒトの成熟した赤血球は核をもたない。", "Y": "血小板は血液凝固に関わる。", "xs": true, "ys": true, "e": "ヒトの赤血球は成熟の過程で核を失う。血小板は傷口に集まり、血液凝固の過程に関わる。"}, {"id": "C18", "c": "C", "f": "S", "X": "肝臓では、有害なアンモニアが毒性の低い尿素につくりかえられる。", "Y": "組織液とは、毛細血管の中を流れる液体のことである。", "xs": true, "ys": false, "e": "肝臓はアンモニアを尿素に変える。組織液は血しょうが毛細血管からしみ出して細胞の周りを満たす液体である。"}, {"id": "C19", "c": "C", "f": "S", "X": "跳躍伝導は、無髄神経繊維でみられる。", "Y": "1本のニューロンでは、刺激が強くなるほど活動電位の大きさが大きくなり続ける。", "xs": false, "ys": false, "e": "跳躍伝導は髄鞘をもつ有髄神経繊維でみられる。1本のニューロンでは全か無かの法則に従い、閾値以上なら活動電位の大きさは一定である。"}, {"id": "C20", "c": "C", "f": "S", "X": "副交感神経は、心臓の拍動を促進する。", "Y": "グルカゴンは、肝臓のグリコーゲン分解を促進して血糖値を上げる。", "xs": false, "ys": true, "e": "心臓の拍動を促進するのは交感神経で、副交感神経は抑制する。グルカゴンはグリコーゲンの分解を促進し血糖値を上げる。"}, {"id": "C21", "c": "C", "f": "S", "X": "寒冷時には、皮膚の血管が拡張して熱の放散が促進される。", "Y": "寒冷時には、甲状腺からのチロキシンの分泌が減少する。", "xs": false, "ys": false, "e": "寒冷時には皮膚の血管が収縮して放熱が抑えられる。また、チロキシンの分泌が増加して代謝が促進され、発熱量が増える。"}, {"id": "C22", "c": "C", "f": "N", "p": "血液凝固の過程について、次のⅠ〜Ⅲを起こる順に正しく並べたものを選べ。", "i": ["フィブリンが血球をからめて血ぺいができる", "血小板が傷口に集まる", "トロンビンがはたらき、フィブリノーゲンがフィブリンになる"], "ord": "231", "e": "血管が傷つくと血小板が集まり、凝固因子のはたらきでトロンビンが生じてフィブリンが形成され、血球をからめて血ぺいとなる。"}, {"id": "C23", "c": "C", "f": "N", "p": "体液性免疫の過程について、次のⅠ〜Ⅲを起こる順に正しく並べたものを選べ。", "i": ["形質細胞が抗体を分泌する", "ヘルパーT細胞が、同じ抗原を認識したB細胞を活性化する", "樹状細胞が抗原をヘルパーT細胞に提示する"], "ord": "321", "e": "樹状細胞の抗原提示でヘルパーT細胞が活性化し、そのヘルパーT細胞がB細胞を活性化する。B細胞は増殖して形質細胞となり抗体を分泌する。"}, {"id": "C24", "c": "C", "f": "N", "p": "膝蓋腱反射において、興奮が伝わる経路として次のⅠ〜Ⅲを伝わる順に正しく並べたものを選べ。", "i": ["脊髄", "運動神経", "感覚神経"], "ord": "312", "e": "膝蓋腱反射では、受容器の興奮が感覚神経→脊髄→運動神経と伝わり、大脳を経ずに筋肉が収縮する。"}, {"id": "D01", "c": "D", "f": "K", "q": "カエルの発生で、原口が生じて陥入が始まる時期はどれか。", "o": ["原腸胚期", "桑実胚期", "胞胚期", "神経胚期"], "e": "原腸胚期に原口から細胞が陥入して原腸がつくられ、外胚葉・中胚葉・内胚葉が分かれる。"}, {"id": "D02", "c": "D", "f": "K", "q": "脊椎動物で、中胚葉に由来する器官・組織はどれか。", "o": ["心臓", "表皮", "脳", "肝臓"], "e": "心臓・骨格筋・腎臓・血管などは中胚葉由来である。表皮と脳は外胚葉、肝臓は内胚葉に由来する。"}, {"id": "D03", "c": "D", "f": "K", "q": "脊椎動物で、外胚葉に由来するものはどれか。", "o": ["神経管（脳・脊髄）", "腸管の上皮", "骨格筋", "腎臓"], "e": "神経管は外胚葉から形成され、脳や脊髄になる。腸管の上皮は内胚葉、骨格筋と腎臓は中胚葉由来である。"}, {"id": "D04", "c": "D", "f": "K", "q": "イモリの初期原腸胚で、他の胚に移植すると二次胚を誘導するはたらきをもつ部域（形成体）はどこか。", "o": ["原口背唇部", "予定表皮域", "植物極側の予定内胚葉域", "胞胚腔"], "e": "シュペーマンらは原口背唇部を移植すると二次胚が生じることを示し、この部域を形成体（オーガナイザー）とよんだ。"}, {"id": "D05", "c": "D", "f": "K", "q": "被子植物の重複受精で生じる胚乳の細胞の核相はどれか。", "o": ["3n", "n", "2n", "4n"], "e": "中央細胞の2個の極核（各n）と精細胞（n）が合体して胚乳核（3n）となる。"}, {"id": "D06", "c": "D", "f": "K", "q": "果実の成熟を促進するはたらきをもつ植物ホルモンはどれか。", "o": ["エチレン", "ジベレリン", "アブシシン酸", "サイトカイニン"], "e": "エチレンは気体の植物ホルモンで、果実の成熟や落葉・落果の促進などにはたらく。"}, {"id": "D07", "c": "D", "f": "K", "q": "乾燥時に気孔を閉じさせるはたらきをもつ植物ホルモンはどれか。", "o": ["アブシシン酸", "オーキシン", "ジベレリン", "エチレン"], "e": "乾燥すると葉でアブシシン酸が増加し、孔辺細胞にはたらいて気孔を閉じさせ、蒸散を抑える。"}, {"id": "D08", "c": "D", "f": "K", "q": "茎の光屈性のしくみとして最も適当なものはどれか。", "o": ["オーキシンが光の当たらない側に多く分布し、その側の伸長成長が促進される", "オーキシンが光の当たる側に多く分布し、その側の伸長成長が促進される", "オーキシンが光の当たらない側で分解され、その側の成長が抑制される", "オーキシンが茎全体に均一に分布し、光の当たる側だけが成長する"], "e": "光の方向に応じてオーキシンが光の当たらない側へ移動し、その側の細胞の伸長が促進されるため、茎は光の方向へ屈曲する。"}, {"id": "D09", "c": "D", "f": "K", "q": "長日植物はどれか。", "o": ["ホウレンソウ", "アサガオ", "キク", "オナモミ"], "e": "ホウレンソウやコムギ、アブラナは長日植物である。アサガオ、キク、オナモミは短日植物である。"}, {"id": "D10", "c": "D", "f": "K", "q": "花芽の形成を促進するフロリゲンが主につくられる場所はどこか。", "o": ["葉", "根", "茎頂分裂組織", "花弁"], "e": "フロリゲンは適切な日長条件を受容した葉でつくられ、師管を通って茎頂へ移動し花芽形成を促す。"}, {"id": "D11", "c": "D", "f": "K", "q": "レタスなどの光発芽種子の発芽を促進する光はどれか。", "o": ["赤色光", "遠赤色光", "緑色光", "紫外線"], "e": "赤色光をフィトクロムが受容すると発芽が促進される。遠赤色光は赤色光の効果を打ち消す。"}, {"id": "D12", "c": "D", "f": "K", "q": "光屈性や気孔の開口に関わる青色光の受容体はどれか。", "o": ["フォトトロピン", "フィトクロム", "ロドプシン", "クロロフィル"], "e": "フォトトロピンは青色光を受容し、光屈性や気孔の開口などに関わる。フィトクロムは赤色光・遠赤色光の受容体である。"}, {"id": "D13", "c": "D", "f": "K", "q": "ヒトの精子形成で、1個の一次精母細胞から最終的に生じる精子は何個か。", "o": ["4個", "1個", "2個", "8個"], "e": "一次精母細胞は減数分裂で2個の二次精母細胞を経て4個の精細胞となり、それぞれが精子になる。"}, {"id": "D14", "c": "D", "f": "K", "q": "花の形成に関するABCモデルで、Aクラス遺伝子のみがはたらく領域に形成される器官はどれか。", "o": ["がく片", "花弁", "おしべ", "めしべ"], "e": "Aのみでがく片、A＋Bで花弁、B＋Cでおしべ、Cのみでめしべが形成される。"}, {"id": "D15", "c": "D", "f": "K", "q": "頂芽優勢において、側芽の成長を抑制する主な植物ホルモンはどれか。", "o": ["オーキシン", "サイトカイニン", "エチレン", "フロリゲン"], "e": "頂芽でつくられたオーキシンが下方へ移動し、側芽の成長を抑制する。サイトカイニンは側芽の成長を促進する。"}, {"id": "D16", "c": "D", "f": "K", "q": "アポトーシスの例として最も適当なものはどれか。", "o": ["ヒトの手の形成過程で、指の間の細胞が死んで除かれる", "やけどによって皮膚の細胞が壊れて死ぬ", "幹細胞が分裂して細胞数が増える", "未分化な細胞が筋細胞に分化する"], "e": "アポトーシスは遺伝的にプログラムされた細胞死で、発生過程の形づくりなどに関わる。外傷などによる細胞死は壊死である。"}, {"id": "D17", "c": "D", "f": "S", "X": "卵割では割球がほとんど成長せずに分裂を繰り返すため、割球は次第に小さくなる。", "Y": "胞胚期には、胚の内部に原腸がつくられる。", "xs": true, "ys": false, "e": "卵割では間期に細胞の成長がほとんどないため割球は小さくなる。胞胚期の内部にあるのは胞胚腔で、原腸は原腸胚期にできる。"}, {"id": "D18", "c": "D", "f": "S", "X": "ジベレリンは種子の発芽を促進する。", "Y": "根は茎よりもオーキシンに対する感受性が高く、茎の成長を促進する濃度では根の成長は抑制される。", "xs": true, "ys": true, "e": "ジベレリンは発芽や茎の伸長を促進する。根の最適オーキシン濃度は茎よりはるかに低く、茎に最適な濃度では根の成長は抑制される。"}, {"id": "D19", "c": "D", "f": "S", "X": "短日植物は、連続した暗期の長さが限界暗期より短くなると花芽を形成する。", "Y": "暗期の途中で短時間光を当てる光中断を行っても、短日植物の花芽形成には影響しない。", "xs": false, "ys": false, "e": "短日植物は連続した暗期が限界暗期より長くなると花芽を形成する。光中断で連続暗期が途切れると花芽形成は起こらなくなる。"}, {"id": "D20", "c": "D", "f": "S", "X": "減数分裂は、受精卵が卵割するときに起こる。", "Y": "被子植物では、花粉管の中に2個の精細胞がつくられる。", "xs": false, "ys": true, "e": "減数分裂は配偶子（植物では胞子など）をつくる過程で起こり、卵割は体細胞分裂である。花粉管内の2個の精細胞が重複受精を行う。"}, {"id": "D21", "c": "D", "f": "S", "X": "iPS細胞は、体細胞に特定の遺伝子を導入してつくられる。", "Y": "ES細胞は、胚盤胞の内部細胞塊からつくられる。", "xs": true, "ys": true, "e": "iPS細胞は体細胞に数種類の遺伝子を導入して作製される。ES細胞は胚盤胞の内部細胞塊の細胞を培養してつくられる。"}, {"id": "D22", "c": "D", "f": "N", "p": "カエルの発生段階について、次のⅠ〜Ⅲを起こる順に正しく並べたものを選べ。", "i": ["神経胚", "胞胚", "原腸胚"], "ord": "231", "e": "カエルの発生は、受精卵→卵割期→桑実胚→胞胚→原腸胚→神経胚→尾芽胚の順に進む。"}, {"id": "D23", "c": "D", "f": "N", "p": "被子植物の受精までの過程について、次のⅠ〜Ⅲを起こる順に正しく並べたものを選べ。", "i": ["花粉管が胚珠に向かって伸びる", "受粉", "重複受精"], "ord": "213", "e": "めしべの柱頭に受粉した花粉が発芽して花粉管を伸ばし、胚のうに達して重複受精が起こる。"}, {"id": "D24", "c": "D", "f": "N", "p": "動物の卵形成について、次のⅠ〜Ⅲを生じる順に正しく並べたものを選べ。", "i": ["二次卵母細胞", "卵原細胞", "一次卵母細胞"], "ord": "231", "e": "卵原細胞が体細胞分裂で増殖し、成長して一次卵母細胞となり、減数第一分裂で二次卵母細胞（と第一極体）が生じる。"}, {"id": "E01", "c": "E", "f": "K", "q": "生態系の生産者にあたるものはどれか。", "o": ["植物プランクトン", "動物プランクトン", "菌類", "草食動物"], "e": "生産者は光合成などにより無機物から有機物をつくる生物で、植物や植物プランクトンが該当する。"}, {"id": "E02", "c": "E", "f": "K", "q": "日本の暖温帯で、陸上の一次遷移が進んで最終的に優占する樹種はどれか。", "o": ["シイやカシなどの陰樹", "アカマツなどの陽樹", "ススキなどの草本", "地衣類やコケ植物"], "e": "遷移が進むと林床が暗くなり、陰樹の幼木が育つため、暖温帯ではシイ・カシ類などの陰樹林が極相となる。"}, {"id": "E03", "c": "E", "f": "K", "q": "日本の東北地方の低地に分布する主なバイオームはどれか。", "o": ["夏緑樹林", "照葉樹林", "針葉樹林", "硬葉樹林"], "e": "東北地方や北海道南部の低地には、ブナやミズナラなどが優占する夏緑樹林が分布する。"}, {"id": "E04", "c": "E", "f": "K", "q": "照葉樹林の代表的な樹種の組合せはどれか。", "o": ["スダジイ・タブノキ", "ブナ・ミズナラ", "エゾマツ・トドマツ", "オリーブ・コルクガシ"], "e": "照葉樹林はスダジイ・タブノキ・アラカシなどが優占する。ブナ・ミズナラは夏緑樹林、エゾマツ・トドマツは針葉樹林、オリーブ・コルクガシは硬葉樹林である。"}, {"id": "E05", "c": "E", "f": "K", "q": "大気中の窒素N<sub>2</sub>を固定してアンモニウムイオンをつくる生物はどれか。", "o": ["根粒菌", "硝酸菌", "亜硝酸菌", "乳酸菌"], "e": "根粒菌はマメ科植物の根に共生して窒素固定を行う。亜硝酸菌・硝酸菌は硝化を行うが窒素固定は行わない。"}, {"id": "E06", "c": "E", "f": "K", "q": "生態系の中で、個体数は少なくても他の生物の存続や生態系のバランスに大きな影響を与える種を何というか。", "o": ["キーストーン種", "外来生物", "絶滅危惧種", "指標生物"], "e": "ラッコなどのように、生態系のバランスを保つうえで大きな影響を与える種をキーストーン種という。"}, {"id": "E07", "c": "E", "f": "K", "q": "湖沼や内湾で窒素やリンなどの栄養塩類が増えすぎた結果、起こりやすい現象はどれか。", "o": ["アオコや赤潮の発生", "オゾン層の破壊", "酸性雨", "砂漠化"], "e": "富栄養化が進むと植物プランクトンが異常に増殖し、淡水ではアオコ、海水では赤潮が発生する。"}, {"id": "E08", "c": "E", "f": "K", "q": "3ドメイン説で生物を分ける3つのドメインの組合せはどれか。", "o": ["細菌・アーキア・真核生物", "原核生物・真核生物・ウイルス", "動物・植物・菌類", "原生生物・植物・動物"], "e": "ウーズはrRNAの塩基配列の比較から、生物を細菌（バクテリア）・アーキア（古細菌）・真核生物の3ドメインに分けた。"}, {"id": "E09", "c": "E", "f": "K", "q": "ハーディ・ワインベルグの法則が成り立つ集団で、潜性ホモ接合体aaの頻度が0.16であった。対立遺伝子aの遺伝子頻度はいくらか。", "o": ["0.4", "0.16", "0.6", "0.84"], "e": "aの遺伝子頻度をqとすると、aaの頻度はq<sup>2</sup>＝0.16なので、q＝0.4となる。"}, {"id": "E10", "c": "E", "f": "K", "q": "遺伝的浮動による遺伝子頻度の変化が最も起こりやすいのはどのような集団か。", "o": ["個体数の少ない集団", "個体数がきわめて多い集団", "個体数が多く突然変異が起こらない集団", "個体数が多く自然選択がはたらかない集団"], "e": "遺伝的浮動は偶然による遺伝子頻度の変化で、個体数の少ない集団ほどその影響が大きくなる。"}, {"id": "E11", "c": "E", "f": "K", "q": "相同器官の例として最も適当な組合せはどれか。", "o": ["ヒトの腕とクジラの胸びれ", "チョウのはねとコウモリの翼", "サツマイモのいもとジャガイモのいも", "エンドウの巻きひげとブドウの巻きひげ"], "e": "ヒトの腕とクジラの胸びれは起源が同じ相同器官である。他は形やはたらきが似ていても起源が異なる相似器官である。"}, {"id": "E12", "c": "E", "f": "K", "q": "恐竜類が繁栄していた地質時代はどれか。", "o": ["中生代", "古生代", "新生代", "先カンブリア時代"], "e": "恐竜類は中生代に繁栄し、中生代末に絶滅した。新生代には哺乳類が繁栄した。"}, {"id": "E13", "c": "E", "f": "K", "q": "カンブリア紀に、多様な動物が短期間に一斉に出現したとされる出来事を何というか。", "o": ["カンブリア紀の大爆発", "全球凍結（スノーボールアース）", "ペルム紀末の大量絶滅", "大陸移動"], "e": "カンブリア紀には多様な体の構造をもつ動物が急速に出現した。バージェス動物群などの化石が知られる。"}, {"id": "E14", "c": "E", "f": "K", "q": "山脈や海などによって集団が地理的に分断され、それぞれが別の種に分化することを何というか。", "o": ["異所的種分化", "同所的種分化", "共進化", "収れん"], "e": "地理的隔離が起こった集団間で遺伝子の交流がなくなり、生殖的隔離が生じて別種になることを異所的種分化という。"}, {"id": "E15", "c": "E", "f": "K", "q": "リンネが確立した学名の表し方（二名法）で用いる組合せはどれか。", "o": ["属名＋種小名", "科名＋属名", "目名＋種小名", "界名＋種小名"], "e": "二名法では、ラテン語の属名と種小名を組み合わせて種の学名を表す。"}, {"id": "E16", "c": "E", "f": "K", "q": "生物濃縮が起こりやすい物質の性質として最も適当なものはどれか。", "o": ["分解されにくく、体外に排出されにくい", "水に溶けやすく、すみやかに排出される", "微生物によってすみやかに分解される", "生体内で容易に代謝される"], "e": "分解されにくく体内に蓄積しやすい物質は、食物連鎖を通じて高次の消費者ほど高濃度に濃縮される。"}, {"id": "E17", "c": "E", "f": "S", "X": "生態系では物質は循環するが、エネルギーは最終的に熱として生態系外へ出ていく。", "Y": "分解者は、遺体や排出物に含まれる有機物を無機物に分解する。", "xs": true, "ys": true, "e": "エネルギーは循環せず熱として失われる。菌類や細菌などの分解者は有機物を無機物に分解し、物質循環を支えている。"}, {"id": "E18", "c": "E", "f": "S", "X": "一次遷移は、山火事の跡地や森林の伐採跡地から始まる遷移である。", "Y": "二次遷移は、土壌がすでに存在するため一次遷移よりも速く進む。", "xs": false, "ys": true, "e": "山火事跡地や伐採跡地から始まるのは二次遷移である。土壌や種子・地下茎などが残っているため、二次遷移は一次遷移より速く進む。"}, {"id": "E19", "c": "E", "f": "S", "X": "突然変異は、生物にとって有利なものだけが起こる。", "Y": "遺伝的浮動は、有利な形質をもつ個体だけを残すはたらきである。", "xs": false, "ys": false, "e": "突然変異は有利・不利・中立に関係なく偶然起こる。遺伝的浮動は偶然による遺伝子頻度の変化で、有利な形質の個体を残すのは自然選択である。"}, {"id": "E20", "c": "E", "f": "S", "X": "アーキア（古細菌）は核膜をもつ。", "Y": "真核生物は、細菌よりもアーキアに近縁であると考えられている。", "xs": false, "ys": true, "e": "アーキアは原核生物であり核膜をもたない。rRNAの解析などから、真核生物は細菌よりアーキアに近縁とされる。"}, {"id": "E21", "c": "E", "f": "S", "X": "光合成を行う生物の出現によって、大気中の酸素濃度が増加した。", "Y": "陸上に最初に進出した生物は、脊椎動物の両生類である。", "xs": true, "ys": false, "e": "シアノバクテリアなどの光合成により大気中の酸素が増加した。陸上へは植物（およびそれに続く節足動物など）が先に進出し、両生類の進出はその後である。"}, {"id": "E22", "c": "E", "f": "N", "p": "脊椎動物の出現について、次のⅠ〜Ⅲを出現した順に正しく並べたものを選べ。", "i": ["魚類", "哺乳類", "両生類"], "ord": "132", "e": "脊椎動物は、魚類→両生類→は虫類→哺乳類の順に出現した。"}, {"id": "E23", "c": "E", "f": "N", "p": "陸上の一次遷移について、次のⅠ〜Ⅲを起こる順に正しく並べたものを選べ。", "i": ["草原", "陽樹林", "荒原（地衣類・コケ植物）"], "ord": "312", "e": "日本の陸上の一次遷移は、荒原→草原→低木林→陽樹林→混交林→陰樹林の順に進む。"}, {"id": "E24", "c": "E", "f": "N", "p": "地球の生物の歴史について、次のⅠ〜Ⅲを起こった順に正しく並べたものを選べ。", "i": ["エディアカラ生物群の出現", "真核生物の出現", "シアノバクテリアの出現"], "ord": "321", "e": "シアノバクテリアは約27億年前までに出現し、真核生物は約20億年前、多細胞のエディアカラ生物群は約6億年前に現れた。"}]};
+const CATS=D.cats;const Q=D.q;
+const FMT={K:"4択",S:"正誤",N:"整序"};
+const SO=["X 正　Y 正","X 正　Y 誤","X 誤　Y 正","X 誤　Y 誤"];
+const NO=["Ⅰ－Ⅱ－Ⅲ","Ⅰ－Ⅲ－Ⅱ","Ⅱ－Ⅰ－Ⅲ","Ⅱ－Ⅲ－Ⅰ","Ⅲ－Ⅰ－Ⅱ","Ⅲ－Ⅱ－Ⅰ"];
+const NK=["123","132","213","231","312","321"];
+Q.forEach(q=>{if(q.f==="S"){q.o=SO;q.a=(q.xs?0:2)+(q.ys?0:1)}else if(q.f==="N"){q.o=NO;q.a=NK.indexOf(q.ord)}else{q.a=0}});
+const FSEG=[["ALL","すべて"]].concat(["K","S","N"].filter(f=>Q.some(q=>q.f===f)).map(f=>[f,FMT[f]]));
+
+/* ===== 記録（このブラウザのみ） ===== */
+const KEY="kyotsu-seibutsu-v1";
+let rec={};
+try{rec=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){rec={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(rec))}catch(e){}}
+function mark(id,ok){const r=rec[id]||{c:0,w:0};ok?r.c++:r.w++;r.last=ok;rec[id]=r;save()}
+/* ===== ランク（習得度：正解済み問題の割合） ===== */
+const RANKS=[
+  {t:"新入生",en:"FRESHMAN",min:0},
+  {t:"学士",en:"BACHELOR",min:15},
+  {t:"修士",en:"MASTER",min:35},
+  {t:"博士",en:"DOCTOR",min:55},
+  {t:"教授",en:"PROFESSOR",min:75},
+  {t:"名誉教授",en:"EMERITUS",min:90}
+];
+function mastery(){let ok=0;Q.forEach(q=>{const r=rec[q.id];if(r&&r.last)ok++});return{ok,n:Q.length,pct:Q.length?ok/Q.length*100:0}}
+function rankOf(pct){let i=0;RANKS.forEach((r,k)=>{if(pct>=r.min)i=k});return i}
+function stars(i){return "★".repeat(i)+"☆".repeat(RANKS.length-1-i)}
+function rankPanel(){
+  const m=mastery(),i=rankOf(m.pct),r=RANKS[i],nx=RANKS[i+1];
+  const need=nx?Math.max(1,Math.ceil(nx.min/100*m.n)-m.ok):0;
+  const lo=r.min,hi=nx?nx.min:100,prog=nx?Math.min(100,Math.max(0,(m.pct-lo)/(hi-lo)*100)):100;
+  return `<div class="panel rankp"><div class="rk-badge rk${i}" aria-hidden="true"><span class="rk-en">${r.en}</span><span class="rk-t">${r.t}</span><span class="rk-st">${stars(i)}</span></div>
+    <div class="rk-body"><h2>あなたのランク：${r.t}</h2>
+    <p class="kbd num">正解済み ${m.ok} / ${m.n} 問（${Math.floor(m.pct)}%）</p>
+    <div class="meter rk-meter"><i style="width:${prog}%"></i></div>
+    <p class="kbd">${nx?`次の「${nx.t}」まで、あと <b class="num">${need}</b> 問正解`:"最高ランクに到達しました！"}</p></div></div>`;
+}
+const TITLES=[[100,"名誉教授級"],[90,"教授級"],[75,"博士級"],[60,"修士級"],[40,"学士級"],[0,"新入生級"]];
+function sessionRank(ok,n,r0){
+  const p=n?ok/n*100:0;const t=TITLES.find(x=>p>=x[0])[1];
+  const r1=rankOf(mastery().pct);
+  const up=r1>r0?`<div class="rk-up">ランクアップ！ ${RANKS[r0].t} → <b>${RANKS[r1].t}</b></div>`:"";
+  return `<div class="rk-session"><span class="kbd">今回の称号</span><span class="rk-title">${t}</span></div>${up}`;
+}
+
+/* ===== 状態 ===== */
+const app=document.getElementById("app");
+let S={view:"home",size:10,fmt:"ALL"};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const rich=s=>esc(s).replace(/&lt;(\/?)(sup|sub|u)&gt;/g,"<$1$2>").replace(/&lt;br&gt;/g,"<br>");
+const ROM=["Ⅰ","Ⅱ","Ⅲ"];
+
+function header(){return `<header class="top"><div class="subject"><h1><b>生物</b> ドリル</h1><span class="tag">共通テスト対策</span></div>
+  <div class="row"><a class="subj-link" href="index.html">メニュー</a><small class="num">全${Q.length}問</small></div></header>`}
+const fmtOK=q=>S.fmt==="ALL"||q.f===S.fmt;
+function stats(cat){const qs=Q.filter(q=>!cat||q.c===cat);let done=0,ok=0;qs.forEach(q=>{const r=rec[q.id];if(r){done++;if(r.last)ok++}});return{n:qs.length,done,ok}}
+
+function home(){
+  delete app.dataset.cat;
+  const missN=Q.filter(q=>rec[q.id]&&rec[q.id].last===false&&fmtOK(q)).length;
+  const all=stats();
+  app.innerHTML=header()+`
+  <p class="lead">分野を選んで始めてください。1問ごとに正誤と解説が出ます。正解を増やすとランクが上がります。記録はこの端末に保存されます。</p>
+  <div class="row"><span class="kbd" ${FSEG.length<3?"hidden":""}>形式</span>
+    <div class="seg" role="group" aria-label="形式" ${FSEG.length<3?"hidden":""}>${FSEG.map(([k,l])=>`<button id="fm${k}" aria-pressed="${S.fmt===k}" data-fmt="${k}">${l}</button>`).join("")}</div>
+    <span class="kbd">出題数</span>
+    <div class="seg" role="group" aria-label="出題数">${[10,20,0].map(n=>`<button id="sz${n}" aria-pressed="${S.size===n}" data-size="${n}">${n?n+"問":"全問"}</button>`).join("")}</div></div>
+  <div class="cats">${Object.entries(CATS).map(([k,c])=>{const s=stats(k);const pct=s.n?Math.round(s.ok/s.n*100):0;
+    return `<button class="cat" id="cat${k}" data-cat="${k}"><span class="k">${c.k}　<span class="era-yr">${c.yr}</span></span><span class="t">${c.name}</span><span class="d">${c.d}</span>
+    <span class="meter" aria-hidden="true"><i style="width:${pct}%"></i></span><span class="s num">正解済 ${s.ok} / ${s.n}　解答済 ${s.done}</span></button>`}).join("")}</div>
+  <div class="row">
+    <button class="btn primary" id="mix" data-cat="ALL">全分野ミックス</button>
+    <button class="btn" id="review" data-cat="MISS" ${missN?"":"disabled"}>間違えた問題を復習（${missN}問）</button>
+  </div>
+  ${rankPanel()}
+  <div class="panel"><h2>これまでの成績</h2>
+    <div class="score"><span class="big">${all.done?Math.round(all.ok/all.done*100):0}<small style="font-size:18px">%</small></span>
+    <span class="kbd num">直近の正答率（解答済 ${all.done} 問中 ${all.ok} 問正解）</span></div>
+    <div class="row" style="margin-top:10px"><button class="btn" id="reset" ${all.done?"":"disabled"}>記録を消す</button><span class="kbd" id="resetMsg"></span></div>
+  </div>
+  <footer>操作：選択肢は数字キー（1〜6）、次へは Enter キーでも進めます。</footer>`;
+  app.querySelectorAll("[data-size]").forEach(b=>b.onclick=()=>{S.size=+b.dataset.size;home()});
+  app.querySelectorAll("[data-fmt]").forEach(b=>b.onclick=()=>{S.fmt=b.dataset.fmt;home()});
+  app.querySelectorAll("button[data-cat]").forEach(b=>b.onclick=()=>start(b.dataset.cat));
+  let armed=false;const rb=document.getElementById("reset");
+  rb.onclick=()=>{if(!armed){armed=true;rb.textContent="本当に消す";document.getElementById("resetMsg").textContent="もう一度押すと全記録を消去します";return}rec={};save();home()};
+}
+
+function start(cat){
+  let pool=Q.filter(fmtOK);
+  pool=cat==="ALL"?pool:cat==="MISS"?pool.filter(q=>rec[q.id]&&rec[q.id].last===false):pool.filter(q=>q.c===cat);
+  if(!pool.length){home();return}
+  pool=shuffle(pool);if(S.size&&cat!=="MISS")pool=pool.slice(0,S.size);
+  S={...S,view:"quiz",r0:rankOf(mastery().pct),cat,list:pool,i:0,res:[],done:false};
+  question();
+}
+
+function body(q){
+  if(q.f==="S")return `<p class="stem">次の文X・Yについて、その正誤の組合せとして正しいものを選べ。</p>
+    <div class="stmts"><div class="stmt"><span class="lb">X</span><span class="tx">${rich(q.X)}</span></div><div class="stmt"><span class="lb">Y</span><span class="tx">${rich(q.Y)}</span></div></div>`;
+  if(q.f==="N")return `<p class="stem">${rich(q.p||"次のⅠ〜Ⅲについて、古いものから年代順に正しく配列したものを選べ。")}</p>
+    <div class="stmts">${q.i.map((t,k)=>`<div class="stmt"><span class="lb">${ROM[k]}</span><span class="tx">${rich(t)}</span></div>`).join("")}</div>`;
+  return `<p class="stem">${rich(q.q)}</p>`;
+}
+
+function question(){
+  const q=S.list[S.i];S.done=false;app.dataset.cat=q.c;
+  const label=S.cat==="ALL"?"全分野ミックス":S.cat==="MISS"?"復習":CATS[S.cat].name;
+  S.opts=(q.f==="K"?shuffle(q.o.map((t,k)=>({t,k}))):q.o.map((t,k)=>({t,k})));
+  app.innerHTML=`${header()}<div class="qhead"><span>${label}　<span class="num">${S.i+1} / ${S.list.length}</span></span><button class="btn" id="quit" style="padding:4px 12px;font-size:13px">やめる</button></div>
+  <div class="bar"><i style="width:${S.i/S.list.length*100}%"></i></div>
+  <div class="panel"><div><span class="qno">${q.id}</span><span class="kbd">${CATS[q.c].name}</span><span class="fmt">${FMT[q.f]}</span></div>
+    ${body(q)}
+    <div class="choices ${q.f==="N"?"six":""}">${S.opts.map((o,n)=>`<button class="ch" id="ch${n}" data-n="${n}"><span class="oval">${n+1}</span><span>${rich(o.t)}</span></button>`).join("")}</div>
+    <div id="fb"></div></div>`;
+  app.querySelectorAll(".ch").forEach(b=>b.onclick=()=>choose(+b.dataset.n));
+  document.getElementById("quit").onclick=()=>{S.view="home";home()};
+}
+
+function answerText(q){
+  if(q.f==="N"){const o=q.ord.split("").map(d=>+d-1);return `${NO[q.a]}（${o.map(k=>`${rich(q.i[k])}${q.yr?`〈${rich(q.yr[k])}〉`:""}`).join(" → ")}）`}
+  return rich(q.o[q.a]);
+}
+function choose(n){
+  if(S.done)return;S.done=true;
+  const q=S.list[S.i];const ok=S.opts[n].k===q.a;
+  app.querySelectorAll(".ch").forEach((b,m)=>{b.disabled=true;if(S.opts[m].k===q.a)b.classList.add("right")});
+  const b=document.getElementById("ch"+n);b.classList.add("sel");if(!ok)b.classList.add("wrong");
+  mark(q.id,ok);S.res.push({q,ok,your:S.opts[n].t});
+  const last=S.i===S.list.length-1;
+  document.getElementById("fb").innerHTML=`<div class="fb ${ok?"ok":"ng"}" role="status">
+    <div class="v"><span class="mark">${ok?"○":"×"}</span>${ok?"正解！":"おしい！"}</div>
+    <p>正解：<b>${answerText(q)}</b></p><p>${rich(q.e)}</p></div>
+    <div class="row" style="margin-top:14px"><button class="btn primary" id="next">${last?"結果を見る":"次の問題へ"}</button></div>`;
+  const nx=document.getElementById("next");nx.focus({preventScroll:true});
+  nx.onclick=()=>{if(last){result()}else{S.i++;question();window.scrollTo({top:0})}};
+}
+
+function qSummary(q){
+  if(q.f==="S")return `X：${rich(q.X)}<br>Y：${rich(q.Y)}`;
+  if(q.f==="N")return q.i.map((t,k)=>`${ROM[k]} ${rich(t)}`).join("　");
+  return rich(q.q);
+}
+function result(){
+  S.view="result";delete app.dataset.cat;
+  const n=S.res.length,ok=S.res.filter(r=>r.ok).length,miss=S.res.filter(r=>!r.ok);
+  app.innerHTML=header()+`<div class="panel"><h2>結果</h2>
+    <div class="score"><span class="big">${ok}</span><span class="num" style="font-size:20px">/ ${n}</span><span class="kbd">正答率 ${Math.round(ok/n*100)}%</span></div>${sessionRank(ok,n,S.r0)}
+    ${miss.length?`<ul class="miss">${miss.map(r=>`<li data-cat="${r.q.c}"><div class="kbd"><span class="qno">${r.q.id}</span>${CATS[r.q.c].name}<span class="fmt">${FMT[r.q.f]}</span></div>
+      <div class="en">${qSummary(r.q)}</div>
+      <div class="x">正解：<b>${answerText(r.q)}</b>　／　あなたの解答：${rich(r.your)}</div><div class="x">${rich(r.q.e)}</div></li>`).join("")}</ul>`:`<p style="font-size:18px;font-weight:900">全問正解！すばらしい！</p>`}
+    <div class="row" style="margin-top:16px"><button class="btn primary" id="again">同じ条件でもう一度</button><button class="btn" id="back">トップへ戻る</button></div></div>`;
+  document.getElementById("again").onclick=()=>start(S.cat);
+  document.getElementById("back").onclick=home;
+}
+
+document.addEventListener("keydown",e=>{
+  if(S.view!=="quiz")return;
+  const n=S.list[S.i].o.length;
+  if(/^[1-6]$/.test(e.key)&&!S.done&&+e.key<=n){choose(+e.key-1)}
+  else if(e.key==="Enter"&&S.done){const nx=document.getElementById("next");if(nx&&document.activeElement!==nx){e.preventDefault();nx.click()}}
+});
+home();
+</script>
+
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
+</body>
+</html>

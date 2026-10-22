@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EAF4FF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161A2E" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="入試ドリル">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}</style>
+<title>物理ドリル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Nunito:wght@600;800;900&family=Fredoka:wght@600;700&display=swap">
+<style>
+/* Layout: ステッカー風のポップな一列カラム。太いフチ＋ずらした影、分野ごとにカラー */
+:root{
+  --bg:#EAF4FF; --dot:#CFE3FA; --card:#FFFFFF; --ink:#1B1E3A; --muted:#5C6385; --edge:#1B1E3A;
+  --g:#FF5C8A; --v:#2FA8FF; --o:#FFB800; --c:var(--g);
+  --c-soft:#FFE3EC;
+  --ok:#14B06A; --ok-soft:#DDF7EA; --ng:#FF4D4D; --ng-soft:#FFE4E4;
+  --btn-ink:#FFFFFF;
+  --f-jp:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  --f-en:"Nunito","Segoe UI",system-ui,sans-serif;
+  --f-num:"Fredoka","Nunito",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#161A2E; --dot:#22284A; --card:#232945; --ink:#F2F4FF; --muted:#A9B0D4; --edge:#060815;
+  --g:#FF7AA2; --v:#5BBEFF; --o:#FFC933; --c-soft:#3A2440;
+  --ok:#3DD68C; --ok-soft:#173829; --ng:#FF6F6F; --ng-soft:#3E1D22; --btn-ink:#161A2E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161A2E; --dot:#22284A; --card:#232945; --ink:#F2F4FF; --muted:#A9B0D4; --edge:#060815;
+  --g:#FF7AA2; --v:#5BBEFF; --o:#FFC933; --c-soft:#3A2440;
+  --ok:#3DD68C; --ok-soft:#173829; --ng:#FF6F6F; --ng-soft:#3E1D22; --btn-ink:#161A2E; color-scheme:dark}
+[data-cat="G"]{--c:var(--g)} [data-cat="V"]{--c:var(--v)} [data-cat="O"]{--c:var(--o)}
+*{box-sizing:border-box}
+body{background-color:var(--bg);background-image:radial-gradient(var(--dot) 2px,transparent 2.5px);background-size:22px 22px;
+  color:var(--ink);font-family:var(--f-jp);font-weight:500;font-size:15px;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--v);outline-offset:3px}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.subject{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.subject h1{margin:0;font-size:30px;font-weight:900;letter-spacing:.02em;text-wrap:balance;
+  text-shadow:3px 3px 0 var(--g)}
+.subject h1 b{font-family:var(--f-num);font-weight:700;color:var(--v);text-shadow:3px 3px 0 var(--o)}
+.tag{font-size:12px;font-weight:900;background:var(--o);color:#1B1E3A;border:2px solid var(--edge);border-radius:999px;padding:2px 12px;transform:rotate(-4deg);box-shadow:2px 2px 0 var(--edge)}
+.top small{font-family:var(--f-num);font-size:14px;background:var(--card);border:2px solid var(--edge);border-radius:999px;padding:2px 12px}
+.lead{color:var(--muted);margin:0}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.cat{background:var(--card);border:3px solid var(--edge);border-radius:20px;padding:16px 16px 14px;text-align:left;display:flex;flex-direction:column;gap:6px;min-width:0;
+  box-shadow:5px 5px 0 var(--c);transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}
+.cat::after{content:"";position:absolute;right:-24px;top:-24px;width:80px;height:80px;border-radius:50%;background:var(--c);opacity:.25}
+.cat:hover{transform:translate(-2px,-3px) rotate(-.6deg);box-shadow:8px 8px 0 var(--c)}
+.cat:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--c)}
+.cat .k{font-family:var(--f-num);font-size:12px;font-weight:700;color:var(--c);letter-spacing:.12em;filter:brightness(.85)}
+.cat .t{font-size:20px;font-weight:900}
+.cat .d{font-size:13px;color:var(--muted)}
+.meter{height:12px;background:var(--bg);border:2px solid var(--edge);border-radius:999px;position:relative;margin-top:6px;overflow:hidden}
+.meter i{position:absolute;inset:0 auto 0 0;background:var(--c);border-radius:999px}
+.cat .s{font-size:12px;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{background:var(--card);border:3px solid var(--edge);border-radius:999px;padding:8px 20px;font-weight:700;box-shadow:3px 3px 0 var(--edge);transition:transform .1s,box-shadow .1s}
+.btn:hover:not([disabled]){transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--edge)}
+.btn:active:not([disabled]){transform:translate(3px,3px);box-shadow:0 0 0 var(--edge)}
+.btn.primary{background:var(--g);color:#fff}
+#mix.primary{background:linear-gradient(90deg,var(--g),var(--v))}
+.btn[disabled]{opacity:.4;cursor:default;box-shadow:none}
+.seg{display:inline-flex;border:3px solid var(--edge);border-radius:999px;overflow:hidden;box-shadow:3px 3px 0 var(--edge)}
+.seg button{background:var(--card);border:0;padding:5px 16px;font-size:13px;font-weight:700}
+.seg button+button{border-left:2px solid var(--edge)}
+.seg button[aria-pressed="true"]{background:var(--o);color:#1B1E3A}
+.panel{background:var(--card);border:3px solid var(--edge);border-radius:24px;padding:20px;box-shadow:6px 6px 0 var(--edge)}
+.panel h2{margin:0 0 8px;font-size:18px;font-weight:900}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;font-weight:700}
+.bar{height:14px;background:var(--card);border:3px solid var(--edge);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:repeating-linear-gradient(45deg,var(--c) 0 10px,color-mix(in srgb,var(--c) 70%,#fff) 10px 20px);transition:width .35s cubic-bezier(.3,1.6,.5,1)}
+.qno{display:inline-block;background:var(--c);color:#fff;font-family:var(--f-num);font-weight:700;padding:1px 10px;margin-right:8px;font-size:13px;border-radius:999px;border:2px solid var(--edge)}
+[data-cat="O"] .qno{color:#1B1E3A}
+.stem{font-family:var(--f-en);font-weight:800;font-size:21px;line-height:1.6;margin:14px 0 6px}
+.stem .blank{display:inline-block;min-width:5.5em;background:var(--c-soft);border:2px dashed var(--c);border-radius:10px;text-align:center;font-family:var(--f-num);font-size:14px;color:var(--ink);line-height:1.8}
+.ja{color:var(--muted);font-size:14px;margin:0}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+@media (max-width:520px){.choices{grid-template-columns:1fr}}
+.ch{display:flex;align-items:center;gap:12px;background:var(--card);border:3px solid var(--edge);border-radius:16px;padding:10px 14px;text-align:left;font-family:var(--f-en);font-weight:800;font-size:17px;
+  box-shadow:3px 3px 0 var(--edge);transition:transform .12s,box-shadow .12s;min-width:0}
+.ch:hover:not([disabled]){transform:translate(-1px,-2px);box-shadow:4px 5px 0 var(--c)}
+.oval{flex:none;width:30px;height:30px;border:2px solid var(--edge);border-radius:50%;display:grid;place-items:center;font-family:var(--f-num);font-size:14px;font-weight:700;background:var(--c);color:#fff}
+[data-cat="O"] .oval{color:#1B1E3A}
+.ch.right{background:var(--ok-soft);border-color:var(--ok);box-shadow:3px 3px 0 var(--ok)}
+.ch.right .oval{background:var(--ok)}
+.ch.wrong{background:var(--ng-soft);border-color:var(--ng);box-shadow:3px 3px 0 var(--ng);animation:shake .35s}
+.ch.wrong .oval{background:var(--ng)}
+.ch.sel.right{animation:pop .4s}
+.ch[disabled]{cursor:default}
+.ch[disabled]:not(.right):not(.wrong){opacity:.55}
+.fb{margin-top:18px;border:3px solid var(--ok);border-radius:18px;background:var(--ok-soft);padding:12px 16px;animation:pop .35s}
+.fb.ng{border-color:var(--ng);background:var(--ng-soft)}
+.fb .v{font-weight:900;font-size:20px;display:flex;align-items:center;gap:8px}
+.fb.ok .v{color:var(--ok)} .fb.ng .v{color:var(--ng)}
+.fb p{margin:6px 0 0}
+.fb .en{font-family:var(--f-en);font-weight:800;font-size:16px}
+.mark{font-family:var(--f-num);font-size:26px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;border:2px solid var(--edge)}
+.fb.ok .mark{background:var(--ok)} .fb.ng .mark{background:var(--ng)}
+/* 並べ替え */
+.build{min-height:60px;border:3px dashed var(--c);border-radius:16px;background:var(--bg);padding:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;font-family:var(--f-en);font-weight:800;font-size:17px}
+.build .fix{color:var(--muted)}
+.build .ph{color:var(--muted);font-family:var(--f-jp);font-size:13px}
+.pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{border:2px solid var(--edge);border-radius:12px;background:var(--card);padding:4px 14px;font-family:var(--f-en);font-weight:800;font-size:17px;box-shadow:2px 2px 0 var(--edge);transition:transform .1s}
+.chip:hover:not([disabled]){transform:translateY(-2px) rotate(-2deg)}
+.chip.used{opacity:.2;cursor:default;box-shadow:none}
+.build .chip{background:var(--c);color:#fff;animation:pop .25s}
+[data-cat="O"] .build .chip{color:#1B1E3A}
+.kbd{font-size:12px;color:var(--muted)}
+.score{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.score .big{font-family:var(--f-num);font-weight:700;font-size:56px;line-height:1;color:var(--g);text-shadow:3px 3px 0 var(--o)}
+.miss{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.miss li{border:2px solid var(--edge);border-radius:14px;padding:10px 12px;min-width:0;background:var(--bg)}
+.miss .en{font-family:var(--f-en);font-weight:800;font-size:16px}
+.miss .en b{color:var(--ok)}
+.miss .x{font-size:13px;color:var(--muted)}
+footer{color:var(--muted);font-size:12px;text-align:center}
+@keyframes pop{0%{transform:scale(.9)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<style>
+/* 日本史用の追加：時代ごとのカラーと設問ブロック */
+:root{--ey:#B88A00;--ea:#F26A2E;--em:#0E9C8C;--ee:#E8457A;--ed:#7353F0;--ep:#2C8FE0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ea:#FF8F5C;--em:#2CC7B5;--ee:#FF7AA2;--ed:#9C85FF;--ep:#5BBEFF;--ey:#E6C340}}
+:root[data-theme="dark"]{--ea:#FF8F5C;--em:#2CC7B5;--ee:#FF7AA2;--ed:#9C85FF;--ep:#5BBEFF;--ey:#E6C340}
+[data-cat="A"]{--c:var(--ea)} [data-cat="B"]{--c:var(--em)} [data-cat="C"]{--c:var(--ee)} [data-cat="D"]{--c:var(--ed)} [data-cat="E"]{--c:var(--ep)}
+.stem{font-family:var(--f-jp);font-weight:700;font-size:18px}
+.stmts{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.stmt{display:flex;gap:10px;align-items:flex-start;background:var(--bg);border:2px solid var(--edge);border-radius:14px;padding:8px 12px;min-width:0}
+.stmt .lb{flex:none;font-family:var(--f-num);font-weight:700;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:#fff;border:2px solid var(--edge)}
+.stmt .tx{font-weight:700;min-width:0}
+.ch{font-family:var(--f-jp);font-weight:700}
+.choices.six{grid-template-columns:repeat(3,1fr)}
+@media (max-width:520px){.choices.six{grid-template-columns:1fr 1fr}}
+.choices.six .ch{white-space:nowrap;gap:8px;padding:10px}
+@media (max-width:520px){.choices.six .ch{font-size:15px;padding:10px 8px}.choices.six .oval{width:26px;height:26px;font-size:13px}}
+.fmt{display:inline-block;font-size:11px;font-weight:900;border:2px solid var(--edge);border-radius:999px;padding:0 8px;margin-left:6px;background:var(--o);color:#1B1E3A}
+.era-yr{font-family:var(--f-num);font-size:12px;color:var(--muted)}
+.subj-link{font-size:13px;font-weight:700;color:var(--ink);text-decoration:none;border:2px solid var(--edge);border-radius:999px;padding:2px 12px;background:var(--card)}
+.subj-link:hover{background:var(--o);color:#1B1E3A}
+.miss .en{font-family:var(--f-jp);font-weight:700}
+.subject h1 b{font-family:var(--f-jp);font-weight:900}
+</style>
+<style>
+/* ランク表示 */
+.rankp{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.rk-body{flex:1;min-width:200px}
+.rk-body h2{margin:0 0 2px}
+.rk-body p{margin:4px 0}
+.rk-meter i{background:linear-gradient(90deg,var(--o),var(--g))}
+.rk-badge{flex:none;width:118px;height:118px;border-radius:50%;border:4px solid var(--edge);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;box-shadow:4px 4px 0 var(--edge);transform:rotate(-6deg);text-align:center;color:#1B1E3A}
+.rk-badge .rk-en{font-family:var(--f-num);font-size:10px;letter-spacing:.12em;font-weight:700}
+.rk-badge .rk-t{font-size:22px;font-weight:900;line-height:1.2}
+.rk-badge .rk-st{font-size:12px;letter-spacing:1px}
+.rk0{background:#E4E8F2}.rk1{background:#BFE6FF}.rk2{background:#C9F2DA}.rk3{background:#FFD873}.rk4{background:#FFB3CB}
+.rk5{background:conic-gradient(#FFD873,#FFB3CB,#BFE6FF,#C9F2DA,#FFD873)}
+.rk-session{display:flex;align-items:baseline;gap:10px;margin-top:12px;flex-wrap:wrap}
+.rk-title{font-size:26px;font-weight:900;color:var(--ink);background:var(--o);border:3px solid var(--edge);border-radius:999px;padding:0 16px;box-shadow:3px 3px 0 var(--edge);transform:rotate(-2deg);display:inline-block;color:#1B1E3A}
+.rk-up{margin-top:12px;font-weight:900;font-size:18px;color:var(--g);animation:pop .5s}
+</style>
+
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* ===== 問題データ ===== */
+const D={"cats": {"A": {"name": "力学", "k": "MECHANICS", "yr": "物理基礎・物理", "d": "運動・力・運動量・円運動・単振動"}, "B": {"name": "熱と気体", "k": "THERMODYNAMICS", "yr": "物理基礎・物理", "d": "熱量・気体の法則・熱力学第一法則・分子運動論"}, "C": {"name": "波動", "k": "WAVES", "yr": "物理基礎・物理", "d": "波の性質・音・光（干渉・屈折・レンズ）"}, "D": {"name": "電磁気", "k": "ELECTROMAGNETISM", "yr": "物理基礎・物理", "d": "電気回路・電場と電位・コンデンサー・磁場・電磁誘導"}, "E": {"name": "原子・総合", "k": "MODERN", "yr": "物理基礎・物理", "d": "光電効果・原子核と放射線・エネルギーの総合"}}, "q": [{"id": "A01", "c": "A", "f": "K", "q": "小球を静かに落下させた。2.0 s 後の速さはいくらか。重力加速度の大きさを 9.8 m/s<sup>2</sup> とする。", "o": ["19.6 m/s", "9.8 m/s", "39.2 m/s", "4.9 m/s"], "e": "自由落下では v = gt なので、v = 9.8 × 2.0 = 19.6 m/s。"}, {"id": "A02", "c": "A", "f": "K", "q": "高さ 19.6 m の位置から小球を静かに落とした。地面に達するまでの時間はいくらか。空気抵抗は無視し、重力加速度の大きさを 9.8 m/s<sup>2</sup> とする。", "o": ["2.0 s", "4.0 s", "1.4 s", "1.0 s"], "e": "h = ½gt<sup>2</sup> より t = √(2h/g) = √(2×19.6/9.8) = 2.0 s。"}, {"id": "A03", "c": "A", "f": "K", "q": "小球を初速度 14 m/s で鉛直上向きに投げ上げた。最高点の高さ（投げ上げた点から）はいくらか。重力加速度の大きさを 9.8 m/s<sup>2</sup> とする。", "o": ["10 m", "20 m", "5.0 m", "1.4 m"], "e": "最高点で速度0なので 0 − v<sub>0</sub><sup>2</sup> = −2gh より h = v<sub>0</sub><sup>2</sup>/(2g) = 196/19.6 = 10 m。"}, {"id": "A04", "c": "A", "f": "K", "q": "高さ 4.9 m の位置から小球を水平に 3.0 m/s で投げた。地面に落ちるまでに進む水平距離はいくらか。重力加速度の大きさを 9.8 m/s<sup>2</sup> とする。", "o": ["3.0 m", "1.5 m", "6.0 m", "9.0 m"], "e": "鉛直方向は自由落下で t = √(2h/g) = 1.0 s。水平方向は等速なので x = 3.0 × 1.0 = 3.0 m。"}, {"id": "A05", "c": "A", "f": "K", "q": "なめらかな水平面上の質量 2.0 kg の物体に、水平に 10 N の力を加え続けた。物体の加速度の大きさはいくらか。", "o": ["5.0 m/s<sup>2</sup>", "20 m/s<sup>2</sup>", "0.20 m/s<sup>2</sup>", "12 m/s<sup>2</sup>"], "e": "運動方程式 ma = F より a = 10/2.0 = 5.0 m/s<sup>2</sup>。"}, {"id": "A06", "c": "A", "f": "K", "q": "動摩擦係数 0.25 の水平面上で、質量 4.0 kg の物体を水平に一定の速さで引き続けるのに必要な力の大きさはいくらか。重力加速度の大きさを 9.8 m/s<sup>2</sup> とする。", "o": ["9.8 N", "39.2 N", "1.0 N", "2.5 N"], "e": "等速なので引く力 = 動摩擦力 μ'N = μ'mg = 0.25 × 4.0 × 9.8 = 9.8 N。"}, {"id": "A07", "c": "A", "f": "K", "q": "なめらかな水平面上で、速さ 3.0 m/s で進む質量 2.0 kg の物体Aが、静止している質量 1.0 kg の物体Bに衝突し、一体となって進んだ。衝突後の速さはいくらか。", "o": ["2.0 m/s", "3.0 m/s", "1.5 m/s", "6.0 m/s"], "e": "運動量保存則 2.0×3.0 = (2.0+1.0)v より v = 2.0 m/s。"}, {"id": "A08", "c": "A", "f": "K", "q": "質量 0.30 kg の物体が半径 0.50 m の円周上を速さ 2.0 m/s で等速円運動している。物体にはたらく向心力の大きさはいくらか。", "o": ["2.4 N", "1.2 N", "0.60 N", "4.8 N"], "e": "向心力 F = mv<sup>2</sup>/r = 0.30 × 2.0<sup>2</sup>/0.50 = 2.4 N。"}, {"id": "A09", "c": "A", "f": "K", "q": "ばね定数 50 N/m の軽いばねに質量 0.50 kg のおもりをつけ、なめらかな水平面上で単振動させた。周期はいくらか。", "o": ["0.20π s", "20π s", "0.10 s", "10π s"], "e": "ばね振り子の周期 T = 2π√(m/k) = 2π√(0.50/50) = 0.20π s（≒0.63 s）。"}, {"id": "A10", "c": "A", "f": "K", "q": "なめらかな斜面上の高さ 10 m の点から物体を静かに滑らせた。斜面の下端（高さ0）での速さはいくらか。重力加速度の大きさを 9.8 m/s<sup>2</sup> とする。", "o": ["14 m/s", "7.0 m/s", "98 m/s", "20 m/s"], "e": "力学的エネルギー保存より mgh = ½mv<sup>2</sup>、v = √(2gh) = √196 = 14 m/s。"}, {"id": "A11", "c": "A", "f": "K", "q": "速さ 20 m/s で飛んできた質量 0.15 kg のボールを、逆向きに速さ 20 m/s で打ち返した。ボールが受けた力積の大きさはいくらか。", "o": ["6.0 N·s", "0 N·s", "3.0 N·s", "12 N·s"], "e": "力積 = 運動量の変化。向きに注意して 0.15×20 − 0.15×(−20) = 6.0 N·s。"}, {"id": "A12", "c": "A", "f": "K", "q": "慣性の法則（運動の第1法則）の内容として正しいものはどれか。", "o": ["物体に力がはたらかないか合力が0のとき、静止している物体は静止を続け、運動している物体は等速直線運動を続ける", "物体に力がはたらかないと、運動している物体はしだいに減速して止まる", "物体の加速度は、はたらく力に比例し質量に反比例する", "物体が他の物体に力を加えると、同じ大きさで逆向きの力を受ける"], "e": "慣性の法則は合力0なら速度が変わらない（静止または等速直線運動）ことを述べる。加速度の式は第2法則、逆向きの力は第3法則。"}, {"id": "A13", "c": "A", "f": "K", "q": "水平な机の上に本が静止している。「地球が本を引く重力」の反作用にあたる力はどれか。", "o": ["本が地球を引く力", "机が本を押す垂直抗力", "本が机を押す力", "机が床を押す力"], "e": "作用・反作用は2物体間で互いに及ぼし合う力の組なので、地球→本の重力の反作用は本→地球の引力。垂直抗力は重力とつり合う力で反作用ではない。"}, {"id": "A14", "c": "A", "f": "K", "q": "鉛直上向きに投げ上げた小球が最高点にあるとき、小球の加速度はどうなっているか。空気抵抗は無視する。", "o": ["鉛直下向きで大きさ g", "0", "鉛直上向きで大きさ g", "水平方向で大きさ g"], "e": "最高点では速度は0だが、重力は常にはたらくので加速度は鉛直下向きに g のまま。"}, {"id": "A15", "c": "A", "f": "K", "q": "等速円運動をしている物体の加速度の向きはどれか。", "o": ["円の中心向き", "円の接線方向（速度の向き）", "円の中心から外向き", "加速度は0"], "e": "等速円運動では速さは一定でも速度の向きが変わるため、中心向きの加速度 a = v<sup>2</sup>/r（向心加速度）をもつ。"}, {"id": "A16", "c": "A", "f": "K", "q": "ばね振り子が単振動しているとき、おもりの速さが最大になるのはどの位置か。", "o": ["振動の中心", "振動の両端", "振動の中心と端の中間", "どの位置でも速さは同じ"], "e": "単振動では振動の中心で復元力が0、位置エネルギーが最小となり、運動エネルギー（速さ）が最大になる。両端では速さ0。"}, {"id": "A17", "c": "A", "f": "K", "q": "外力のはたらかない2物体が、はね返り係数（反発係数）1で衝突した。衝突の前後で保存されるものはどれか。", "o": ["運動量と運動エネルギーの両方", "運動量のみ", "運動エネルギーのみ", "どちらも保存されない"], "e": "外力がなければ運動量は常に保存される。さらに e = 1 の弾性衝突では運動エネルギーも保存される。"}, {"id": "A18", "c": "A", "f": "K", "q": "振れ幅が小さい単振り子の周期を決めるものはどれか。", "o": ["糸の長さと重力加速度", "おもりの質量と糸の長さ", "振れ幅とおもりの質量", "おもりの質量のみ"], "e": "単振り子の周期 T = 2π√(L/g) は糸の長さ L と重力加速度 g だけで決まり、質量や（小さい）振れ幅によらない（振り子の等時性）。"}, {"id": "A19", "c": "A", "f": "K", "q": "あらい水平面上を滑っていた物体が、摩擦によって止まった。この間の力学的エネルギーについて正しいものはどれか。", "o": ["減少し、減少分は熱などに変わる", "保存される", "増加する", "すべて重力による位置エネルギーに変わる"], "e": "動摩擦力は負の仕事をするため力学的エネルギーは減少し、その分が熱エネルギーなどになる。高さは変わらないので位置エネルギーは変わらない。"}, {"id": "A20", "c": "A", "f": "K", "q": "液体中に完全に沈めた物体が受ける浮力の大きさについて正しいものはどれか。", "o": ["物体が押しのけた液体の重さに等しい", "物体自身の重さに等しい", "沈めた深さに比例して大きくなる", "液体の密度によらない"], "e": "アルキメデスの原理より浮力 F = ρVg（ρ は液体の密度、V は物体の体積）。完全に沈めば深さによらず一定。"}, {"id": "A21", "c": "A", "f": "S", "X": "運動量の単位 kg·m/s は N·s と等しい。", "Y": "仕事率の単位 W は J/s と等しい。", "xs": true, "ys": true, "e": "N = kg·m/s<sup>2</sup> より N·s = kg·m/s。仕事率は単位時間あたりの仕事なので W = J/s。どちらも正しい。"}, {"id": "A22", "c": "A", "f": "S", "X": "等加速度直線運動では v<sup>2</sup> − v<sub>0</sub><sup>2</sup> = 2ax が成り立つ。", "Y": "人工衛星の中で物体が浮いて見えるのは、物体に重力がはたらいていないからである。", "xs": true, "ys": false, "e": "X は等加速度運動の公式で正しい。Y は誤り。衛星内でも重力ははたらいており、重力が円運動の向心力となって衛星とともに落下し続けているため浮いて見える。"}, {"id": "A23", "c": "A", "f": "S", "X": "静止摩擦力の大きさは、常に μN（μ：静止摩擦係数、N：垂直抗力）に等しい。", "Y": "物体にはたらく合力が0のとき、物体の運動量は一定に保たれる。", "xs": false, "ys": true, "e": "X は誤り。μN は最大静止摩擦力で、静止摩擦力は外力とつり合う大きさ（0〜μN）をとる。Y は運動量の変化＝力積より正しい。"}, {"id": "A24", "c": "A", "f": "S", "X": "ばね振り子の周期は、振幅が大きいほど長くなる。", "Y": "地球上で重さが 9.8 N の物体の質量は 9.8 kg である。", "xs": false, "ys": false, "e": "X は誤り。T = 2π√(m/k) は振幅によらない。Y は誤り。W = mg より m = 9.8/9.8 = 1.0 kg。"}, {"id": "B01", "c": "B", "f": "K", "q": "比熱 4.2 J/(g·K) の水 100 g の温度を 20 K 上昇させるのに必要な熱量はいくらか。", "o": ["8.4×10<sup>3</sup> J", "4.2×10<sup>2</sup> J", "2.0×10<sup>3</sup> J", "8.4 J"], "e": "Q = mcΔT = 100 × 4.2 × 20 = 8.4×10<sup>3</sup> J。"}, {"id": "B02", "c": "B", "f": "K", "q": "80 ℃の水 100 g と 20 ℃の水 200 g を混ぜた。熱は外部に逃げないものとすると、全体の温度は何 ℃になるか。", "o": ["40 ℃", "50 ℃", "60 ℃", "30 ℃"], "e": "熱量の保存より 100×(80−t) = 200×(t−20)、t = 40 ℃。単純な平均の 50 ℃にはならない。"}, {"id": "B03", "c": "B", "f": "K", "q": "温度一定のもとで、圧力 1.0×10<sup>5</sup> Pa、体積 6.0 L の気体を体積 2.0 L まで圧縮した。圧力はいくらになるか。", "o": ["3.0×10<sup>5</sup> Pa", "3.3×10<sup>4</sup> Pa", "1.0×10<sup>5</sup> Pa", "1.2×10<sup>6</sup> Pa"], "e": "ボイルの法則 pV = 一定より p = 1.0×10<sup>5</sup> × 6.0/2.0 = 3.0×10<sup>5</sup> Pa。"}, {"id": "B04", "c": "B", "f": "K", "q": "圧力一定のもとで、27 ℃で体積 3.0 L の気体を 127 ℃にした。体積はいくらになるか。", "o": ["4.0 L", "14 L", "2.3 L", "3.0 L"], "e": "シャルルの法則 V/T = 一定（T は絶対温度）。V = 3.0 × 400/300 = 4.0 L。セ氏温度のまま比を取ると誤る。"}, {"id": "B05", "c": "B", "f": "K", "q": "物質量 1.0 mol の理想気体が、体積 8.3×10<sup>−3</sup> m<sup>3</sup>、絶対温度 300 K の状態にある。圧力はいくらか。気体定数を 8.3 J/(mol·K) とする。", "o": ["3.0×10<sup>5</sup> Pa", "3.0×10<sup>2</sup> Pa", "1.0×10<sup>5</sup> Pa", "3.0×10<sup>8</sup> Pa"], "e": "状態方程式 pV = nRT より p = 1.0×8.3×300/(8.3×10<sup>−3</sup>) = 3.0×10<sup>5</sup> Pa。"}, {"id": "B06", "c": "B", "f": "K", "q": "気体に 500 J の熱を与えたところ、気体は外部に 200 J の仕事をした。気体の内部エネルギーの変化 ΔU はいくらか。", "o": ["ΔU = +300 J", "ΔU = +700 J", "ΔU = −300 J", "ΔU = +500 J"], "e": "熱力学第一法則 ΔU = Q − W<sub>外へ</sub> = 500 − 200 = +300 J（増加）。"}, {"id": "B07", "c": "B", "f": "K", "q": "圧力を 2.0×10<sup>5</sup> Pa に保ったまま、気体の体積が 3.0×10<sup>−3</sup> m<sup>3</sup> だけ増加した。気体が外部にした仕事はいくらか。", "o": ["6.0×10<sup>2</sup> J", "3.0×10<sup>2</sup> J", "1.2×10<sup>3</sup> J", "6.0 J"], "e": "定圧変化の仕事 W = pΔV = 2.0×10<sup>5</sup> × 3.0×10<sup>−3</sup> = 6.0×10<sup>2</sup> J。"}, {"id": "B08", "c": "B", "f": "K", "q": "ある熱機関は1サイクルの間に高温熱源から 800 J の熱を吸収し、低温熱源に 600 J の熱を放出する。この熱機関の熱効率はいくらか。", "o": ["25 %", "75 %", "33 %", "40 %"], "e": "外部にした仕事 W = 800 − 600 = 200 J。熱効率 e = W/Q<sub>吸収</sub> = 200/800 = 0.25。"}, {"id": "B09", "c": "B", "f": "K", "q": "単原子分子理想気体 2.0 mol の絶対温度が 300 K のとき、内部エネルギーはいくらか。気体定数を 8.3 J/(mol·K) とする。", "o": ["7.5×10<sup>3</sup> J", "5.0×10<sup>3</sup> J", "1.2×10<sup>4</sup> J", "3.7×10<sup>3</sup> J"], "e": "単原子分子理想気体の内部エネルギー U = (3/2)nRT = 1.5×2.0×8.3×300 ≒ 7.5×10<sup>3</sup> J。"}, {"id": "B10", "c": "B", "f": "K", "q": "単原子分子理想気体 2.0 mol の体積を一定に保ったまま、温度を 10 K 上げるのに必要な熱量はいくらか。気体定数を 8.3 J/(mol·K) とする。", "o": ["2.5×10<sup>2</sup> J", "4.2×10<sup>2</sup> J", "1.7×10<sup>2</sup> J", "1.2×10<sup>2</sup> J"], "e": "定積変化では W = 0 なので Q = ΔU = (3/2)nRΔT = 1.5×2.0×8.3×10 ≒ 2.5×10<sup>2</sup> J。"}, {"id": "B11", "c": "B", "f": "K", "q": "一定量の理想気体の圧力を2倍、絶対温度を3倍にした。体積はもとの何倍になるか。", "o": ["1.5 倍", "6.0 倍", "0.67 倍", "3.0 倍"], "e": "pV/T = 一定より V′/V = (T′/T)/(p′/p) = 3/2 = 1.5 倍。"}, {"id": "B12", "c": "B", "f": "K", "q": "絶対温度 0 K はセルシウス温度でおよそ何 ℃か。", "o": ["−273 ℃", "0 ℃", "−100 ℃", "−373 ℃"], "e": "T〔K〕= t〔℃〕+ 273 の関係より、0 K はおよそ −273 ℃（絶対零度）。"}, {"id": "B13", "c": "B", "f": "K", "q": "気体の絶対温度は、分子のどのような量に比例するか。", "o": ["分子1個あたりの平均の運動エネルギー", "気体分子の総数", "分子間の位置エネルギー", "分子1個の質量"], "e": "気体分子運動論より、分子の平均運動エネルギー ½m<u>v<sup>2</sup></u> = (3/2)kT で、絶対温度に比例する。"}, {"id": "B14", "c": "B", "f": "K", "q": "理想気体を断熱圧縮すると、気体の温度はどうなるか。", "o": ["上昇する", "下降する", "変化しない", "はじめ下降し、のちに上昇する"], "e": "断熱変化では Q = 0。圧縮で外部から仕事をされる（W<sub>された</sub> ＞ 0）ので ΔU ＞ 0 となり温度が上がる。"}, {"id": "B15", "c": "B", "f": "K", "q": "理想気体を等温膨張させたときについて正しいものはどれか。", "o": ["内部エネルギーは変化せず、吸収した熱はすべて外部への仕事になる", "内部エネルギーが増加し、外部に仕事はしない", "熱の出入りはなく、内部エネルギーが減少する", "内部エネルギーが減少し、熱を放出する"], "e": "理想気体の内部エネルギーは温度だけで決まるので等温なら ΔU = 0。第一法則より Q = W<sub>外へ</sub> となる。"}, {"id": "B16", "c": "B", "f": "K", "q": "熱力学第二法則の内容として正しいものはどれか。", "o": ["熱は、ほかに何の変化も残さずに低温の物体から高温の物体へ移ることはない", "熱効率 100 % の熱機関をつくることができる", "孤立した系の全エネルギーは保存されない", "熱と仕事は互いに変換できない"], "e": "第二法則は熱現象の不可逆性を表し、熱が自然に低温→高温へ移らないことや熱効率 100 % の熱機関が不可能であることを示す。"}, {"id": "B17", "c": "B", "f": "K", "q": "気体分子運動論において、容器の壁が気体から受ける圧力の原因は何か。", "o": ["多数の分子が壁に衝突してはね返るときに壁に与える力積", "分子どうしが引き合う分子間力", "気体分子にはたらく重力", "容器の壁と分子の間の静電気力"], "e": "分子が壁で弾性衝突すると壁に力積を与え、その単位時間・単位面積あたりの総和が圧力となる。"}, {"id": "B18", "c": "B", "f": "K", "q": "理想気体の定圧モル比熱が定積モル比熱より大きい理由として正しいものはどれか。", "o": ["定圧変化では温度上昇に加えて、気体が外部にする仕事の分の熱が必要だから", "定圧変化では分子の数が増えるから", "定積変化では気体が外部に仕事をするから", "定圧変化では内部エネルギーが変化しないから"], "e": "同じ温度上昇なら ΔU は等しいが、定圧では膨張して外部に仕事をするため、その分多くの熱が必要（C<sub>p</sub> = C<sub>V</sub> + R）。"}, {"id": "B19", "c": "B", "f": "K", "q": "真空中でも熱を伝えることができる熱の伝わり方はどれか。", "o": ["放射（熱放射）", "伝導", "対流", "いずれも真空中では伝わらない"], "e": "伝導と対流は物質（媒質）が必要だが、放射は電磁波によるため真空中でも伝わる。太陽の熱が地球に届くのはこのため。"}, {"id": "B20", "c": "B", "f": "K", "q": "一定量の理想気体の内部エネルギーは、何によって決まるか。", "o": ["絶対温度のみ", "体積のみ", "圧力のみ", "容器の形と体積"], "e": "理想気体では分子間力を無視するので、内部エネルギーは分子の運動エネルギーの総和で、絶対温度だけで決まる（単原子分子なら U = (3/2)nRT）。"}, {"id": "B21", "c": "B", "f": "S", "X": "0 ℃の氷がとけて 0 ℃の水になる間は、熱を吸収しても温度は一定に保たれる。", "Y": "熱効率が 100 % の熱機関をつくることができる。", "xs": true, "ys": false, "e": "X は正しい。吸収した熱は融解熱として状態変化に使われる。Y は熱力学第二法則に反するので誤り。"}, {"id": "B22", "c": "B", "f": "S", "X": "物体の熱容量は、その物体の質量と比熱の積に等しい。", "Y": "温度差 1 K と温度差 1 ℃は同じ大きさである。", "xs": true, "ys": true, "e": "熱容量 C = mc で正しい。T = t + 273 なので目盛り間隔は同じで、温度差は K と ℃で等しい。どちらも正しい。"}, {"id": "B23", "c": "B", "f": "S", "X": "理想気体の絶対温度が2倍になると、分子の二乗平均速度も2倍になる。", "Y": "摩擦によって物体の運動エネルギーが熱に変わる現象は、可逆変化である。", "xs": false, "ys": false, "e": "X は誤り。平均運動エネルギーが T に比例するので速さは √2 倍。Y は誤り。摩擦熱の発生は代表的な不可逆変化。"}, {"id": "B24", "c": "B", "f": "S", "X": "理想気体を体積一定のまま加熱するとき、気体は外部に仕事をする。", "Y": "理想気体を断熱膨張させると、温度は下がる。", "xs": false, "ys": true, "e": "X は誤り。体積変化がないので W = 0。Y は正しい。外部に仕事をし Q = 0 なので内部エネルギーが減り温度が下がる。"}, {"id": "C01", "c": "C", "f": "K", "q": "振動数 500 Hz、波長 0.68 m の音波の速さはいくらか。", "o": ["3.4×10<sup>2</sup> m/s", "7.4×10<sup>2</sup> m/s", "1.4×10<sup>−3</sup> m/s", "1.7×10<sup>2</sup> m/s"], "e": "波の基本式 v = fλ = 500 × 0.68 = 3.4×10<sup>2</sup> m/s。"}, {"id": "C02", "c": "C", "f": "K", "q": "周期 0.50 s、波長 2.0 m の波の速さはいくらか。", "o": ["4.0 m/s", "1.0 m/s", "0.25 m/s", "2.5 m/s"], "e": "v = λ/T = 2.0/0.50 = 4.0 m/s（f = 1/T = 2.0 Hz として v = fλ でも同じ）。"}, {"id": "C03", "c": "C", "f": "K", "q": "長さ 0.60 m の弦の両端を固定して基本振動させた。このとき弦を伝わる波の波長はいくらか。", "o": ["1.2 m", "0.60 m", "0.30 m", "2.4 m"], "e": "両端固定の基本振動では弦の長さが半波長にあたるので λ = 2L = 1.2 m。"}, {"id": "C04", "c": "C", "f": "K", "q": "一端を閉じた長さ 0.17 m の気柱がある。気柱の基本振動数はいくらか。音速を 340 m/s とし、開口端補正は無視する。", "o": ["500 Hz", "1000 Hz", "2000 Hz", "1500 Hz"], "e": "閉管の基本振動では L = λ/4 なので λ = 0.68 m、f = v/λ = 340/0.68 = 500 Hz。"}, {"id": "C05", "c": "C", "f": "K", "q": "振動数 440 Hz と 444 Hz のおんさを同時に鳴らした。1秒間に聞こえるうなりの回数はいくらか。", "o": ["4 回", "2 回", "8 回", "442 回"], "e": "うなりの回数 f = |f<sub>1</sub> − f<sub>2</sub>| = |440 − 444| = 4 回/s。"}, {"id": "C06", "c": "C", "f": "K", "q": "振動数 640 Hz の音を出す音源が、静止している観測者に向かって速さ 20 m/s で近づいている。観測者が聞く音の振動数はいくらか。音速を 340 m/s とする。", "o": ["680 Hz", "600 Hz", "620 Hz", "640 Hz"], "e": "ドップラー効果 f′ = Vf/(V − v<sub>s</sub>) = 340×640/(340 − 20) = 680 Hz。"}, {"id": "C07", "c": "C", "f": "K", "q": "真空中の光の速さを 3.0×10<sup>8</sup> m/s とする。屈折率 1.5 のガラス中での光の速さはいくらか。", "o": ["2.0×10<sup>8</sup> m/s", "4.5×10<sup>8</sup> m/s", "3.0×10<sup>8</sup> m/s", "1.5×10<sup>8</sup> m/s"], "e": "屈折率 n = c/v より v = c/n = 3.0×10<sup>8</sup>/1.5 = 2.0×10<sup>8</sup> m/s。"}, {"id": "C08", "c": "C", "f": "K", "q": "ヤングの実験で、スリット間隔 0.50 mm、スリットとスクリーンの距離 1.0 m、光の波長 6.0×10<sup>−7</sup> m のとき、スクリーン上の隣り合う明線の間隔はいくらか。", "o": ["1.2 mm", "0.60 mm", "2.4 mm", "12 mm"], "e": "明線間隔 Δx = Lλ/d = 1.0 × 6.0×10<sup>−7</sup>/(0.50×10<sup>−3</sup>) = 1.2×10<sup>−3</sup> m = 1.2 mm。"}, {"id": "C09", "c": "C", "f": "K", "q": "焦点距離 10 cm の凸レンズの前方 15 cm の位置に物体を置いた。像ができるのはレンズの後方何 cm の位置か。", "o": ["30 cm", "6.0 cm", "25 cm", "5.0 cm"], "e": "写像公式 1/a + 1/b = 1/f より 1/b = 1/10 − 1/15 = 1/30、b = 30 cm（倒立の実像）。"}, {"id": "C10", "c": "C", "f": "K", "q": "格子定数 2.0×10<sup>−6</sup> m の回折格子に単色光を垂直に当てたところ、1次の回折光が sinθ = 0.30 となる方向に生じた。光の波長はいくらか。", "o": ["6.0×10<sup>−7</sup> m", "3.0×10<sup>−7</sup> m", "6.7×10<sup>−6</sup> m", "1.2×10<sup>−6</sup> m"], "e": "回折格子の強め合いの条件 d sinθ = mλ（m = 1）より λ = 2.0×10<sup>−6</sup> × 0.30 = 6.0×10<sup>−7</sup> m。"}, {"id": "C11", "c": "C", "f": "K", "q": "屈折率 2.0 の媒質から空気（屈折率 1.0）へ光が進むとき、臨界角はいくらか。", "o": ["30°", "60°", "45°", "90°"], "e": "臨界角 θ<sub>c</sub> は sinθ<sub>c</sub> = 1/n = 1/2.0 を満たすので θ<sub>c</sub> = 30°。"}, {"id": "C12", "c": "C", "f": "K", "q": "空気中を伝わる音波はどのような波か。", "o": ["媒質の振動方向が波の進行方向と平行な縦波（疎密波）", "媒質の振動方向が波の進行方向と垂直な横波", "電場と磁場が振動する電磁波", "縦波と横波が同時に伝わる波"], "e": "音波は空気の圧縮・膨張（疎密）が伝わる縦波。気体中では横波は伝わらない。"}, {"id": "C13", "c": "C", "f": "K", "q": "波が異なる媒質へ屈折して進むとき、変化しないものはどれか。", "o": ["振動数", "波長", "速さ", "波長と速さ"], "e": "振動数は波源で決まり境界で変わらない。速さが変わるので v = fλ より波長も変わる。"}, {"id": "C14", "c": "C", "f": "K", "q": "光が屈折率の大きい媒質から小さい媒質へ進むとき、入射角が臨界角より大きくなると何が起こるか。", "o": ["光はすべて境界面で反射される（全反射）", "光はすべて屈折して透過する", "光は境界面に沿ってのみ進む", "光の振動数が変化する"], "e": "屈折角が90°を超える入射角では屈折光が存在せず、すべて反射する。光ファイバーに利用される。"}, {"id": "C15", "c": "C", "f": "K", "q": "ロープを伝わる波が固定端で反射するとき、反射波について正しいものはどれか。", "o": ["変位の位相が π ずれ、山は谷となって反射する", "位相は変わらず、山は山として反射する", "振動数が2倍になって反射する", "反射波は生じない"], "e": "固定端では変位が常に0となるため、入射波と逆位相（位相が π ずれた）の反射波が生じる。自由端では位相はずれない。"}, {"id": "C16", "c": "C", "f": "K", "q": "定常波の「節」について正しいものはどれか。", "o": ["媒質がまったく振動しない点", "媒質がもっとも大きく振動する点", "波が右向きに進む点", "隣り合う節の間隔は1波長である"], "e": "節は振幅0で振動しない点、腹は最も大きく振動する点。隣り合う節の間隔は半波長。"}, {"id": "C17", "c": "C", "f": "K", "q": "シャボン玉の膜が色づいて見えるおもな原因はどれか。", "o": ["膜の表と裏で反射した光の干渉", "光の分散", "光の偏光", "光の回折による虹"], "e": "薄膜の上下の面で反射した光の経路差により、特定の波長の光が強め合って色づく（薄膜の干渉）。"}, {"id": "C18", "c": "C", "f": "K", "q": "晴れた日の空が青く見えるおもな理由はどれか。", "o": ["大気中の分子によって波長の短い青い光が強く散乱されるから", "大気によって青い光が強く吸収されるから", "太陽光が青い光しか含まないから", "大気中で青い光が全反射するから"], "e": "空気分子による散乱は波長の短い光ほど強い（レイリー散乱）ので、青い光が空全体から目に届く。"}, {"id": "C19", "c": "C", "f": "K", "q": "白色光をプリズムに通すと、さまざまな色の光に分かれる。この現象の名称と原因の組合せとして正しいものはどれか。", "o": ["分散：屈折率が光の波長によって異なる", "干渉：光が2つの経路を通って重なる", "回折：光がプリズムの角を回り込む", "偏光：光が特定の方向にのみ振動する"], "e": "ガラスの屈折率は波長が短い（紫）ほど大きく、屈折角が色ごとに異なるため分かれる（分散）。"}, {"id": "C20", "c": "C", "f": "K", "q": "光が偏光することは、光についてどのようなことを示しているか。", "o": ["光が横波であること", "光が縦波であること", "光が質量をもつ粒子であること", "光の速さが一定でないこと"], "e": "偏光は振動方向が進行方向に垂直な横波にだけ生じる現象なので、光が横波であることを示す。"}, {"id": "C21", "c": "C", "f": "S", "X": "音の高さは、音波の振動数によって決まる。", "Y": "気温が高いほど、空気中を伝わる音の速さは大きい。", "xs": true, "ys": true, "e": "音の高さは振動数で決まる。音速は V ≒ 331.5 + 0.6t〔m/s〕で気温とともに大きくなる。どちらも正しい。"}, {"id": "C22", "c": "C", "f": "S", "X": "縦波は気体中を伝わることができない。", "Y": "2つの波が重なり合ったあと、それぞれの波はもとの形のまま進んでいく。", "xs": false, "ys": true, "e": "X は誤り。音波（縦波）は空気中を伝わる。伝わらないのは横波の方。Y は波の独立性で正しい。"}, {"id": "C23", "c": "C", "f": "S", "X": "水面波が深い所から浅い所に進むと、波の速さは小さくなる。", "Y": "光は真空中を伝わることができない。", "xs": true, "ys": false, "e": "X は正しい（浅いほど水面波は遅い）。Y は誤り。光は電磁波で媒質がなくても伝わる。"}, {"id": "C24", "c": "C", "f": "S", "X": "実物体を凹レンズの前に置くと、レンズの後方に倒立の実像ができる。", "Y": "赤色の光は紫色の光より波長が短い。", "xs": false, "ys": false, "e": "X は誤り。凹レンズで実物体を見ると常に正立の虚像になる。Y は誤り。可視光では赤が最も波長が長く、紫が最も短い。"}, {"id": "D01", "c": "D", "f": "K", "q": "抵抗値 20 Ω の抵抗に 3.0 V の電圧を加えた。流れる電流はいくらか。", "o": ["0.15 A", "60 A", "6.7 A", "1.5 A"], "e": "オームの法則 V = RI より I = V/R = 3.0/20 = 0.15 A。"}, {"id": "D02", "c": "D", "f": "K", "q": "10 Ω と 30 Ω の抵抗を直列につなぎ、12 V の電源に接続した。回路を流れる電流はいくらか。", "o": ["0.30 A", "1.6 A", "1.2 A", "0.40 A"], "e": "直列の合成抵抗は 10 + 30 = 40 Ω。I = 12/40 = 0.30 A。"}, {"id": "D03", "c": "D", "f": "K", "q": "6.0 Ω と 3.0 Ω の抵抗を並列につないだときの合成抵抗はいくらか。", "o": ["2.0 Ω", "9.0 Ω", "4.5 Ω", "0.50 Ω"], "e": "並列では 1/R = 1/6.0 + 1/3.0 = 1/2.0 より R = 2.0 Ω。"}, {"id": "D04", "c": "D", "f": "K", "q": "消費電力 500 W の電熱器を 10 分間使用した。発生するジュール熱はいくらか。", "o": ["3.0×10<sup>5</sup> J", "5.0×10<sup>3</sup> J", "3.0×10<sup>4</sup> J", "6.0×10<sup>5</sup> J"], "e": "Q = Pt = 500 × (10 × 60) = 3.0×10<sup>5</sup> J。時間は秒に直す。"}, {"id": "D05", "c": "D", "f": "K", "q": "真空中で 0.30 m 離れた 2.0×10<sup>−6</sup> C と 3.0×10<sup>−6</sup> C の点電荷の間にはたらく静電気力の大きさはいくらか。クーロンの法則の比例定数を 9.0×10<sup>9</sup> N·m<sup>2</sup>/C<sup>2</sup> とする。", "o": ["0.60 N", "0.18 N", "5.4×10<sup>−2</sup> N", "6.0 N"], "e": "F = kq<sub>1</sub>q<sub>2</sub>/r<sup>2</sup> = 9.0×10<sup>9</sup> × 6.0×10<sup>−12</sup>/0.30<sup>2</sup> = 0.60 N。"}, {"id": "D06", "c": "D", "f": "K", "q": "強さ 2.0×10<sup>3</sup> V/m の一様な電場の中で、電場の向きに 0.050 m 離れた2点間の電位差はいくらか。", "o": ["1.0×10<sup>2</sup> V", "4.0×10<sup>4</sup> V", "2.5×10<sup>−5</sup> V", "1.0×10<sup>4</sup> V"], "e": "一様な電場では V = Ed = 2.0×10<sup>3</sup> × 0.050 = 1.0×10<sup>2</sup> V。"}, {"id": "D07", "c": "D", "f": "K", "q": "電気容量 2.0 μF のコンデンサーに 50 V の電圧を加えた。蓄えられる電気量はいくらか。", "o": ["1.0×10<sup>−4</sup> C", "4.0×10<sup>−8</sup> C", "1.0×10<sup>2</sup> C", "2.5×10<sup>−3</sup> C"], "e": "Q = CV = 2.0×10<sup>−6</sup> × 50 = 1.0×10<sup>−4</sup> C。μ = 10<sup>−6</sup> に注意。"}, {"id": "D08", "c": "D", "f": "K", "q": "磁束密度 0.50 T の一様な磁場中に、磁場と垂直に長さ 0.30 m の導線を置き、2.0 A の電流を流した。導線が受ける力の大きさはいくらか。", "o": ["0.30 N", "0.075 N", "1.2 N", "3.0 N"], "e": "電流が磁場から受ける力 F = IBL = 2.0 × 0.50 × 0.30 = 0.30 N。"}, {"id": "D09", "c": "D", "f": "K", "q": "巻数 100 のコイルを貫く磁束が、0.20 s 間に一定の割合で 4.0×10<sup>−3</sup> Wb 増加した。コイルに生じる誘導起電力の大きさはいくらか。", "o": ["2.0 V", "2.0×10<sup>−2</sup> V", "8.0×10<sup>−2</sup> V", "5.0×10<sup>3</sup> V"], "e": "ファラデーの電磁誘導の法則 V = NΔΦ/Δt = 100 × 4.0×10<sup>−3</sup>/0.20 = 2.0 V。"}, {"id": "D10", "c": "D", "f": "K", "q": "電気量 2.0×10<sup>−6</sup> C の荷電粒子が、磁束密度 0.50 T の一様な磁場に垂直に速さ 3.0×10<sup>3</sup> m/s で入射した。粒子が受けるローレンツ力の大きさはいくらか。", "o": ["3.0×10<sup>−3</sup> N", "1.2×10<sup>−2</sup> N", "1.5×10<sup>−3</sup> N", "3.0×10<sup>3</sup> N"], "e": "ローレンツ力 f = qvB = 2.0×10<sup>−6</sup> × 3.0×10<sup>3</sup> × 0.50 = 3.0×10<sup>−3</sup> N。"}, {"id": "D11", "c": "D", "f": "K", "q": "1次コイルの巻数 100、2次コイルの巻数 500 の理想的な変圧器の1次側に、実効値 20 V の交流電圧を加えた。2次側の電圧の実効値はいくらか。", "o": ["100 V", "4.0 V", "20 V", "500 V"], "e": "変圧器では V<sub>1</sub>:V<sub>2</sub> = N<sub>1</sub>:N<sub>2</sub> より V<sub>2</sub> = 20 × 500/100 = 100 V。"}, {"id": "D12", "c": "D", "f": "K", "q": "帯電した導体が静電気的につり合った状態（静電平衡）にあるとき、導体内部について正しいものはどれか。", "o": ["電場は0で、導体全体が等電位になる", "電場は導体表面より強い", "電荷が導体内部に一様に分布する", "電位は中心ほど高い"], "e": "導体内部に電場があると自由電子が動くので、つり合いでは内部の電場は0、導体全体が等電位で、電荷は表面にのみ分布する。"}, {"id": "D13", "c": "D", "f": "K", "q": "まっすぐな導線を流れる電流がつくる磁場について正しいものはどれか。", "o": ["導線を中心とする同心円状で、電流の向きに右ねじを進めるときねじを回す向きにできる", "導線と平行に、電流と同じ向きにできる", "導線から放射状に外向きにできる", "電流の大きさによらず一定の強さである"], "e": "右ねじの法則。直線電流のまわりの磁場は同心円状で、強さは H = I/(2πr) と電流に比例し距離に反比例する。"}, {"id": "D14", "c": "D", "f": "K", "q": "コイルに磁石を近づけたときに流れる誘導電流の向きを決める法則（レンツの法則）の内容として正しいものはどれか。", "o": ["誘導電流は、コイルを貫く磁束の変化を妨げる向きに流れる", "誘導電流は、コイルを貫く磁束の変化を助ける向きに流れる", "誘導電流は、常に磁石の N 極に向かって流れる", "誘導電流の向きは磁石の動かし方によらない"], "e": "レンツの法則：誘導電流はそれがつくる磁場によって、もとの磁束の変化を打ち消す（妨げる）向きに流れる。"}, {"id": "D15", "c": "D", "f": "K", "q": "静電場における電気力線と等電位面の関係として正しいものはどれか。", "o": ["電気力線と等電位面は常に垂直に交わる", "電気力線と等電位面は常に平行である", "電気力線と等電位面は45°で交わる", "両者の間に決まった関係はない"], "e": "等電位面に沿って電荷を動かしても仕事は0なので、電場（電気力線）は等電位面に垂直。"}, {"id": "D16", "c": "D", "f": "K", "q": "同じ材質の導線で、長さを2倍、断面積を2倍にした。抵抗値はもとの何倍になるか。", "o": ["1倍（変わらない）", "4倍", "2倍", "1/4倍"], "e": "抵抗 R = ρL/S は長さに比例し断面積に反比例するので、2 ÷ 2 = 1 倍。"}, {"id": "D17", "c": "D", "f": "K", "q": "電池につないだままの平行板コンデンサーの極板間隔を広げた。電気容量と蓄えられる電気量はどうなるか。", "o": ["電気容量も電気量も小さくなる", "電気容量は小さくなり、電気量は変わらない", "電気容量は大きくなり、電気量も大きくなる", "電気容量は変わらず、電気量は小さくなる"], "e": "C = εS/d より d を大きくすると C は減少。電池につないだままなので V 一定で、Q = CV も減少する。"}, {"id": "D18", "c": "D", "f": "K", "q": "真空中を伝わる電磁波の速さについて正しいものはどれか。", "o": ["振動数によらず約 3.0×10<sup>8</sup> m/s である", "振動数が大きいほど速い", "波長が長いほど速い", "電波は光より遅い"], "e": "電磁波は真空中では電波・光・X線などの種類（振動数）によらず光速 c ≒ 3.0×10<sup>8</sup> m/s で伝わる。"}, {"id": "D19", "c": "D", "f": "K", "q": "金属の導線を電流が流れているとき、電流の向きと自由電子の移動の向きの関係として正しいものはどれか。", "o": ["互いに逆向き", "同じ向き", "互いに垂直", "電子は移動しない"], "e": "電流の向きは正電荷が移動する向きと定められており、負電荷をもつ電子は電流と逆向きに移動する。"}, {"id": "D20", "c": "D", "f": "K", "q": "電流が流れているコイルを含む回路のスイッチを急に切ると、コイルにはどのような起電力が生じるか。", "o": ["電流の減少を妨げる向き（もとの電流と同じ向きに流そうとする向き）の大きな起電力", "電流の減少を助ける向きの起電力", "起電力はまったく生じない", "電源電圧と同じ大きさの逆向きの起電力が常に生じる"], "e": "自己誘導。V = −L ΔI/Δt より、急激な電流変化を妨げる向きに大きな誘導起電力が生じる。"}, {"id": "D21", "c": "D", "f": "S", "X": "静止している荷電粒子は、磁場から力を受けない。", "Y": "抵抗を並列に接続すると、合成抵抗はどの抵抗よりも大きくなる。", "xs": true, "ys": false, "e": "X は正しい。ローレンツ力 f = qvB は v = 0 なら0。Y は誤り。並列の合成抵抗は最小の抵抗より小さくなる。"}, {"id": "D22", "c": "D", "f": "S", "X": "一様な磁場中で磁場に平行に運動する荷電粒子は、ローレンツ力を受けて等速円運動をする。", "Y": "電気力線どうしは交わることがある。", "xs": false, "ys": false, "e": "X は誤り。磁場に平行な運動ではローレンツ力は0で等速直線運動。Y は誤り。交点では電場の向きが2つになるので電気力線は交わらない。"}, {"id": "D23", "c": "D", "f": "S", "X": "電気量の単位 C（クーロン）は A·s と等しい。", "Y": "電力量 1 kWh は 3.6×10<sup>6</sup> J である。", "xs": true, "ys": true, "e": "Q = It より C = A·s。1 kWh = 1000 W × 3600 s = 3.6×10<sup>6</sup> J。どちらも正しい。"}, {"id": "D24", "c": "D", "f": "S", "X": "直流の電源だけでも、変圧器を用いて電圧を変えることができる。", "Y": "磁石の外部では、磁力線は N 極から出て S 極に入る。", "xs": false, "ys": true, "e": "X は誤り。変圧器は電磁誘導を利用するので磁束が変化する交流が必要。Y は正しい。"}, {"id": "E01", "c": "E", "f": "K", "q": "振動数 5.0×10<sup>14</sup> Hz の光の光子1個のエネルギーはいくらか。プランク定数を 6.6×10<sup>−34</sup> J·s とする。", "o": ["3.3×10<sup>−19</sup> J", "1.3×10<sup>−48</sup> J", "3.3×10<sup>−20</sup> J", "6.6×10<sup>−19</sup> J"], "e": "光子のエネルギー E = hν = 6.6×10<sup>−34</sup> × 5.0×10<sup>14</sup> = 3.3×10<sup>−19</sup> J。"}, {"id": "E02", "c": "E", "f": "K", "q": "仕事関数 2.0 eV の金属に、エネルギー 3.5 eV の光子をもつ光を当てた。飛び出す光電子の運動エネルギーの最大値はいくらか。", "o": ["1.5 eV", "5.5 eV", "2.0 eV", "3.5 eV"], "e": "アインシュタインの光電方程式 K<sub>0</sub> = hν − W = 3.5 − 2.0 = 1.5 eV。"}, {"id": "E03", "c": "E", "f": "K", "q": "半減期 5.0 日の放射性原子核がある。15 日後に崩壊せずに残っている原子核の数は、はじめの何倍か。", "o": ["1/8 倍", "1/3 倍", "1/6 倍", "1/4 倍"], "e": "N = N<sub>0</sub>(1/2)<sup>t/T</sup>、t/T = 15/5.0 = 3 より (1/2)<sup>3</sup> = 1/8 倍。"}, {"id": "E04", "c": "E", "f": "K", "q": "ウラン <sup>238</sup><sub>92</sub>U が α崩壊を1回すると、生じる原子核の原子番号と質量数はいくらか。", "o": ["原子番号 90、質量数 234", "原子番号 92、質量数 234", "原子番号 90、質量数 236", "原子番号 91、質量数 238"], "e": "α粒子は <sup>4</sup><sub>2</sub>He なので、α崩壊1回で原子番号は2、質量数は4減る。92 − 2 = 90、238 − 4 = 234（トリウム Th）。"}, {"id": "E05", "c": "E", "f": "K", "q": "運動量の大きさが 3.3×10<sup>−24</sup> kg·m/s の電子のド・ブロイ波長はいくらか。プランク定数を 6.6×10<sup>−34</sup> J·s とする。", "o": ["2.0×10<sup>−10</sup> m", "5.0×10<sup>9</sup> m", "2.2×10<sup>−57</sup> m", "1.0×10<sup>−10</sup> m"], "e": "ド・ブロイ波長 λ = h/p = 6.6×10<sup>−34</sup>/(3.3×10<sup>−24</sup>) = 2.0×10<sup>−10</sup> m。"}, {"id": "E06", "c": "E", "f": "K", "q": "質量 1.0×10<sup>−3</sup> kg がすべてエネルギーに変わったとすると、そのエネルギーはいくらか。光の速さを 3.0×10<sup>8</sup> m/s とする。", "o": ["9.0×10<sup>13</sup> J", "3.0×10<sup>5</sup> J", "9.0×10<sup>16</sup> J", "4.5×10<sup>13</sup> J"], "e": "質量とエネルギーの等価性 E = mc<sup>2</sup> = 1.0×10<sup>−3</sup> × (3.0×10<sup>8</sup>)<sup>2</sup> = 9.0×10<sup>13</sup> J。"}, {"id": "E07", "c": "E", "f": "K", "q": "20 N の力で物体を力の向きに 3.0 m 動かすのに 2.0 s かかった。このときの仕事率はいくらか。", "o": ["30 W", "120 W", "60 W", "13 W"], "e": "仕事 W = Fx = 20 × 3.0 = 60 J、仕事率 P = W/t = 60/2.0 = 30 W。"}, {"id": "E08", "c": "E", "f": "K", "q": "質量 2.0 kg の物体が速さ 3.0 m/s で運動している。運動エネルギーはいくらか。", "o": ["9.0 J", "18 J", "6.0 J", "3.0 J"], "e": "運動エネルギー K = ½mv<sup>2</sup> = ½ × 2.0 × 3.0<sup>2</sup> = 9.0 J。"}, {"id": "E09", "c": "E", "f": "K", "q": "静止していた電子を電圧 100 V で加速した。電子が得る運動エネルギーは何 J か。電気素量を 1.6×10<sup>−19</sup> C とする。", "o": ["1.6×10<sup>−17</sup> J", "1.6×10<sup>−21</sup> J", "1.0×10<sup>2</sup> J", "6.3×10<sup>20</sup> J"], "e": "電場がする仕事 W = eV = 1.6×10<sup>−19</sup> × 100 = 1.6×10<sup>−17</sup> J（= 100 eV）。"}, {"id": "E10", "c": "E", "f": "K", "q": "水素原子のエネルギー準位は E<sub>n</sub> = −13.6/n<sup>2</sup> 〔eV〕（n = 1, 2, 3, …）で表される。電子が n = 2 から n = 1 の状態に移るときに放出される光子のエネルギーはいくらか。", "o": ["10.2 eV", "13.6 eV", "3.4 eV", "6.8 eV"], "e": "ボーアの振動数条件 hν = E<sub>2</sub> − E<sub>1</sub> = −3.4 − (−13.6) = 10.2 eV。"}, {"id": "E11", "c": "E", "f": "K", "q": "消費電力 420 W の電熱線で、質量 1.0 kg の水を 100 s 間加熱した。発生した熱がすべて水に与えられたとすると、水の温度上昇はいくらか。水の比熱を 4.2×10<sup>3</sup> J/(kg·K) とする。", "o": ["10 K", "1.0 K", "100 K", "0.10 K"], "e": "ジュール熱 Q = Pt = 420 × 100 = 4.2×10<sup>4</sup> J。Q = mcΔT より ΔT = 4.2×10<sup>4</sup>/(1.0 × 4.2×10<sup>3</sup>) = 10 K。"}, {"id": "E12", "c": "E", "f": "K", "q": "光電効果において、金属の限界振動数より小さい振動数の光を当てた場合について正しいものはどれか。", "o": ["光をどれだけ強くしても光電子は飛び出さない", "光を強くすれば光電子が飛び出す", "光を長時間当て続ければ光電子が飛び出す", "光電子は飛び出すが運動エネルギーが0である"], "e": "光子1個のエネルギー hν が仕事関数 W より小さいと電子は飛び出せない。光の強さは光子の数を変えるだけで hν は変わらない。"}, {"id": "E13", "c": "E", "f": "K", "q": "α線、β線、γ線のうち、物質を透過する能力がもっとも大きいものはどれか。", "o": ["γ線", "α線", "β線", "3つとも同じ"], "e": "透過力は γ線 ＞ β線 ＞ α線。電離作用はその逆で α線が最大。"}, {"id": "E14", "c": "E", "f": "K", "q": "原子核が β崩壊（β<sup>−</sup>崩壊）をすると、原子番号と質量数はどうなるか。", "o": ["原子番号が1増え、質量数は変わらない", "原子番号が1減り、質量数は変わらない", "原子番号が2減り、質量数が4減る", "原子番号も質量数も変わらない"], "e": "β<sup>−</sup>崩壊では核内の中性子1個が陽子に変わり電子を放出するので、原子番号 +1、質量数は不変。"}, {"id": "E15", "c": "E", "f": "K", "q": "同位体（アイソトープ）の説明として正しいものはどれか。", "o": ["陽子の数が同じで、中性子の数が異なる原子どうし", "中性子の数が同じで、陽子の数が異なる原子どうし", "質量数が同じで、原子番号が異なる原子どうし", "電子の数だけが異なる原子どうし"], "e": "同位体は原子番号（陽子数）が同じで中性子数（したがって質量数）が異なる原子で、化学的性質はほぼ同じ。"}, {"id": "E16", "c": "E", "f": "K", "q": "核分裂や核融合で大きなエネルギーが放出される理由として正しいものはどれか。", "o": ["反応後の粒子の質量の和が反応前より小さくなり、その質量差がエネルギーとして放出されるから", "反応によって新たに質量が生まれるから", "原子核内の電子が放出されるから", "原子核の静電気力がなくなるから"], "e": "反応の前後で質量が減少し（質量欠損）、E = Δmc<sup>2</sup> に相当するエネルギーが放出される。"}, {"id": "E17", "c": "E", "f": "K", "q": "原子核内で陽子や中性子（核子）どうしを結びつけている力はどれか。", "o": ["核力", "静電気力（クーロン力）", "万有引力", "磁気力"], "e": "核力はごく短い距離ではたらく強い引力で、陽子どうしの静電気的な反発力に打ち勝って核子を結びつける。"}, {"id": "E18", "c": "E", "f": "K", "q": "X線管の加速電圧を大きくすると、発生する連続X線の最短波長はどうなるか。", "o": ["短くなる", "長くなる", "変わらない", "連続X線が発生しなくなる"], "e": "電子の運動エネルギー eV がすべて光子になるとき最短波長 λ<sub>0</sub> = hc/(eV) となるので、V が大きいほど短くなる。"}, {"id": "E19", "c": "E", "f": "K", "q": "装置とそのおもなエネルギー変換の組合せとして正しいものはどれか。", "o": ["太陽電池：光エネルギー → 電気エネルギー", "発電機：電気エネルギー → 運動エネルギー", "電熱器：熱エネルギー → 電気エネルギー", "モーター：熱エネルギー → 運動エネルギー"], "e": "太陽電池は光を電気に変える。発電機は運動→電気、電熱器は電気→熱、モーターは電気→運動で、他の選択肢は向きや種類が誤り。"}, {"id": "E20", "c": "E", "f": "K", "q": "炭素の同位体 <sup>14</sup><sub>6</sub>C の原子核に含まれる中性子の数はいくらか。", "o": ["8", "6", "14", "20"], "e": "中性子数 = 質量数 − 原子番号 = 14 − 6 = 8。"}, {"id": "E21", "c": "E", "f": "S", "X": "γ線は電磁波の一種である。", "Y": "放射性原子核の半減期は、温度を上げると短くなる。", "xs": true, "ys": false, "e": "X は正しい（波長の非常に短い電磁波）。Y は誤り。半減期は原子核固有の値で、温度や圧力などの外部条件によらない。"}, {"id": "E22", "c": "E", "f": "S", "X": "光の強さを2倍にすると、光電子の運動エネルギーの最大値も2倍になる。", "Y": "原子核の質量は、それを構成する陽子と中性子の質量の和より大きい。", "xs": false, "ys": false, "e": "X は誤り。最大運動エネルギーは hν − W で振動数で決まり、強さを変えると光電子の数が変わる。Y は誤り。質量欠損があり、原子核の質量は核子の質量の和より小さい。"}, {"id": "E23", "c": "E", "f": "S", "X": "原子核の大きさは、原子の大きさに比べてはるかに小さい。", "Y": "光は波動性と粒子性の両方の性質をもつ。", "xs": true, "ys": true, "e": "原子核の半径は約 10<sup>−15</sup>〜10<sup>−14</sup> m で、原子（約 10<sup>−10</sup> m）の1万分の1程度。光は干渉などの波動性と光電効果などの粒子性をもつ。どちらも正しい。"}, {"id": "E24", "c": "E", "f": "S", "X": "α線の正体は、高速の電子の流れである。", "Y": "光電効果で飛び出す電子の運動エネルギーの最大値は、当てる光の振動数が大きいほど大きい。", "xs": false, "ys": true, "e": "X は誤り。α線はヘリウムの原子核の流れで、電子の流れは β線。Y は K<sub>0</sub> = hν − W より正しい。"}]};
+const CATS=D.cats;const Q=D.q;
+const FMT={K:"4択",S:"正誤",N:"整序"};
+const SO=["X 正　Y 正","X 正　Y 誤","X 誤　Y 正","X 誤　Y 誤"];
+const NO=["Ⅰ－Ⅱ－Ⅲ","Ⅰ－Ⅲ－Ⅱ","Ⅱ－Ⅰ－Ⅲ","Ⅱ－Ⅲ－Ⅰ","Ⅲ－Ⅰ－Ⅱ","Ⅲ－Ⅱ－Ⅰ"];
+const NK=["123","132","213","231","312","321"];
+Q.forEach(q=>{if(q.f==="S"){q.o=SO;q.a=(q.xs?0:2)+(q.ys?0:1)}else if(q.f==="N"){q.o=NO;q.a=NK.indexOf(q.ord)}else{q.a=0}});
+const FSEG=[["ALL","すべて"]].concat(["K","S","N"].filter(f=>Q.some(q=>q.f===f)).map(f=>[f,FMT[f]]));
+
+/* ===== 記録（このブラウザのみ） ===== */
+const KEY="kyotsu-butsuri-v1";
+let rec={};
+try{rec=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){rec={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(rec))}catch(e){}}
+function mark(id,ok){const r=rec[id]||{c:0,w:0};ok?r.c++:r.w++;r.last=ok;rec[id]=r;save()}
+/* ===== ランク（習得度：正解済み問題の割合） ===== */
+const RANKS=[
+  {t:"新入生",en:"FRESHMAN",min:0},
+  {t:"学士",en:"BACHELOR",min:15},
+  {t:"修士",en:"MASTER",min:35},
+  {t:"博士",en:"DOCTOR",min:55},
+  {t:"教授",en:"PROFESSOR",min:75},
+  {t:"名誉教授",en:"EMERITUS",min:90}
+];
+function mastery(){let ok=0;Q.forEach(q=>{const r=rec[q.id];if(r&&r.last)ok++});return{ok,n:Q.length,pct:Q.length?ok/Q.length*100:0}}
+function rankOf(pct){let i=0;RANKS.forEach((r,k)=>{if(pct>=r.min)i=k});return i}
+function stars(i){return "★".repeat(i)+"☆".repeat(RANKS.length-1-i)}
+function rankPanel(){
+  const m=mastery(),i=rankOf(m.pct),r=RANKS[i],nx=RANKS[i+1];
+  const need=nx?Math.max(1,Math.ceil(nx.min/100*m.n)-m.ok):0;
+  const lo=r.min,hi=nx?nx.min:100,prog=nx?Math.min(100,Math.max(0,(m.pct-lo)/(hi-lo)*100)):100;
+  return `<div class="panel rankp"><div class="rk-badge rk${i}" aria-hidden="true"><span class="rk-en">${r.en}</span><span class="rk-t">${r.t}</span><span class="rk-st">${stars(i)}</span></div>
+    <div class="rk-body"><h2>あなたのランク：${r.t}</h2>
+    <p class="kbd num">正解済み ${m.ok} / ${m.n} 問（${Math.floor(m.pct)}%）</p>
+    <div class="meter rk-meter"><i style="width:${prog}%"></i></div>
+    <p class="kbd">${nx?`次の「${nx.t}」まで、あと <b class="num">${need}</b> 問正解`:"最高ランクに到達しました！"}</p></div></div>`;
+}
+const TITLES=[[100,"名誉教授級"],[90,"教授級"],[75,"博士級"],[60,"修士級"],[40,"学士級"],[0,"新入生級"]];
+function sessionRank(ok,n,r0){
+  const p=n?ok/n*100:0;const t=TITLES.find(x=>p>=x[0])[1];
+  const r1=rankOf(mastery().pct);
+  const up=r1>r0?`<div class="rk-up">ランクアップ！ ${RANKS[r0].t} → <b>${RANKS[r1].t}</b></div>`:"";
+  return `<div class="rk-session"><span class="kbd">今回の称号</span><span class="rk-title">${t}</span></div>${up}`;
+}
+
+/* ===== 状態 ===== */
+const app=document.getElementById("app");
+let S={view:"home",size:10,fmt:"ALL"};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const rich=s=>esc(s).replace(/&lt;(\/?)(sup|sub|u)&gt;/g,"<$1$2>").replace(/&lt;br&gt;/g,"<br>");
+const ROM=["Ⅰ","Ⅱ","Ⅲ"];
+
+function header(){return `<header class="top"><div class="subject"><h1><b>物理</b> ドリル</h1><span class="tag">共通テスト対策</span></div>
+  <div class="row"><a class="subj-link" href="index.html">メニュー</a><small class="num">全${Q.length}問</small></div></header>`}
+const fmtOK=q=>S.fmt==="ALL"||q.f===S.fmt;
+function stats(cat){const qs=Q.filter(q=>!cat||q.c===cat);let done=0,ok=0;qs.forEach(q=>{const r=rec[q.id];if(r){done++;if(r.last)ok++}});return{n:qs.length,done,ok}}
+
+function home(){
+  delete app.dataset.cat;
+  const missN=Q.filter(q=>rec[q.id]&&rec[q.id].last===false&&fmtOK(q)).length;
+  const all=stats();
+  app.innerHTML=header()+`
+  <p class="lead">分野を選んで始めてください。1問ごとに正誤と解説が出ます。正解を増やすとランクが上がります。記録はこの端末に保存されます。</p>
+  <div class="row"><span class="kbd" ${FSEG.length<3?"hidden":""}>形式</span>
+    <div class="seg" role="group" aria-label="形式" ${FSEG.length<3?"hidden":""}>${FSEG.map(([k,l])=>`<button id="fm${k}" aria-pressed="${S.fmt===k}" data-fmt="${k}">${l}</button>`).join("")}</div>
+    <span class="kbd">出題数</span>
+    <div class="seg" role="group" aria-label="出題数">${[10,20,0].map(n=>`<button id="sz${n}" aria-pressed="${S.size===n}" data-size="${n}">${n?n+"問":"全問"}</button>`).join("")}</div></div>
+  <div class="cats">${Object.entries(CATS).map(([k,c])=>{const s=stats(k);const pct=s.n?Math.round(s.ok/s.n*100):0;
+    return `<button class="cat" id="cat${k}" data-cat="${k}"><span class="k">${c.k}　<span class="era-yr">${c.yr}</span></span><span class="t">${c.name}</span><span class="d">${c.d}</span>
+    <span class="meter" aria-hidden="true"><i style="width:${pct}%"></i></span><span class="s num">正解済 ${s.ok} / ${s.n}　解答済 ${s.done}</span></button>`}).join("")}</div>
+  <div class="row">
+    <button class="btn primary" id="mix" data-cat="ALL">全分野ミックス</button>
+    <button class="btn" id="review" data-cat="MISS" ${missN?"":"disabled"}>間違えた問題を復習（${missN}問）</button>
+  </div>
+  ${rankPanel()}
+  <div class="panel"><h2>これまでの成績</h2>
+    <div class="score"><span class="big">${all.done?Math.round(all.ok/all.done*100):0}<small style="font-size:18px">%</small></span>
+    <span class="kbd num">直近の正答率（解答済 ${all.done} 問中 ${all.ok} 問正解）</span></div>
+    <div class="row" style="margin-top:10px"><button class="btn" id="reset" ${all.done?"":"disabled"}>記録を消す</button><span class="kbd" id="resetMsg"></span></div>
+  </div>
+  <footer>操作：選択肢は数字キー（1〜6）、次へは Enter キーでも進めます。</footer>`;
+  app.querySelectorAll("[data-size]").forEach(b=>b.onclick=()=>{S.size=+b.dataset.size;home()});
+  app.querySelectorAll("[data-fmt]").forEach(b=>b.onclick=()=>{S.fmt=b.dataset.fmt;home()});
+  app.querySelectorAll("button[data-cat]").forEach(b=>b.onclick=()=>start(b.dataset.cat));
+  let armed=false;const rb=document.getElementById("reset");
+  rb.onclick=()=>{if(!armed){armed=true;rb.textContent="本当に消す";document.getElementById("resetMsg").textContent="もう一度押すと全記録を消去します";return}rec={};save();home()};
+}
+
+function start(cat){
+  let pool=Q.filter(fmtOK);
+  pool=cat==="ALL"?pool:cat==="MISS"?pool.filter(q=>rec[q.id]&&rec[q.id].last===false):pool.filter(q=>q.c===cat);
+  if(!pool.length){home();return}
+  pool=shuffle(pool);if(S.size&&cat!=="MISS")pool=pool.slice(0,S.size);
+  S={...S,view:"quiz",r0:rankOf(mastery().pct),cat,list:pool,i:0,res:[],done:false};
+  question();
+}
+
+function body(q){
+  if(q.f==="S")return `<p class="stem">次の文X・Yについて、その正誤の組合せとして正しいものを選べ。</p>
+    <div class="stmts"><div class="stmt"><span class="lb">X</span><span class="tx">${rich(q.X)}</span></div><div class="stmt"><span class="lb">Y</span><span class="tx">${rich(q.Y)}</span></div></div>`;
+  if(q.f==="N")return `<p class="stem">${rich(q.p||"次のⅠ〜Ⅲについて、古いものから年代順に正しく配列したものを選べ。")}</p>
+    <div class="stmts">${q.i.map((t,k)=>`<div class="stmt"><span class="lb">${ROM[k]}</span><span class="tx">${rich(t)}</span></div>`).join("")}</div>`;
+  return `<p class="stem">${rich(q.q)}</p>`;
+}
+
+function question(){
+  const q=S.list[S.i];S.done=false;app.dataset.cat=q.c;
+  const label=S.cat==="ALL"?"全分野ミックス":S.cat==="MISS"?"復習":CATS[S.cat].name;
+  S.opts=(q.f==="K"?shuffle(q.o.map((t,k)=>({t,k}))):q.o.map((t,k)=>({t,k})));
+  app.innerHTML=`${header()}<div class="qhead"><span>${label}　<span class="num">${S.i+1} / ${S.list.length}</span></span><button class="btn" id="quit" style="padding:4px 12px;font-size:13px">やめる</button></div>
+  <div class="bar"><i style="width:${S.i/S.list.length*100}%"></i></div>
+  <div class="panel"><div><span class="qno">${q.id}</span><span class="kbd">${CATS[q.c].name}</span><span class="fmt">${FMT[q.f]}</span></div>
+    ${body(q)}
+    <div class="choices ${q.f==="N"?"six":""}">${S.opts.map((o,n)=>`<button class="ch" id="ch${n}" data-n="${n}"><span class="oval">${n+1}</span><span>${rich(o.t)}</span></button>`).join("")}</div>
+    <div id="fb"></div></div>`;
+  app.querySelectorAll(".ch").forEach(b=>b.onclick=()=>choose(+b.dataset.n));
+  document.getElementById("quit").onclick=()=>{S.view="home";home()};
+}
+
+function answerText(q){
+  if(q.f==="N"){const o=q.ord.split("").map(d=>+d-1);return `${NO[q.a]}（${o.map(k=>`${rich(q.i[k])}${q.yr?`〈${rich(q.yr[k])}〉`:""}`).join(" → ")}）`}
+  return rich(q.o[q.a]);
+}
+function choose(n){
+  if(S.done)return;S.done=true;
+  const q=S.list[S.i];const ok=S.opts[n].k===q.a;
+  app.querySelectorAll(".ch").forEach((b,m)=>{b.disabled=true;if(S.opts[m].k===q.a)b.classList.add("right")});
+  const b=document.getElementById("ch"+n);b.classList.add("sel");if(!ok)b.classList.add("wrong");
+  mark(q.id,ok);S.res.push({q,ok,your:S.opts[n].t});
+  const last=S.i===S.list.length-1;
+  document.getElementById("fb").innerHTML=`<div class="fb ${ok?"ok":"ng"}" role="status">
+    <div class="v"><span class="mark">${ok?"○":"×"}</span>${ok?"正解！":"おしい！"}</div>
+    <p>正解：<b>${answerText(q)}</b></p><p>${rich(q.e)}</p></div>
+    <div class="row" style="margin-top:14px"><button class="btn primary" id="next">${last?"結果を見る":"次の問題へ"}</button></div>`;
+  const nx=document.getElementById("next");nx.focus({preventScroll:true});
+  nx.onclick=()=>{if(last){result()}else{S.i++;question();window.scrollTo({top:0})}};
+}
+
+function qSummary(q){
+  if(q.f==="S")return `X：${rich(q.X)}<br>Y：${rich(q.Y)}`;
+  if(q.f==="N")return q.i.map((t,k)=>`${ROM[k]} ${rich(t)}`).join("　");
+  return rich(q.q);
+}
+function result(){
+  S.view="result";delete app.dataset.cat;
+  const n=S.res.length,ok=S.res.filter(r=>r.ok).length,miss=S.res.filter(r=>!r.ok);
+  app.innerHTML=header()+`<div class="panel"><h2>結果</h2>
+    <div class="score"><span class="big">${ok}</span><span class="num" style="font-size:20px">/ ${n}</span><span class="kbd">正答率 ${Math.round(ok/n*100)}%</span></div>${sessionRank(ok,n,S.r0)}
+    ${miss.length?`<ul class="miss">${miss.map(r=>`<li data-cat="${r.q.c}"><div class="kbd"><span class="qno">${r.q.id}</span>${CATS[r.q.c].name}<span class="fmt">${FMT[r.q.f]}</span></div>
+      <div class="en">${qSummary(r.q)}</div>
+      <div class="x">正解：<b>${answerText(r.q)}</b>　／　あなたの解答：${rich(r.your)}</div><div class="x">${rich(r.q.e)}</div></li>`).join("")}</ul>`:`<p style="font-size:18px;font-weight:900">全問正解！すばらしい！</p>`}
+    <div class="row" style="margin-top:16px"><button class="btn primary" id="again">同じ条件でもう一度</button><button class="btn" id="back">トップへ戻る</button></div></div>`;
+  document.getElementById("again").onclick=()=>start(S.cat);
+  document.getElementById("back").onclick=home;
+}
+
+document.addEventListener("keydown",e=>{
+  if(S.view!=="quiz")return;
+  const n=S.list[S.i].o.length;
+  if(/^[1-6]$/.test(e.key)&&!S.done&&+e.key<=n){choose(+e.key-1)}
+  else if(e.key==="Enter"&&S.done){const nx=document.getElementById("next");if(nx&&document.activeElement!==nx){e.preventDefault();nx.click()}}
+});
+home();
+</script>
+
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
+</body>
+</html>

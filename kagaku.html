@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EAF4FF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161A2E" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="入試ドリル">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}</style>
+<title>化学ドリル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Nunito:wght@600;800;900&family=Fredoka:wght@600;700&display=swap">
+<style>
+/* Layout: ステッカー風のポップな一列カラム。太いフチ＋ずらした影、分野ごとにカラー */
+:root{
+  --bg:#EAF4FF; --dot:#CFE3FA; --card:#FFFFFF; --ink:#1B1E3A; --muted:#5C6385; --edge:#1B1E3A;
+  --g:#FF5C8A; --v:#2FA8FF; --o:#FFB800; --c:var(--g);
+  --c-soft:#FFE3EC;
+  --ok:#14B06A; --ok-soft:#DDF7EA; --ng:#FF4D4D; --ng-soft:#FFE4E4;
+  --btn-ink:#FFFFFF;
+  --f-jp:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  --f-en:"Nunito","Segoe UI",system-ui,sans-serif;
+  --f-num:"Fredoka","Nunito",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#161A2E; --dot:#22284A; --card:#232945; --ink:#F2F4FF; --muted:#A9B0D4; --edge:#060815;
+  --g:#FF7AA2; --v:#5BBEFF; --o:#FFC933; --c-soft:#3A2440;
+  --ok:#3DD68C; --ok-soft:#173829; --ng:#FF6F6F; --ng-soft:#3E1D22; --btn-ink:#161A2E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161A2E; --dot:#22284A; --card:#232945; --ink:#F2F4FF; --muted:#A9B0D4; --edge:#060815;
+  --g:#FF7AA2; --v:#5BBEFF; --o:#FFC933; --c-soft:#3A2440;
+  --ok:#3DD68C; --ok-soft:#173829; --ng:#FF6F6F; --ng-soft:#3E1D22; --btn-ink:#161A2E; color-scheme:dark}
+[data-cat="G"]{--c:var(--g)} [data-cat="V"]{--c:var(--v)} [data-cat="O"]{--c:var(--o)}
+*{box-sizing:border-box}
+body{background-color:var(--bg);background-image:radial-gradient(var(--dot) 2px,transparent 2.5px);background-size:22px 22px;
+  color:var(--ink);font-family:var(--f-jp);font-weight:500;font-size:15px;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--v);outline-offset:3px}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.subject{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.subject h1{margin:0;font-size:30px;font-weight:900;letter-spacing:.02em;text-wrap:balance;
+  text-shadow:3px 3px 0 var(--g)}
+.subject h1 b{font-family:var(--f-num);font-weight:700;color:var(--v);text-shadow:3px 3px 0 var(--o)}
+.tag{font-size:12px;font-weight:900;background:var(--o);color:#1B1E3A;border:2px solid var(--edge);border-radius:999px;padding:2px 12px;transform:rotate(-4deg);box-shadow:2px 2px 0 var(--edge)}
+.top small{font-family:var(--f-num);font-size:14px;background:var(--card);border:2px solid var(--edge);border-radius:999px;padding:2px 12px}
+.lead{color:var(--muted);margin:0}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.cat{background:var(--card);border:3px solid var(--edge);border-radius:20px;padding:16px 16px 14px;text-align:left;display:flex;flex-direction:column;gap:6px;min-width:0;
+  box-shadow:5px 5px 0 var(--c);transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}
+.cat::after{content:"";position:absolute;right:-24px;top:-24px;width:80px;height:80px;border-radius:50%;background:var(--c);opacity:.25}
+.cat:hover{transform:translate(-2px,-3px) rotate(-.6deg);box-shadow:8px 8px 0 var(--c)}
+.cat:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--c)}
+.cat .k{font-family:var(--f-num);font-size:12px;font-weight:700;color:var(--c);letter-spacing:.12em;filter:brightness(.85)}
+.cat .t{font-size:20px;font-weight:900}
+.cat .d{font-size:13px;color:var(--muted)}
+.meter{height:12px;background:var(--bg);border:2px solid var(--edge);border-radius:999px;position:relative;margin-top:6px;overflow:hidden}
+.meter i{position:absolute;inset:0 auto 0 0;background:var(--c);border-radius:999px}
+.cat .s{font-size:12px;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{background:var(--card);border:3px solid var(--edge);border-radius:999px;padding:8px 20px;font-weight:700;box-shadow:3px 3px 0 var(--edge);transition:transform .1s,box-shadow .1s}
+.btn:hover:not([disabled]){transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--edge)}
+.btn:active:not([disabled]){transform:translate(3px,3px);box-shadow:0 0 0 var(--edge)}
+.btn.primary{background:var(--g);color:#fff}
+#mix.primary{background:linear-gradient(90deg,var(--g),var(--v))}
+.btn[disabled]{opacity:.4;cursor:default;box-shadow:none}
+.seg{display:inline-flex;border:3px solid var(--edge);border-radius:999px;overflow:hidden;box-shadow:3px 3px 0 var(--edge)}
+.seg button{background:var(--card);border:0;padding:5px 16px;font-size:13px;font-weight:700}
+.seg button+button{border-left:2px solid var(--edge)}
+.seg button[aria-pressed="true"]{background:var(--o);color:#1B1E3A}
+.panel{background:var(--card);border:3px solid var(--edge);border-radius:24px;padding:20px;box-shadow:6px 6px 0 var(--edge)}
+.panel h2{margin:0 0 8px;font-size:18px;font-weight:900}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;font-weight:700}
+.bar{height:14px;background:var(--card);border:3px solid var(--edge);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:repeating-linear-gradient(45deg,var(--c) 0 10px,color-mix(in srgb,var(--c) 70%,#fff) 10px 20px);transition:width .35s cubic-bezier(.3,1.6,.5,1)}
+.qno{display:inline-block;background:var(--c);color:#fff;font-family:var(--f-num);font-weight:700;padding:1px 10px;margin-right:8px;font-size:13px;border-radius:999px;border:2px solid var(--edge)}
+[data-cat="O"] .qno{color:#1B1E3A}
+.stem{font-family:var(--f-en);font-weight:800;font-size:21px;line-height:1.6;margin:14px 0 6px}
+.stem .blank{display:inline-block;min-width:5.5em;background:var(--c-soft);border:2px dashed var(--c);border-radius:10px;text-align:center;font-family:var(--f-num);font-size:14px;color:var(--ink);line-height:1.8}
+.ja{color:var(--muted);font-size:14px;margin:0}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+@media (max-width:520px){.choices{grid-template-columns:1fr}}
+.ch{display:flex;align-items:center;gap:12px;background:var(--card);border:3px solid var(--edge);border-radius:16px;padding:10px 14px;text-align:left;font-family:var(--f-en);font-weight:800;font-size:17px;
+  box-shadow:3px 3px 0 var(--edge);transition:transform .12s,box-shadow .12s;min-width:0}
+.ch:hover:not([disabled]){transform:translate(-1px,-2px);box-shadow:4px 5px 0 var(--c)}
+.oval{flex:none;width:30px;height:30px;border:2px solid var(--edge);border-radius:50%;display:grid;place-items:center;font-family:var(--f-num);font-size:14px;font-weight:700;background:var(--c);color:#fff}
+[data-cat="O"] .oval{color:#1B1E3A}
+.ch.right{background:var(--ok-soft);border-color:var(--ok);box-shadow:3px 3px 0 var(--ok)}
+.ch.right .oval{background:var(--ok)}
+.ch.wrong{background:var(--ng-soft);border-color:var(--ng);box-shadow:3px 3px 0 var(--ng);animation:shake .35s}
+.ch.wrong .oval{background:var(--ng)}
+.ch.sel.right{animation:pop .4s}
+.ch[disabled]{cursor:default}
+.ch[disabled]:not(.right):not(.wrong){opacity:.55}
+.fb{margin-top:18px;border:3px solid var(--ok);border-radius:18px;background:var(--ok-soft);padding:12px 16px;animation:pop .35s}
+.fb.ng{border-color:var(--ng);background:var(--ng-soft)}
+.fb .v{font-weight:900;font-size:20px;display:flex;align-items:center;gap:8px}
+.fb.ok .v{color:var(--ok)} .fb.ng .v{color:var(--ng)}
+.fb p{margin:6px 0 0}
+.fb .en{font-family:var(--f-en);font-weight:800;font-size:16px}
+.mark{font-family:var(--f-num);font-size:26px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;border:2px solid var(--edge)}
+.fb.ok .mark{background:var(--ok)} .fb.ng .mark{background:var(--ng)}
+/* 並べ替え */
+.build{min-height:60px;border:3px dashed var(--c);border-radius:16px;background:var(--bg);padding:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;font-family:var(--f-en);font-weight:800;font-size:17px}
+.build .fix{color:var(--muted)}
+.build .ph{color:var(--muted);font-family:var(--f-jp);font-size:13px}
+.pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{border:2px solid var(--edge);border-radius:12px;background:var(--card);padding:4px 14px;font-family:var(--f-en);font-weight:800;font-size:17px;box-shadow:2px 2px 0 var(--edge);transition:transform .1s}
+.chip:hover:not([disabled]){transform:translateY(-2px) rotate(-2deg)}
+.chip.used{opacity:.2;cursor:default;box-shadow:none}
+.build .chip{background:var(--c);color:#fff;animation:pop .25s}
+[data-cat="O"] .build .chip{color:#1B1E3A}
+.kbd{font-size:12px;color:var(--muted)}
+.score{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.score .big{font-family:var(--f-num);font-weight:700;font-size:56px;line-height:1;color:var(--g);text-shadow:3px 3px 0 var(--o)}
+.miss{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.miss li{border:2px solid var(--edge);border-radius:14px;padding:10px 12px;min-width:0;background:var(--bg)}
+.miss .en{font-family:var(--f-en);font-weight:800;font-size:16px}
+.miss .en b{color:var(--ok)}
+.miss .x{font-size:13px;color:var(--muted)}
+footer{color:var(--muted);font-size:12px;text-align:center}
+@keyframes pop{0%{transform:scale(.9)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<style>
+/* 日本史用の追加：時代ごとのカラーと設問ブロック */
+:root{--ey:#B88A00;--ea:#F26A2E;--em:#0E9C8C;--ee:#E8457A;--ed:#7353F0;--ep:#2C8FE0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ea:#FF8F5C;--em:#2CC7B5;--ee:#FF7AA2;--ed:#9C85FF;--ep:#5BBEFF;--ey:#E6C340}}
+:root[data-theme="dark"]{--ea:#FF8F5C;--em:#2CC7B5;--ee:#FF7AA2;--ed:#9C85FF;--ep:#5BBEFF;--ey:#E6C340}
+[data-cat="A"]{--c:var(--ea)} [data-cat="B"]{--c:var(--em)} [data-cat="C"]{--c:var(--ee)} [data-cat="D"]{--c:var(--ed)} [data-cat="E"]{--c:var(--ep)}
+.stem{font-family:var(--f-jp);font-weight:700;font-size:18px}
+.stmts{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.stmt{display:flex;gap:10px;align-items:flex-start;background:var(--bg);border:2px solid var(--edge);border-radius:14px;padding:8px 12px;min-width:0}
+.stmt .lb{flex:none;font-family:var(--f-num);font-weight:700;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:#fff;border:2px solid var(--edge)}
+.stmt .tx{font-weight:700;min-width:0}
+.ch{font-family:var(--f-jp);font-weight:700}
+.choices.six{grid-template-columns:repeat(3,1fr)}
+@media (max-width:520px){.choices.six{grid-template-columns:1fr 1fr}}
+.choices.six .ch{white-space:nowrap;gap:8px;padding:10px}
+@media (max-width:520px){.choices.six .ch{font-size:15px;padding:10px 8px}.choices.six .oval{width:26px;height:26px;font-size:13px}}
+.fmt{display:inline-block;font-size:11px;font-weight:900;border:2px solid var(--edge);border-radius:999px;padding:0 8px;margin-left:6px;background:var(--o);color:#1B1E3A}
+.era-yr{font-family:var(--f-num);font-size:12px;color:var(--muted)}
+.subj-link{font-size:13px;font-weight:700;color:var(--ink);text-decoration:none;border:2px solid var(--edge);border-radius:999px;padding:2px 12px;background:var(--card)}
+.subj-link:hover{background:var(--o);color:#1B1E3A}
+.miss .en{font-family:var(--f-jp);font-weight:700}
+.subject h1 b{font-family:var(--f-jp);font-weight:900}
+</style>
+<style>
+/* ランク表示 */
+.rankp{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.rk-body{flex:1;min-width:200px}
+.rk-body h2{margin:0 0 2px}
+.rk-body p{margin:4px 0}
+.rk-meter i{background:linear-gradient(90deg,var(--o),var(--g))}
+.rk-badge{flex:none;width:118px;height:118px;border-radius:50%;border:4px solid var(--edge);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;box-shadow:4px 4px 0 var(--edge);transform:rotate(-6deg);text-align:center;color:#1B1E3A}
+.rk-badge .rk-en{font-family:var(--f-num);font-size:10px;letter-spacing:.12em;font-weight:700}
+.rk-badge .rk-t{font-size:22px;font-weight:900;line-height:1.2}
+.rk-badge .rk-st{font-size:12px;letter-spacing:1px}
+.rk0{background:#E4E8F2}.rk1{background:#BFE6FF}.rk2{background:#C9F2DA}.rk3{background:#FFD873}.rk4{background:#FFB3CB}
+.rk5{background:conic-gradient(#FFD873,#FFB3CB,#BFE6FF,#C9F2DA,#FFD873)}
+.rk-session{display:flex;align-items:baseline;gap:10px;margin-top:12px;flex-wrap:wrap}
+.rk-title{font-size:26px;font-weight:900;color:var(--ink);background:var(--o);border:3px solid var(--edge);border-radius:999px;padding:0 16px;box-shadow:3px 3px 0 var(--edge);transform:rotate(-2deg);display:inline-block;color:#1B1E3A}
+.rk-up{margin-top:12px;font-weight:900;font-size:18px;color:var(--g);animation:pop .5s}
+</style>
+
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* ===== 問題データ ===== */
+const D={"cats": {"A": {"name": "物質の構成・化学結合・物質量", "k": "STRUCTURE", "yr": "化学基礎", "d": "原子の構造、周期表、化学結合と結晶、物質量と濃度の計算"}, "B": {"name": "酸と塩基・酸化還元・電池と電気分解", "k": "REACTIONS", "yr": "化学基礎・化学", "d": "pH・中和滴定、酸化数と酸化還元滴定、電池・電気分解"}, "C": {"name": "物質の状態・反応の速さと平衡・熱化学", "k": "STATE & EQUILIBRIUM", "yr": "化学", "d": "気体の法則・溶液、反応速度と化学平衡、エンタルピー変化"}, "D": {"name": "無機物質", "k": "INORGANIC", "yr": "化学", "d": "非金属・金属元素の単体と化合物、気体の製法、イオンの反応、工業的製法"}, "E": {"name": "有機化合物・高分子", "k": "ORGANIC & POLYMER", "yr": "化学", "d": "脂肪族・芳香族化合物、異性体、天然高分子と合成高分子"}}, "q": [{"id": "A01", "c": "A", "f": "K", "q": "二酸化炭素 CO<sub>2</sub> 4.4 g の物質量は何 mol か。原子量は C=12, O=16 とする。", "o": ["0.10 mol", "0.20 mol", "0.050 mol", "1.0 mol"], "e": "CO<sub>2</sub> のモル質量は 44 g/mol なので、4.4 ÷ 44 = 0.10 mol となる。"}, {"id": "A02", "c": "A", "f": "K", "q": "0℃、1.013×10<sup>5</sup> Pa（標準状態）で 5.6 L を占める気体の物質量は何 mol か。標準状態の気体のモル体積は 22.4 L/mol とする。", "o": ["0.25 mol", "0.50 mol", "2.5 mol", "4.0 mol"], "e": "5.6 ÷ 22.4 = 0.25 mol である。気体の種類によらずモル体積で割ればよい。"}, {"id": "A03", "c": "A", "f": "K", "q": "水酸化ナトリウム NaOH 2.0 g を水に溶かして 250 mL の水溶液とした。この水溶液のモル濃度は何 mol/L か。原子量は H=1.0, O=16, Na=23 とする。", "o": ["0.20 mol/L", "0.050 mol/L", "0.80 mol/L", "0.0080 mol/L"], "e": "NaOH（40 g/mol）2.0 g は 0.050 mol で、これが 0.250 L に含まれるので 0.050 ÷ 0.250 = 0.20 mol/L となる。"}, {"id": "A04", "c": "A", "f": "K", "q": "質量パーセント濃度 98％、密度 1.8 g/cm<sup>3</sup> の濃硫酸のモル濃度は何 mol/L か。H<sub>2</sub>SO<sub>4</sub> のモル質量は 98 g/mol とする。", "o": ["18 mol/L", "9.0 mol/L", "1.8 mol/L", "36 mol/L"], "e": "1 L（1000 cm<sup>3</sup>）の質量は 1800 g、そのうち H<sub>2</sub>SO<sub>4</sub> は 1800×0.98 = 1764 g で、1764 ÷ 98 = 18 mol となる。"}, {"id": "A05", "c": "A", "f": "K", "q": "塩素には相対質量 35 の <sup>35</sup>Cl が 75％、相対質量 37 の <sup>37</sup>Cl が 25％ 存在する。塩素の原子量はいくらか。", "o": ["35.5", "36.0", "35.0", "36.5"], "e": "原子量は同位体の相対質量の存在比による平均で、35×0.75 + 37×0.25 = 35.5 となる。"}, {"id": "A06", "c": "A", "f": "K", "q": "メタン CH<sub>4</sub> 3.2 g を完全燃焼させたとき、生成する水の質量は何 g か。原子量は H=1.0, C=12, O=16 とする。", "o": ["7.2 g", "3.6 g", "8.8 g", "14.4 g"], "e": "CH<sub>4</sub> + 2O<sub>2</sub> → CO<sub>2</sub> + 2H<sub>2</sub>O より、CH<sub>4</sub> 0.20 mol から H<sub>2</sub>O 0.40 mol（18×0.40 = 7.2 g）が生じる。"}, {"id": "A07", "c": "A", "f": "K", "q": "原子番号 17 の塩素原子の価電子の数はいくつか。", "o": ["7", "17", "1", "8"], "e": "塩素の電子配置は K殻2、L殻8、M殻7 で、最外殻の7個が価電子である。"}, {"id": "A08", "c": "A", "f": "K", "q": "互いに同素体である組合せはどれか。", "o": ["黄リンと赤リン", "<sup>1</sup>H と <sup>2</sup>H", "一酸化炭素と二酸化炭素", "水と過酸化水素"], "e": "同素体は同じ元素からなる性質の異なる単体どうしである。<sup>1</sup>H と <sup>2</sup>H は同位体、残りは化合物どうしである。"}, {"id": "A09", "c": "A", "f": "K", "q": "次の原子のうち、第一イオン化エネルギーが最も大きいものはどれか。", "o": ["He", "Ne", "Li", "Na"], "e": "イオン化エネルギーは貴ガスで大きく、同族では原子番号が小さいほど大きい。He が全元素中で最大である。"}, {"id": "A10", "c": "A", "f": "K", "q": "次の元素のうち、電気陰性度が最も大きいものはどれか。", "o": ["F", "O", "Cl", "N"], "e": "電気陰性度は周期表の右上ほど大きく（貴ガスを除く）、フッ素が最大である。"}, {"id": "A11", "c": "A", "f": "K", "q": "次の分子のうち、無極性分子はどれか。", "o": ["CO<sub>2</sub>", "H<sub>2</sub>O", "NH<sub>3</sub>", "HCl"], "e": "CO<sub>2</sub> は直線形で、2つの C=O 結合の極性が打ち消し合うため無極性分子となる。H<sub>2</sub>O は折れ線形、NH<sub>3</sub> は三角錐形で極性分子である。"}, {"id": "A12", "c": "A", "f": "K", "q": "共有結合の結晶であるものはどれか。", "o": ["ダイヤモンド", "ヨウ素", "塩化ナトリウム", "銅"], "e": "ダイヤモンドは炭素原子が共有結合で三次元的に結びついた共有結合の結晶である。ヨウ素は分子結晶、塩化ナトリウムはイオン結晶、銅は金属結晶。"}, {"id": "A13", "c": "A", "f": "K", "q": "配位結合を含むものはどれか。", "o": ["NH<sub>4</sub><sup>+</sup>", "CH<sub>4</sub>", "H<sub>2</sub>O", "OH<sup>−</sup>"], "e": "NH<sub>4</sub><sup>+</sup> は NH<sub>3</sub> の非共有電子対が H<sup>+</sup> に提供されてできた配位結合を含む。"}, {"id": "A14", "c": "A", "f": "K", "q": "アンモニア分子 NH<sub>3</sub> の形として正しいものはどれか。", "o": ["三角錐形", "正四面体形", "平面三角形", "直線形"], "e": "N 原子のまわりには3組の共有電子対と1組の非共有電子対があり、分子は三角錐形になる。"}, {"id": "A15", "c": "A", "f": "K", "q": "液体空気から窒素と酸素を分離する方法として最も適当なものはどれか。", "o": ["分留（分別蒸留）", "再結晶", "昇華法", "ろ過"], "e": "窒素と酸素の沸点の違いを利用して、液体空気を分留することで分離する。"}, {"id": "A16", "c": "A", "f": "K", "q": "炎色反応で黄色を示す元素はどれか。", "o": ["Na", "K", "Ca", "Cu"], "e": "Na は黄色、K は赤紫色、Ca は橙赤色、Cu は青緑色の炎色反応を示す。"}, {"id": "A17", "c": "A", "f": "K", "q": "<sup>37</sup>Cl（原子番号 17）の原子核に含まれる中性子の数はいくつか。", "o": ["20", "17", "37", "18"], "e": "中性子の数 = 質量数 − 陽子数（原子番号）= 37 − 17 = 20 である。"}, {"id": "A18", "c": "A", "f": "K", "q": "金属が展性・延性を示す主な理由として最も適当なものはどれか。", "o": ["自由電子が金属原子全体に共有され、原子の位置がずれても結合が保たれるため", "陽イオンと陰イオンが静電気的な引力で強く結びついているため", "分子どうしが弱い分子間力で結びついているため", "原子どうしが方向性のある共有結合で三次元的に結びついているため"], "e": "金属結合は自由電子による結合で方向性がないため、外力で原子がずれても結合が切れにくく、展性・延性を示す。"}, {"id": "A19", "c": "A", "f": "S", "X": "同位体どうしは、化学的性質がほぼ同じである。", "Y": "18族元素の原子の価電子の数は 0 とみなす。", "xs": true, "ys": true, "e": "同位体は電子配置が同じなので化学的性質はほぼ同じである。18族は安定な電子配置で化合物をつくりにくいため、価電子は0とする。"}, {"id": "A20", "c": "A", "f": "S", "X": "イオン結晶は固体では電気を通さないが、融解すると電気を通す。", "Y": "原子番号が同じで質量数が異なる原子どうしを、互いに同素体という。", "xs": true, "ys": false, "e": "イオン結晶は融解するとイオンが動けるようになり電気を通す。原子番号が同じで質量数が異なる原子どうしは同位体である。"}, {"id": "A21", "c": "A", "f": "S", "X": "水分子は直線形の無極性分子である。", "Y": "水の沸点が同族元素の水素化合物に比べて著しく高いのは、分子間に水素結合がはたらくためである。", "xs": false, "ys": true, "e": "水分子は折れ線形の極性分子である。分子間の水素結合のため、水の沸点は H<sub>2</sub>S などより著しく高い。"}, {"id": "A22", "c": "A", "f": "S", "X": "1 mol の水分子 H<sub>2</sub>O には、水素原子が 6.0×10<sup>23</sup> 個含まれる。", "Y": "同じ周期の元素（18族を除く）では、原子番号が大きいほど原子半径が大きい。", "xs": false, "ys": false, "e": "H<sub>2</sub>O 1 mol には水素原子が 2 mol、すなわち 1.2×10<sup>24</sup> 個含まれる。同一周期では原子番号が大きいほど原子核の正電荷が増え、原子半径は小さくなる。"}, {"id": "A23", "c": "A", "f": "S", "X": "黒鉛は電気をよく導く。", "Y": "気体を理想気体とみなすと、0℃、1.013×10<sup>5</sup> Pa で 1 mol の気体の体積は、気体の種類によらず約 22.4 L である。", "xs": true, "ys": true, "e": "黒鉛は各炭素原子の価電子1個が層内を動けるため電気を導く。アボガドロの法則により、標準状態の気体のモル体積は種類によらず約 22.4 L/mol である。"}, {"id": "A24", "c": "A", "f": "S", "X": "金属元素の原子は一般に陰性が強く、陰イオンになりやすい。", "Y": "貴ガスの原子は安定な電子配置をもち、ほとんど化合物をつくらない。", "xs": false, "ys": true, "e": "金属元素の原子は価電子を放出しやすく、陽イオンになりやすい（陽性が強い）。貴ガスは閉殻の安定な電子配置をもつ。"}, {"id": "B01", "c": "B", "f": "K", "q": "0.010 mol/L の塩酸を水で 100 倍に薄めた水溶液の pH はいくらか。HCl は完全に電離するものとする。", "o": ["4", "2", "3", "6"], "e": "100倍に薄めると [H<sup>+</sup>] = 1.0×10<sup>−4</sup> mol/L となり、pH = 4 である。"}, {"id": "B02", "c": "B", "f": "K", "q": "0.10 mol/L の希硫酸 10 mL を過不足なく中和するのに必要な 0.20 mol/L の水酸化ナトリウム水溶液の体積は何 mL か。", "o": ["10 mL", "5.0 mL", "20 mL", "2.5 mL"], "e": "H<sub>2</sub>SO<sub>4</sub> は2価の酸なので、2×0.10×10 = 1×0.20×V より V = 10 mL となる。"}, {"id": "B03", "c": "B", "f": "K", "q": "0.10 mol/L の酢酸水溶液中で、酢酸の電離度が 0.010 であるとき、この水溶液の pH はいくらか。", "o": ["3", "1", "2", "4"], "e": "[H<sup>+</sup>] = 0.10×0.010 = 1.0×10<sup>−3</sup> mol/L なので pH = 3 である。"}, {"id": "B04", "c": "B", "f": "K", "q": "硫酸酸性の 0.020 mol/L 過マンガン酸カリウム水溶液 10 mL と過不足なく反応する過酸化水素の物質量は何 mol か。MnO<sub>4</sub><sup>−</sup> + 8H<sup>+</sup> + 5e<sup>−</sup> → Mn<sup>2+</sup> + 4H<sub>2</sub>O、H<sub>2</sub>O<sub>2</sub> → O<sub>2</sub> + 2H<sup>+</sup> + 2e<sup>−</sup> とする。", "o": ["5.0×10<sup>−4</sup> mol", "2.0×10<sup>−4</sup> mol", "1.0×10<sup>−3</sup> mol", "8.0×10<sup>−5</sup> mol"], "e": "MnO<sub>4</sub><sup>−</sup> 2.0×10<sup>−4</sup> mol が受け取る電子は 1.0×10<sup>−3</sup> mol で、H<sub>2</sub>O<sub>2</sub> は1 mol あたり電子2 mol を与えるので 5.0×10<sup>−4</sup> mol となる。"}, {"id": "B05", "c": "B", "f": "K", "q": "硫酸銅(II)水溶液を白金電極で電気分解し、9650 C の電気量を流した。陰極に析出する銅の質量は何 g か。Cu=64、ファラデー定数は 9.65×10<sup>4</sup> C/mol とする。", "o": ["3.2 g", "6.4 g", "1.6 g", "0.32 g"], "e": "流れた電子は 9650 ÷ 96500 = 0.10 mol。Cu<sup>2+</sup> + 2e<sup>−</sup> → Cu より Cu は 0.050 mol で、64×0.050 = 3.2 g となる。"}, {"id": "B06", "c": "B", "f": "K", "q": "二クロム酸カリウム K<sub>2</sub>Cr<sub>2</sub>O<sub>7</sub> 中のクロム原子の酸化数はいくらか。", "o": ["+6", "+3", "+7", "+12"], "e": "K は +1、O は −2 なので、2×(+1) + 2x + 7×(−2) = 0 より x = +6 となる。"}, {"id": "B07", "c": "B", "f": "K", "q": "下線を引いた物質がブレンステッド・ローリーの定義で酸としてはたらいているものはどれか。", "o": ["<u>H<sub>2</sub>O</u> + NH<sub>3</sub> ⇄ NH<sub>4</sub><sup>+</sup> + OH<sup>−</sup>", "HCl + <u>H<sub>2</sub>O</u> → H<sub>3</sub>O<sup>+</sup> + Cl<sup>−</sup>", "<u>NH<sub>3</sub></u> + HCl → NH<sub>4</sub>Cl", "<u>CO<sub>3</sub><sup>2−</sup></u> + H<sub>2</sub>O ⇄ HCO<sub>3</sub><sup>−</sup> + OH<sup>−</sup>"], "e": "H<sup>+</sup> を与える物質が酸である。NH<sub>3</sub> に H<sup>+</sup> を与えている H<sub>2</sub>O が酸としてはたらき、他の下線部はいずれも H<sup>+</sup> を受け取る塩基である。"}, {"id": "B08", "c": "B", "f": "K", "q": "水溶液が塩基性を示す塩はどれか。", "o": ["CH<sub>3</sub>COONa", "NH<sub>4</sub>Cl", "NaCl", "NaHSO<sub>4</sub>"], "e": "弱酸と強塩基からなる酢酸ナトリウムは加水分解して塩基性を示す。NH<sub>4</sub>Cl と NaHSO<sub>4</sub> は酸性、NaCl は中性である。"}, {"id": "B09", "c": "B", "f": "K", "q": "酢酸水溶液を水酸化ナトリウム水溶液で中和滴定するとき、指示薬として最も適当なものはどれか。", "o": ["フェノールフタレイン", "メチルオレンジ", "メチルレッド", "デンプン水溶液"], "e": "弱酸と強塩基の中和点は塩基性側にあるので、塩基性側（pH 8〜10）で変色するフェノールフタレインを用いる。"}, {"id": "B10", "c": "B", "f": "K", "q": "中和滴定の実験で、純水でぬれたまま使用してよい器具の組合せはどれか。", "o": ["メスフラスコとコニカルビーカー", "ホールピペットとビュレット", "ホールピペットとメスフラスコ", "ビュレットとコニカルビーカー"], "e": "メスフラスコとコニカルビーカーは、ぬれていても中の溶質の物質量が変わらない。ホールピペットとビュレットは使用する溶液で共洗いする。"}, {"id": "B11", "c": "B", "f": "K", "q": "下線を引いた物質が酸化剤としてはたらいているものはどれか。", "o": ["<u>SO<sub>2</sub></u> + 2H<sub>2</sub>S → 3S + 2H<sub>2</sub>O", "<u>SO<sub>2</sub></u> + Br<sub>2</sub> + 2H<sub>2</sub>O → H<sub>2</sub>SO<sub>4</sub> + 2HBr", "<u>SO<sub>2</sub></u> + H<sub>2</sub>O<sub>2</sub> → H<sub>2</sub>SO<sub>4</sub>", "<u>SO<sub>2</sub></u> + H<sub>2</sub>O ⇄ H<sub>2</sub>SO<sub>3</sub>"], "e": "H<sub>2</sub>S との反応では SO<sub>2</sub> の S の酸化数が +4 → 0 と減少しており、SO<sub>2</sub> は還元されて酸化剤としてはたらく。他は還元剤としてはたらくか、酸化還元反応ではない。"}, {"id": "B12", "c": "B", "f": "K", "q": "希塩酸に入れても水素を発生しない金属はどれか。", "o": ["Cu", "Zn", "Fe", "Mg"], "e": "銅は水素よりイオン化傾向が小さいため、希塩酸とは反応しない。"}, {"id": "B13", "c": "B", "f": "K", "q": "ダニエル電池の負極で起こる反応はどれか。", "o": ["Zn → Zn<sup>2+</sup> + 2e<sup>−</sup>", "Cu<sup>2+</sup> + 2e<sup>−</sup> → Cu", "Cu → Cu<sup>2+</sup> + 2e<sup>−</sup>", "Zn<sup>2+</sup> + 2e<sup>−</sup> → Zn"], "e": "イオン化傾向の大きい亜鉛が負極となり、亜鉛が酸化されて Zn<sup>2+</sup> となる。正極では Cu<sup>2+</sup> が還元されて銅が析出する。"}, {"id": "B14", "c": "B", "f": "K", "q": "鉛蓄電池の正極活物質はどれか。", "o": ["PbO<sub>2</sub>", "Pb", "PbSO<sub>4</sub>", "H<sub>2</sub>SO<sub>4</sub>"], "e": "鉛蓄電池は負極に Pb、正極に PbO<sub>2</sub>、電解液に希硫酸を用いる。放電すると両極とも PbSO<sub>4</sub> になる。"}, {"id": "B15", "c": "B", "f": "K", "q": "塩化ナトリウム水溶液を炭素電極で電気分解したとき、陽極で主に発生する気体はどれか。", "o": ["Cl<sub>2</sub>", "H<sub>2</sub>", "O<sub>2</sub>", "HCl"], "e": "陽極では 2Cl<sup>−</sup> → Cl<sub>2</sub> + 2e<sup>−</sup> の酸化反応が起こり、塩素が発生する。陰極では水素が発生する。"}, {"id": "B16", "c": "B", "f": "K", "q": "リン酸形燃料電池の負極で起こる反応はどれか。", "o": ["H<sub>2</sub> → 2H<sup>+</sup> + 2e<sup>−</sup>", "O<sub>2</sub> + 4H<sup>+</sup> + 4e<sup>−</sup> → 2H<sub>2</sub>O", "2H<sub>2</sub>O → O<sub>2</sub> + 4H<sup>+</sup> + 4e<sup>−</sup>", "2H<sup>+</sup> + 2e<sup>−</sup> → H<sub>2</sub>"], "e": "負極では燃料の水素が酸化されて H<sup>+</sup> になり、正極では酸素が還元されて水が生じる。"}, {"id": "B17", "c": "B", "f": "K", "q": "窒素原子の酸化数が最も大きいものはどれか。", "o": ["HNO<sub>3</sub>", "NO<sub>2</sub>", "NH<sub>3</sub>", "N<sub>2</sub>O"], "e": "N の酸化数は HNO<sub>3</sub> で +5、NO<sub>2</sub> で +4、NH<sub>3</sub> で −3、N<sub>2</sub>O で +1 である。"}, {"id": "B18", "c": "B", "f": "K", "q": "25℃ で 0.010 mol/L の水酸化ナトリウム水溶液の pH はいくらか。水のイオン積は 1.0×10<sup>−14</sup> (mol/L)<sup>2</sup> とし、NaOH は完全に電離するものとする。", "o": ["12", "2", "10", "13"], "e": "[OH<sup>−</sup>] = 1.0×10<sup>−2</sup> mol/L より [H<sup>+</sup>] = 1.0×10<sup>−12</sup> mol/L で、pH = 12 となる。"}, {"id": "B19", "c": "B", "f": "S", "X": "酸化還元反応において、酸化剤は自身が還元される。", "Y": "単体中の原子の酸化数は +1 である。", "xs": true, "ys": false, "e": "酸化剤は相手から電子を奪い、自身は還元される。単体中の原子の酸化数は 0 である。"}, {"id": "B20", "c": "B", "f": "S", "X": "同じモル濃度の水溶液では、弱酸の水溶液の方が強酸の水溶液より pH が小さい。", "Y": "同じモル濃度・同じ体積の塩酸と酢酸水溶液を中和するのに必要な水酸化ナトリウムの物質量は等しい。", "xs": false, "ys": true, "e": "弱酸は電離度が小さく [H<sup>+</sup>] が小さいので pH は大きい。中和に必要な塩基の量は酸の強弱ではなく、酸の物質量と価数で決まる。"}, {"id": "B21", "c": "B", "f": "S", "X": "電気分解では、陽極で還元反応が起こる。", "Y": "鉛蓄電池を放電すると、電解液の硫酸の濃度は大きくなる。", "xs": false, "ys": false, "e": "電気分解の陽極では酸化反応が起こる。鉛蓄電池の放電では硫酸が消費され水が生じるため、硫酸の濃度は小さくなる。"}, {"id": "B22", "c": "B", "f": "S", "X": "アルミニウムは濃硝酸に入れると不動態となり、溶けにくい。", "Y": "塩化アンモニウムの水溶液は酸性を示す。", "xs": true, "ys": true, "e": "Al・Fe・Ni は濃硝酸中で表面に緻密な酸化被膜ができ不動態となる。NH<sub>4</sub>Cl は強酸と弱塩基からなる塩で、加水分解して酸性を示す。"}, {"id": "B23", "c": "B", "f": "S", "X": "電池において、外部回路へ電子が流れ出る電極を負極という。", "Y": "酸の価数が大きい酸ほど、強い酸である。", "xs": true, "ys": false, "e": "負極では酸化反応が起こり電子が外部回路へ流れ出す。酸の強弱は電離度で決まり、価数とは関係しない（例：3価のリン酸は1価の塩酸より弱い）。"}, {"id": "B24", "c": "B", "f": "S", "X": "過酸化水素は酸化剤としてのみはたらき、還元剤としてはたらくことはない。", "Y": "水酸化カルシウムは弱塩基である。", "xs": false, "ys": false, "e": "過酸化水素は KMnO<sub>4</sub> などの強い酸化剤に対しては還元剤としてはたらく。Ca(OH)<sub>2</sub> は強塩基に分類される。"}, {"id": "C01", "c": "C", "f": "K", "q": "27℃、1.0×10<sup>5</sup> Pa で 6.0 L を占める気体を、127℃、2.0×10<sup>5</sup> Pa にすると体積は何 L になるか。", "o": ["4.0 L", "3.0 L", "2.3 L", "16 L"], "e": "ボイル・シャルルの法則より V = 6.0 × (1.0/2.0) × (400/300) = 4.0 L となる。温度は絶対温度で計算する。"}, {"id": "C02", "c": "C", "f": "K", "q": "ある気体 1.0 g は、27℃、8.3×10<sup>4</sup> Pa で 1.0 L を占めた。この気体のモル質量は何 g/mol か。気体定数は R = 8.3×10<sup>3</sup> Pa·L/(K·mol) とする。", "o": ["30 g/mol", "15 g/mol", "60 g/mol", "3.0 g/mol"], "e": "PV = (w/M)RT より M = wRT/(PV) = 1.0×8.3×10<sup>3</sup>×300 ÷ (8.3×10<sup>4</sup>×1.0) = 30 g/mol である。"}, {"id": "C03", "c": "C", "f": "K", "q": "次の2つの熱化学反応式から、C(黒鉛) + 1/2 O<sub>2</sub>(気) → CO(気) の反応エンタルピー ΔH を求めよ。<br>C(黒鉛) + O<sub>2</sub>(気) → CO<sub>2</sub>(気)　ΔH = −394 kJ<br>CO(気) + 1/2 O<sub>2</sub>(気) → CO<sub>2</sub>(気)　ΔH = −283 kJ", "o": ["−111 kJ", "+111 kJ", "−677 kJ", "−394 kJ"], "e": "ヘスの法則より、第1式から第2式を引くと ΔH = −394 − (−283) = −111 kJ となる。"}, {"id": "C04", "c": "C", "f": "K", "q": "結合エンタルピーを H−H 436 kJ/mol、Cl−Cl 243 kJ/mol、H−Cl 432 kJ/mol とするとき、H<sub>2</sub>(気) + Cl<sub>2</sub>(気) → 2HCl(気) の反応エンタルピー ΔH は何 kJ か。", "o": ["−185 kJ", "+185 kJ", "+247 kJ", "−247 kJ"], "e": "ΔH =（切断する結合の結合エンタルピーの和）−（生成する結合の和）= (436 + 243) − 2×432 = −185 kJ である。"}, {"id": "C05", "c": "C", "f": "K", "q": "H<sub>2</sub>(気) + I<sub>2</sub>(気) ⇄ 2HI(気) の反応が一定体積の容器内で平衡に達したとき、H<sub>2</sub> 0.10 mol、I<sub>2</sub> 0.10 mol、HI 0.80 mol が存在した。この温度での平衡定数 K はいくらか。", "o": ["64", "8.0", "80", "0.016"], "e": "K = [HI]<sup>2</sup>/([H<sub>2</sub>][I<sub>2</sub>]) で、体積は約分されるので K = 0.80<sup>2</sup> ÷ (0.10×0.10) = 64 となる。"}, {"id": "C06", "c": "C", "f": "K", "q": "過酸化水素の分解反応 2H<sub>2</sub>O<sub>2</sub> → 2H<sub>2</sub>O + O<sub>2</sub> で、H<sub>2</sub>O<sub>2</sub> の濃度が 20 秒間で 0.80 mol/L から 0.60 mol/L に減少した。この間の H<sub>2</sub>O<sub>2</sub> の平均の分解速度は何 mol/(L·s) か。", "o": ["0.010 mol/(L·s)", "0.020 mol/(L·s)", "0.0050 mol/(L·s)", "0.040 mol/(L·s)"], "e": "分解速度 = (0.80 − 0.60) ÷ 20 = 0.010 mol/(L·s) である。"}, {"id": "C07", "c": "C", "f": "K", "q": "硝酸カリウムの溶解度（水 100 g に溶ける最大質量）は 60℃ で 109 g、20℃ で 32 g である。60℃ の飽和水溶液 209 g を 20℃ まで冷却すると、析出する硝酸カリウムは何 g か。", "o": ["77 g", "109 g", "32 g", "154 g"], "e": "飽和水溶液 209 g は水 100 g と KNO<sub>3</sub> 109 g からなり、20℃ では 32 g しか溶けないので 109 − 32 = 77 g が析出する。"}, {"id": "C08", "c": "C", "f": "K", "q": "塩化ナトリウム 0.050 mol を水 500 g に溶かした水溶液の沸点上昇度は約何 K か。水のモル沸点上昇は 0.52 K·kg/mol とし、NaCl は完全に電離するものとする。", "o": ["0.10 K", "0.052 K", "0.21 K", "0.026 K"], "e": "質量モル濃度は 0.10 mol/kg で、NaCl は Na<sup>+</sup> と Cl<sup>−</sup> に電離して溶質粒子は 0.20 mol/kg となるので、0.52×0.20 ≒ 0.10 K となる。"}, {"id": "C09", "c": "C", "f": "K", "q": "N<sub>2</sub>(気) + 3H<sub>2</sub>(気) ⇄ 2NH<sub>3</sub>(気)　ΔH = −92 kJ の平衡で、NH<sub>3</sub> の生成率を高める条件として最も適当なものはどれか。", "o": ["低温・高圧", "高温・高圧", "低温・低圧", "高温・低圧"], "e": "正反応は発熱（ΔH が負）で、気体分子の数が減る反応なので、ルシャトリエの原理より低温・高圧で平衡は右へ移動する。"}, {"id": "C10", "c": "C", "f": "K", "q": "触媒のはたらきについての記述として正しいものはどれか。", "o": ["活性化エネルギーを小さくし、反応速度を大きくする", "反応エンタルピーを小さくする", "平衡を生成物側へ移動させる", "活性化エネルギーを大きくし、反応を穏やかにする"], "e": "触媒は活性化エネルギーの小さい別の経路を与えて反応を速くするが、反応エンタルピーや平衡の位置は変えない。"}, {"id": "C11", "c": "C", "f": "K", "q": "液体が沸騰するのはどのようなときか。", "o": ["液体の飽和蒸気圧が外圧と等しくなったとき", "液体の飽和蒸気圧が 0 になったとき", "液体の温度が 100℃ になったとき", "液体の表面からの蒸発が止まったとき"], "e": "飽和蒸気圧が外圧に等しくなると液体内部からも気化が起こり沸騰する。100℃ で沸騰するのは外圧 1.013×10<sup>5</sup> Pa の水の場合に限られる。"}, {"id": "C12", "c": "C", "f": "K", "q": "次のハロゲン化水素のうち、沸点が最も高いものはどれか。", "o": ["HF", "HCl", "HBr", "HI"], "e": "HF は分子間に水素結合を形成するため、分子量が小さいにもかかわらず沸点が最も高い。"}, {"id": "C13", "c": "C", "f": "K", "q": "実在気体が理想気体に近いふるまいをする条件として最も適当なものはどれか。", "o": ["高温・低圧", "低温・高圧", "高温・高圧", "低温・低圧"], "e": "高温では分子間力の影響が、低圧では分子自身の体積の影響が相対的に小さくなるため、理想気体に近づく。"}, {"id": "C14", "c": "C", "f": "K", "q": "コロイド溶液に横から強い光を当てると、光の通路が明るく輝いて見える。この現象を何というか。", "o": ["チンダル現象", "ブラウン運動", "電気泳動", "透析"], "e": "コロイド粒子が光を散乱するために光の通路が見える現象をチンダル現象という。"}, {"id": "C15", "c": "C", "f": "K", "q": "次の物質をそれぞれ質量モル濃度 0.10 mol/kg の水溶液としたとき、凝固点が最も低いものはどれか。電解質は完全に電離するものとする。", "o": ["塩化カルシウム", "塩化ナトリウム", "グルコース", "尿素"], "e": "凝固点降下度は溶質粒子の質量モル濃度に比例する。CaCl<sub>2</sub> は3個のイオンに電離し粒子濃度が 0.30 mol/kg と最大になる。"}, {"id": "C16", "c": "C", "f": "K", "q": "発熱反応についての記述として正しいものはどれか。", "o": ["生成物のエンタルピーの総和が反応物より小さく、ΔH は負の値になる", "生成物のエンタルピーの総和が反応物より大きく、ΔH は正の値になる", "反応物のエンタルピーの総和が生成物より小さく、ΔH は負の値になる", "反応が進むと周囲から熱を吸収し、ΔH は正の値になる"], "e": "発熱反応では系のエンタルピーが減少して周囲に熱が放出されるため、ΔH = (生成物) − (反応物) は負になる。"}, {"id": "C17", "c": "C", "f": "K", "q": "燃焼エンタルピーの定義として正しいものはどれか。", "o": ["物質 1 mol が完全燃焼するときのエンタルピー変化", "物質 1 mol がその成分元素の単体から生成するときのエンタルピー変化", "物質 1 mol が多量の水に溶解するときのエンタルピー変化", "酸と塩基が中和して水 1 mol が生じるときのエンタルピー変化"], "e": "燃焼エンタルピーは物質 1 mol が完全燃焼するときのエンタルピー変化で、負の値をとる。他はそれぞれ生成・溶解・中和エンタルピーの定義である。"}, {"id": "C18", "c": "C", "f": "K", "q": "酢酸の電離平衡 CH<sub>3</sub>COOH ⇄ CH<sub>3</sub>COO<sup>−</sup> + H<sup>+</sup> が成り立っている水溶液に、酢酸ナトリウムを加えた。このときの変化として正しいものはどれか。", "o": ["平衡は左へ移動し、酢酸の電離度は小さくなる", "平衡は右へ移動し、酢酸の電離度は大きくなる", "平衡は移動せず、電離度も変わらない", "平衡は左へ移動し、酢酸の電離度は大きくなる"], "e": "CH<sub>3</sub>COO<sup>−</sup> が増えるため、それを減らす左向きに平衡が移動し、酢酸の電離度は小さくなる（共通イオン効果）。"}, {"id": "C19", "c": "C", "f": "S", "X": "温度を上げると反応速度が大きくなるのは、活性化エネルギー以上のエネルギーをもつ分子の割合が増えるためである。", "Y": "温度一定のとき、一定物質量の気体の体積は圧力に反比例する。", "xs": true, "ys": true, "e": "温度上昇で活性化エネルギーを超える分子の割合が大きく増え、反応速度が大きくなる。後者はボイルの法則である。"}, {"id": "C20", "c": "C", "f": "S", "X": "触媒を加えると、平衡定数が大きくなる。", "Y": "化学平衡の状態では、正反応と逆反応の反応速度が等しい。", "xs": false, "ys": true, "e": "触媒は正・逆両方向の反応を同じように速めるので、平衡定数は変わらない。平衡状態は正反応と逆反応の速さが等しく、見かけ上反応が止まった状態である。"}, {"id": "C21", "c": "C", "f": "S", "X": "氷が融解して水になる変化は吸熱変化であり、ΔH は正の値をとる。", "Y": "水に不揮発性の物質を溶かすと、その溶液の蒸気圧は純水より高くなる。", "xs": true, "ys": false, "e": "融解は熱を吸収する変化（融解エンタルピーは正）である。不揮発性物質の溶液では蒸気圧降下が起こり、蒸気圧は純水より低くなる。"}, {"id": "C22", "c": "C", "f": "S", "X": "気体の水に対する溶解度は、一般に温度が高いほど大きい。", "Y": "発熱反応では、反応エンタルピー ΔH が正の値になる。", "xs": false, "ys": false, "e": "気体の溶解度は一般に温度が高いほど小さい。発熱反応では系のエンタルピーが減少するので ΔH は負になる。"}, {"id": "C23", "c": "C", "f": "S", "X": "液体の飽和蒸気圧は、温度が高くなるほど小さくなる。", "Y": "疎水コロイドに少量の電解質を加えると沈殿する現象を凝析という。", "xs": false, "ys": true, "e": "飽和蒸気圧は温度が高いほど大きくなる。疎水コロイドは少量の電解質で凝集・沈殿し、これを凝析という。"}, {"id": "C24", "c": "C", "f": "S", "X": "反応エンタルピーは、反応の経路によらず、反応の最初と最後の状態だけで決まる。", "Y": "反応物の濃度が大きいほど分子どうしの衝突回数が増え、反応速度は大きくなる。", "xs": true, "ys": true, "e": "前者はヘスの法則（総熱量保存の法則）である。濃度が大きいと単位時間あたりの衝突回数が増え、反応速度が大きくなる。"}, {"id": "D01", "c": "D", "f": "K", "q": "炭酸カルシウム CaCO<sub>3</sub> 10 g に十分な量の塩酸を加えたとき、発生する二酸化炭素の体積は標準状態で何 L か。原子量は C=12, O=16, Ca=40、標準状態の気体のモル体積は 22.4 L/mol とする。", "o": ["2.24 L", "4.48 L", "1.12 L", "22.4 L"], "e": "CaCO<sub>3</sub> + 2HCl → CaCl<sub>2</sub> + H<sub>2</sub>O + CO<sub>2</sub> より、CaCO<sub>3</sub>（100 g/mol）0.10 mol から CO<sub>2</sub> 0.10 mol（2.24 L）が発生する。"}, {"id": "D02", "c": "D", "f": "K", "q": "オストワルト法で、アンモニア 17 kg がすべて硝酸に変化したとすると、得られる硝酸 HNO<sub>3</sub> は何 kg か。全体の反応は NH<sub>3</sub> + 2O<sub>2</sub> → HNO<sub>3</sub> + H<sub>2</sub>O とし、原子量は H=1.0, N=14, O=16 とする。", "o": ["63 kg", "42 kg", "126 kg", "21 kg"], "e": "NH<sub>3</sub> 1 mol から HNO<sub>3</sub> 1 mol が得られる。NH<sub>3</sub> 17 kg は 1.0×10<sup>3</sup> mol なので、HNO<sub>3</sub>（63 g/mol）は 63 kg となる。"}, {"id": "D03", "c": "D", "f": "K", "q": "酸化鉄(III) Fe<sub>2</sub>O<sub>3</sub> 16 kg を完全に還元すると、鉄は何 kg 得られるか。原子量は O=16, Fe=56 とする。", "o": ["11.2 kg", "5.6 kg", "22.4 kg", "8.0 kg"], "e": "Fe<sub>2</sub>O<sub>3</sub>（160 g/mol）16 kg は 100 mol で、含まれる Fe は 200 mol、56×200 = 11200 g = 11.2 kg となる。"}, {"id": "D04", "c": "D", "f": "K", "q": "銅 1.92 g を十分な量の希硝酸と反応させた。3Cu + 8HNO<sub>3</sub> → 3Cu(NO<sub>3</sub>)<sub>2</sub> + 2NO + 4H<sub>2</sub>O の反応式に従うとき、発生する一酸化窒素の体積は標準状態で何 L か。Cu=64、標準状態の気体のモル体積は 22.4 L/mol とする。", "o": ["0.448 L", "0.672 L", "1.34 L", "0.224 L"], "e": "Cu 1.92 g は 0.030 mol で、NO は 0.030×2/3 = 0.020 mol 生じるので、22.4×0.020 = 0.448 L となる。"}, {"id": "D05", "c": "D", "f": "K", "q": "ハロゲンの単体の酸化力の強さの順として正しいものはどれか。", "o": ["F<sub>2</sub> ＞ Cl<sub>2</sub> ＞ Br<sub>2</sub> ＞ I<sub>2</sub>", "I<sub>2</sub> ＞ Br<sub>2</sub> ＞ Cl<sub>2</sub> ＞ F<sub>2</sub>", "Cl<sub>2</sub> ＞ F<sub>2</sub> ＞ Br<sub>2</sub> ＞ I<sub>2</sub>", "F<sub>2</sub> ＞ Br<sub>2</sub> ＞ Cl<sub>2</sub> ＞ I<sub>2</sub>"], "e": "ハロゲンの単体の酸化力は原子番号が小さいほど強い。例えば Cl<sub>2</sub> は KI 水溶液から I<sub>2</sub> を遊離させる。"}, {"id": "D06", "c": "D", "f": "K", "q": "ガラスを腐食するため、ポリエチレン容器に保存する必要がある薬品はどれか。", "o": ["フッ化水素酸", "塩酸", "濃硫酸", "濃硝酸"], "e": "フッ化水素酸はガラスの成分 SiO<sub>2</sub> と反応して溶かすため、ポリエチレン容器に保存する。"}, {"id": "D07", "c": "D", "f": "K", "q": "気体とその捕集法の組合せとして適当なものはどれか。", "o": ["NH<sub>3</sub> ― 上方置換", "HCl ― 水上置換", "NO<sub>2</sub> ― 水上置換", "Cl<sub>2</sub> ― 上方置換"], "e": "NH<sub>3</sub> は水に溶けやすく空気より軽いので上方置換で捕集する。HCl・NO<sub>2</sub>・Cl<sub>2</sub> は水に溶けやすく空気より重いので下方置換で捕集する。"}, {"id": "D08", "c": "D", "f": "K", "q": "アンモニアの乾燥剤として適当なものはどれか。", "o": ["ソーダ石灰", "濃硫酸", "十酸化四リン", "塩化カルシウム"], "e": "塩基性の NH<sub>3</sub> は酸性の乾燥剤（濃硫酸、十酸化四リン）と反応し、塩化カルシウムとも化合物をつくるため、塩基性のソーダ石灰を用いる。"}, {"id": "D09", "c": "D", "f": "K", "q": "スクロースに濃硫酸を加えると黒くなる。このとき主に利用されている濃硫酸の性質はどれか。", "o": ["脱水作用", "不揮発性", "強い酸性", "熱濃硫酸の酸化作用"], "e": "濃硫酸は有機化合物から H と O を水の形で奪う脱水作用をもち、スクロースは炭化して黒くなる。"}, {"id": "D10", "c": "D", "f": "K", "q": "塩酸とも水酸化ナトリウム水溶液とも反応して水素を発生する金属はどれか。", "o": ["Al", "Mg", "Ca", "Cu"], "e": "Al は両性金属で、酸とも強塩基とも反応して水素を発生する。"}, {"id": "D11", "c": "D", "f": "K", "q": "テトラアンミン銅(II)イオン [Cu(NH<sub>3</sub>)<sub>4</sub>]<sup>2+</sup> の色と形の組合せとして正しいものはどれか。", "o": ["深青色・正方形", "深青色・正四面体形", "無色・直線形", "淡緑色・正八面体形"], "e": "Cu(OH)<sub>2</sub> に過剰のアンモニア水を加えると、深青色で正方形の [Cu(NH<sub>3</sub>)<sub>4</sub>]<sup>2+</sup> が生じて溶ける。"}, {"id": "D12", "c": "D", "f": "K", "q": "金属イオンと試薬を反応させたときに生じる沈殿の色の組合せとして正しいものはどれか。", "o": ["Ag<sup>+</sup> に Cl<sup>−</sup> ― 白色", "Pb<sup>2+</sup> に CrO<sub>4</sub><sup>2−</sup> ― 白色", "Cu<sup>2+</sup> に H<sub>2</sub>S ― 黄色", "Fe<sup>3+</sup> に OH<sup>−</sup> ― 白色"], "e": "AgCl は白色沈殿である。PbCrO<sub>4</sub> は黄色、CuS は黒色、水酸化鉄(III) は赤褐色の沈殿である。"}, {"id": "D13", "c": "D", "f": "K", "q": "Fe<sup>3+</sup> を含む水溶液についての記述として正しいものはどれか。", "o": ["ヘキサシアニド鉄(II)酸カリウム水溶液を加えると濃青色の沈殿を生じる", "チオシアン酸カリウム水溶液を加えても変化しない", "水酸化ナトリウム水溶液を加えると緑白色の沈殿を生じる", "ヘキサシアニド鉄(III)酸カリウム水溶液を加えると白色の沈殿を生じる"], "e": "Fe<sup>3+</sup> は K<sub>4</sub>[Fe(CN)<sub>6</sub>] で濃青色沈殿、KSCN で血赤色溶液となる。NaOH では赤褐色沈殿を生じ、緑白色沈殿は Fe<sup>2+</sup> の場合である。"}, {"id": "D14", "c": "D", "f": "K", "q": "工業的製法と主な製品の組合せとして正しいものはどれか。", "o": ["ハーバー・ボッシュ法 ― アンモニア", "オストワルト法 ― 硫酸", "接触法 ― 硝酸", "アンモニアソーダ法 ― 水酸化ナトリウム"], "e": "ハーバー・ボッシュ法は鉄を主成分とする触媒で N<sub>2</sub> と H<sub>2</sub> からアンモニアをつくる。オストワルト法は硝酸、接触法は硫酸、アンモニアソーダ法は炭酸ナトリウムの製法である。"}, {"id": "D15", "c": "D", "f": "K", "q": "アルミニウムの単体を工業的に得る方法として正しいものはどれか。", "o": ["酸化アルミニウムを氷晶石とともに融解し、溶融塩電解する", "アルミニウムイオンを含む水溶液を電気分解する", "酸化アルミニウムをコークスで還元する", "ボーキサイトを水に溶かし、鉄を加えて析出させる"], "e": "Al はイオン化傾向が大きく水溶液の電気分解では得られないため、氷晶石を用いて融点を下げた酸化アルミニウムを溶融塩電解する。"}, {"id": "D16", "c": "D", "f": "K", "q": "ナトリウムの単体の保存方法として最も適当なものはどれか。", "o": ["石油（灯油）中に保存する", "水中に保存する", "空気中に放置して保存する", "エタノール中に保存する"], "e": "ナトリウムは水や空気中の酸素と反応しやすいので、石油中に保存する。水中に保存するのは黄リンである。"}, {"id": "D17", "c": "D", "f": "K", "q": "ケイ素とその化合物についての記述として正しいものはどれか。", "o": ["ケイ素の単体は共有結合の結晶で、半導体の性質を示す", "二酸化ケイ素は分子結晶で、融点が低い", "二酸化ケイ素は塩酸によく溶ける", "ケイ素は地殻中に最も多く存在する元素である"], "e": "ケイ素の単体はダイヤモンドと同様の構造をもつ共有結合の結晶で半導体である。SiO<sub>2</sub> は融点の高い共有結合の結晶でフッ化水素酸に溶け、地殻中で最も多い元素は酸素である。"}, {"id": "D18", "c": "D", "f": "K", "q": "反応と発生する主な気体の組合せとして正しいものはどれか。", "o": ["亜鉛に希硫酸を加える ― H<sub>2</sub>", "銅に希硝酸を加える ― NO<sub>2</sub>", "塩化ナトリウムに濃硫酸を加えて加熱する ― Cl<sub>2</sub>", "硫化鉄(II)に希硫酸を加える ― SO<sub>2</sub>"], "e": "亜鉛と希硫酸からは水素が発生する。銅と希硝酸では NO、NaCl と濃硫酸では HCl、FeS と希硫酸では H<sub>2</sub>S が発生する。"}, {"id": "D19", "c": "D", "f": "S", "X": "塩素は水に溶けにくいので、水上置換で捕集する。", "Y": "一酸化炭素は水に溶けやすい赤褐色の気体である。", "xs": false, "ys": false, "e": "塩素は水に溶けやすく空気より重いので下方置換で捕集する。一酸化炭素は無色で水に溶けにくい有毒な気体である（赤褐色は NO<sub>2</sub>）。"}, {"id": "D20", "c": "D", "f": "S", "X": "水酸化ナトリウムの固体は、空気中の水分を吸収して溶ける（潮解する）。", "Y": "炭酸ナトリウム十水和物の結晶を空気中に放置すると、水分を吸収して潮解する。", "xs": true, "ys": false, "e": "NaOH は潮解性をもつ。Na<sub>2</sub>CO<sub>3</sub>·10H<sub>2</sub>O は空気中で水和水の一部を失って粉末状になる（風解）。"}, {"id": "D21", "c": "D", "f": "S", "X": "硝酸銀水溶液にアンモニア水を少量加えると褐色沈殿を生じ、さらに過剰に加えるとその沈殿は溶ける。", "Y": "硫化水素は還元剤としてはたらく。", "xs": true, "ys": true, "e": "Ag<sub>2</sub>O の褐色沈殿が過剰のアンモニア水で [Ag(NH<sub>3</sub>)<sub>2</sub>]<sup>+</sup> となり溶ける。H<sub>2</sub>S は S の酸化数 −2 から酸化されやすく還元剤としてはたらく。"}, {"id": "D22", "c": "D", "f": "S", "X": "濃硝酸は光によって分解しにくいので、無色透明のびんで保存する。", "Y": "硫酸バリウムは水に溶けにくく、胃のX線造影剤に用いられる。", "xs": false, "ys": true, "e": "濃硝酸は光や熱で分解しやすいので褐色びんで保存する。BaSO<sub>4</sub> は水や酸に溶けにくく、X線を通しにくいので造影剤に使われる。"}, {"id": "D23", "c": "D", "f": "S", "X": "オゾンは酸素の同素体で、強い酸化作用をもつ。", "Y": "銅は希塩酸に溶けて水素を発生する。", "xs": true, "ys": false, "e": "O<sub>3</sub> は O<sub>2</sub> の同素体で強い酸化力をもつ。銅は水素よりイオン化傾向が小さく、希塩酸には溶けない。"}, {"id": "D24", "c": "D", "f": "S", "X": "鉄は濃硝酸によく溶けて水素を発生する。", "Y": "アルミニウムは水酸化ナトリウム水溶液には溶けない。", "xs": false, "ys": false, "e": "鉄は濃硝酸中では不動態となり溶けにくい。アルミニウムは両性金属で、水酸化ナトリウム水溶液に溶けて水素を発生する。"}, {"id": "E01", "c": "E", "f": "K", "q": "炭素・水素・酸素からなる化合物 4.6 mg を完全燃焼させると、二酸化炭素 8.8 mg と水 5.4 mg が得られた。この化合物の組成式はどれか。原子量は H=1.0, C=12, O=16 とする。", "o": ["C<sub>2</sub>H<sub>6</sub>O", "CH<sub>3</sub>O", "C<sub>2</sub>H<sub>4</sub>O", "C<sub>3</sub>H<sub>8</sub>O"], "e": "C は 8.8×12/44 = 2.4 mg、H は 5.4×2/18 = 0.60 mg、O は 4.6 − 2.4 − 0.60 = 1.6 mg。物質量比は C:H:O = 0.20:0.60:0.10 = 2:6:1 となる。"}, {"id": "E02", "c": "E", "f": "K", "q": "エチレン C<sub>2</sub>H<sub>4</sub> 2.8 g に臭素を完全に付加させるとき、必要な臭素 Br<sub>2</sub> の質量は何 g か。原子量は H=1.0, C=12, Br=80 とする。", "o": ["16 g", "8.0 g", "32 g", "1.6 g"], "e": "C<sub>2</sub>H<sub>4</sub> + Br<sub>2</sub> → C<sub>2</sub>H<sub>4</sub>Br<sub>2</sub> より、エチレン 0.10 mol に Br<sub>2</sub>（160 g/mol）0.10 mol = 16 g が付加する。"}, {"id": "E03", "c": "E", "f": "K", "q": "酢酸 6.0 g を十分な量のエタノールと反応させ、すべて酢酸エチルに変化させたとすると、得られる酢酸エチルは何 g か。原子量は H=1.0, C=12, O=16 とする。", "o": ["8.8 g", "4.4 g", "6.0 g", "17.6 g"], "e": "酢酸（60 g/mol）0.10 mol から酢酸エチル CH<sub>3</sub>COOC<sub>2</sub>H<sub>5</sub>（88 g/mol）0.10 mol = 8.8 g が得られる。"}, {"id": "E04", "c": "E", "f": "K", "q": "平均分子量 2.8×10<sup>4</sup> のポリエチレンの平均重合度はいくらか。原子量は H=1.0, C=12 とする。", "o": ["1.0×10<sup>3</sup>", "5.0×10<sup>2</sup>", "2.0×10<sup>3</sup>", "1.0×10<sup>4</sup>"], "e": "繰り返し単位 −CH<sub>2</sub>−CH<sub>2</sub>− の式量は 28 なので、重合度は 2.8×10<sup>4</sup> ÷ 28 = 1.0×10<sup>3</sup> である。"}, {"id": "E05", "c": "E", "f": "K", "q": "分子式 C<sub>5</sub>H<sub>12</sub> で表されるアルカンの構造異性体はいくつあるか。", "o": ["3", "2", "4", "5"], "e": "ペンタン、2-メチルブタン、2,2-ジメチルプロパンの3種類である。"}, {"id": "E06", "c": "E", "f": "K", "q": "アルデヒド基（ホルミル基）を表すものはどれか。", "o": ["−CHO", "−COOH", "−OH", "−CO−"], "e": "−CHO はアルデヒド基、−COOH はカルボキシ基、−OH はヒドロキシ基、−CO− はカルボニル基（ケトン基）である。"}, {"id": "E07", "c": "E", "f": "K", "q": "銀鏡反応を示す化合物はどれか。", "o": ["ホルムアルデヒド", "アセトン", "エタノール", "酢酸"], "e": "銀鏡反応は還元性をもつアルデヒド基の検出に用いられる。ホルムアルデヒドは還元性を示すが、アセトン・エタノール・酢酸は示さない。"}, {"id": "E08", "c": "E", "f": "K", "q": "ヨウ素と水酸化ナトリウム水溶液を加えて温めると、黄色沈殿を生じる化合物はどれか。", "o": ["エタノール", "メタノール", "酢酸", "ホルムアルデヒド"], "e": "ヨードホルム反応は CH<sub>3</sub>CH(OH)− や CH<sub>3</sub>CO− をもつ化合物で起こり、エタノールは CH<sub>3</sub>CH(OH)− をもつので CHI<sub>3</sub> の黄色沈殿を生じる。"}, {"id": "E09", "c": "E", "f": "K", "q": "ベンゼンに濃硝酸と濃硫酸の混合物を加えて加熱すると得られる化合物はどれか。", "o": ["ニトロベンゼン", "ベンゼンスルホン酸", "クロロベンゼン", "アニリン"], "e": "濃硫酸を触媒とするニトロ化（置換反応）によりニトロベンゼンが生じる。"}, {"id": "E10", "c": "E", "f": "K", "q": "フェノールの性質についての記述として正しいものはどれか。", "o": ["塩化鉄(III)水溶液を加えると紫色を呈する", "水溶液は塩基性を示す", "炭酸水素ナトリウム水溶液と反応して二酸化炭素を発生する", "ナトリウムとは反応しない"], "e": "フェノール類は塩化鉄(III)で紫色を呈する。フェノールは炭酸より弱い酸なので NaHCO<sub>3</sub> とは反応しないが、Na とは反応して水素を発生する。"}, {"id": "E11", "c": "E", "f": "K", "q": "さらし粉水溶液を加えると赤紫色を呈する化合物はどれか。", "o": ["アニリン", "フェノール", "安息香酸", "トルエン"], "e": "さらし粉水溶液による赤紫色の呈色はアニリンの検出反応である。"}, {"id": "E12", "c": "E", "f": "K", "q": "フェノール、安息香酸、アニリンを含むジエチルエーテル溶液に炭酸水素ナトリウム水溶液を加えてよく振ると、水層に移るものはどれか。", "o": ["安息香酸", "フェノール", "アニリン", "すべて水層に移る"], "e": "安息香酸は炭酸より強い酸なので NaHCO<sub>3</sub> と反応してナトリウム塩となり水層に移る。炭酸より弱い酸のフェノールや塩基のアニリンはエーテル層に残る。"}, {"id": "E13", "c": "E", "f": "K", "q": "油脂に水酸化ナトリウム水溶液を加えて加熱（けん化）すると得られるものの組合せはどれか。", "o": ["グリセリンと脂肪酸のナトリウム塩", "エチレングリコールと脂肪酸のナトリウム塩", "グリセリンとアミノ酸", "グルコースと脂肪酸"], "e": "油脂はグリセリンと高級脂肪酸のエステルで、けん化するとグリセリンと脂肪酸のナトリウム塩（セッケン）が生じる。"}, {"id": "E14", "c": "E", "f": "K", "q": "還元性を示さない二糖はどれか。", "o": ["スクロース", "マルトース", "ラクトース", "セロビオース"], "e": "スクロースはグルコースとフルクトースが互いの還元性を示す部分で結合しているため、還元性を示さない。"}, {"id": "E15", "c": "E", "f": "K", "q": "タンパク質の水溶液に濃硝酸を加えて加熱すると黄色になり、冷却後アンモニア水を加えると橙黄色になった。この反応の名称はどれか。", "o": ["キサントプロテイン反応", "ビウレット反応", "ニンヒドリン反応", "銀鏡反応"], "e": "キサントプロテイン反応で、ベンゼン環をもつアミノ酸がニトロ化されることによる。"}, {"id": "E16", "c": "E", "f": "K", "q": "ナイロン66 の原料の組合せとして正しいものはどれか。", "o": ["アジピン酸とヘキサメチレンジアミン", "テレフタル酸とエチレングリコール", "ε-カプロラクタムのみ", "塩化ビニルのみ"], "e": "ナイロン66 はアジピン酸とヘキサメチレンジアミンの縮合重合でつくられる。テレフタル酸とエチレングリコールは PET、ε-カプロラクタムはナイロン6 の原料である。"}, {"id": "E17", "c": "E", "f": "K", "q": "付加重合によって得られる高分子はどれか。", "o": ["ポリ塩化ビニル", "ポリエチレンテレフタラート", "ナイロン66", "フェノール樹脂"], "e": "ポリ塩化ビニルは塩化ビニルの付加重合で得られる。PET とナイロン66 は縮合重合、フェノール樹脂は付加縮合で得られる。"}, {"id": "E18", "c": "E", "f": "K", "q": "シス-トランス異性体（幾何異性体）が存在する化合物はどれか。", "o": ["2-ブテン", "1-ブテン", "プロペン", "2-メチルプロペン"], "e": "C=C の両方の炭素原子にそれぞれ異なる原子や原子団が結合している 2-ブテンにはシス形とトランス形がある。"}, {"id": "E19", "c": "E", "f": "S", "X": "エタノールとジメチルエーテルは分子式が異なる。", "Y": "メタンと塩素の混合気体に光を当てると、置換反応が起こる。", "xs": false, "ys": true, "e": "エタノールとジメチルエーテルはどちらも C<sub>2</sub>H<sub>6</sub>O で、互いに構造異性体である。メタンは光照射下で塩素と置換反応を起こし、クロロメタンなどを生じる。"}, {"id": "E20", "c": "E", "f": "S", "X": "アセチレンに水を付加させると、不安定なビニルアルコールを経てアセトアルデヒドが生じる。", "Y": "天然ゴムは、イソプレンが付加重合した構造をもつ。", "xs": true, "ys": true, "e": "ビニルアルコールはすぐに異性化してアセトアルデヒドになる。天然ゴムはシス形のポリイソプレン構造をもつ。"}, {"id": "E21", "c": "E", "f": "S", "X": "デンプンは β-グルコースが縮合重合した高分子である。", "Y": "セッケンの水溶液は弱酸性を示す。", "xs": false, "ys": false, "e": "デンプンは α-グルコースが縮合重合したもので、β-グルコースからなるのはセルロースである。セッケンは弱酸と強塩基の塩で、水溶液は弱塩基性を示す。"}, {"id": "E22", "c": "E", "f": "S", "X": "酢酸は炭酸より強い酸なので、炭酸水素ナトリウム水溶液と反応して二酸化炭素を発生する。", "Y": "ベンゼンは付加反応を起こしやすく、置換反応を起こしにくい。", "xs": true, "ys": false, "e": "弱酸の塩に強い酸を加えると弱い酸が遊離するので CO<sub>2</sub> が発生する。ベンゼン環は安定で、付加反応より置換反応を起こしやすい。"}, {"id": "E23", "c": "E", "f": "S", "X": "アミノ酸は結晶中で双性イオンとして存在し、融点が比較的高い。", "Y": "ポリエチレンテレフタラートは縮合重合によって得られる。", "xs": true, "ys": true, "e": "アミノ酸は双性イオン間の静電気的な引力のため融点が高い。PET はテレフタル酸とエチレングリコールの縮合重合で得られる。"}, {"id": "E24", "c": "E", "f": "S", "X": "第二級アルコールを酸化すると、アルデヒドが得られる。", "Y": "タンパク質の水溶液に水酸化ナトリウム水溶液と少量の硫酸銅(II)水溶液を加えると赤紫色になる。", "xs": false, "ys": true, "e": "第二級アルコールの酸化ではケトンが得られ、アルデヒドが得られるのは第一級アルコールである。後者はビウレット反応で、ペプチド結合を2つ以上もつ物質で起こる。"}]};
+const CATS=D.cats;const Q=D.q;
+const FMT={K:"4択",S:"正誤",N:"整序"};
+const SO=["X 正　Y 正","X 正　Y 誤","X 誤　Y 正","X 誤　Y 誤"];
+const NO=["Ⅰ－Ⅱ－Ⅲ","Ⅰ－Ⅲ－Ⅱ","Ⅱ－Ⅰ－Ⅲ","Ⅱ－Ⅲ－Ⅰ","Ⅲ－Ⅰ－Ⅱ","Ⅲ－Ⅱ－Ⅰ"];
+const NK=["123","132","213","231","312","321"];
+Q.forEach(q=>{if(q.f==="S"){q.o=SO;q.a=(q.xs?0:2)+(q.ys?0:1)}else if(q.f==="N"){q.o=NO;q.a=NK.indexOf(q.ord)}else{q.a=0}});
+const FSEG=[["ALL","すべて"]].concat(["K","S","N"].filter(f=>Q.some(q=>q.f===f)).map(f=>[f,FMT[f]]));
+
+/* ===== 記録（このブラウザのみ） ===== */
+const KEY="kyotsu-kagaku-v1";
+let rec={};
+try{rec=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){rec={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(rec))}catch(e){}}
+function mark(id,ok){const r=rec[id]||{c:0,w:0};ok?r.c++:r.w++;r.last=ok;rec[id]=r;save()}
+/* ===== ランク（習得度：正解済み問題の割合） ===== */
+const RANKS=[
+  {t:"新入生",en:"FRESHMAN",min:0},
+  {t:"学士",en:"BACHELOR",min:15},
+  {t:"修士",en:"MASTER",min:35},
+  {t:"博士",en:"DOCTOR",min:55},
+  {t:"教授",en:"PROFESSOR",min:75},
+  {t:"名誉教授",en:"EMERITUS",min:90}
+];
+function mastery(){let ok=0;Q.forEach(q=>{const r=rec[q.id];if(r&&r.last)ok++});return{ok,n:Q.length,pct:Q.length?ok/Q.length*100:0}}
+function rankOf(pct){let i=0;RANKS.forEach((r,k)=>{if(pct>=r.min)i=k});return i}
+function stars(i){return "★".repeat(i)+"☆".repeat(RANKS.length-1-i)}
+function rankPanel(){
+  const m=mastery(),i=rankOf(m.pct),r=RANKS[i],nx=RANKS[i+1];
+  const need=nx?Math.max(1,Math.ceil(nx.min/100*m.n)-m.ok):0;
+  const lo=r.min,hi=nx?nx.min:100,prog=nx?Math.min(100,Math.max(0,(m.pct-lo)/(hi-lo)*100)):100;
+  return `<div class="panel rankp"><div class="rk-badge rk${i}" aria-hidden="true"><span class="rk-en">${r.en}</span><span class="rk-t">${r.t}</span><span class="rk-st">${stars(i)}</span></div>
+    <div class="rk-body"><h2>あなたのランク：${r.t}</h2>
+    <p class="kbd num">正解済み ${m.ok} / ${m.n} 問（${Math.floor(m.pct)}%）</p>
+    <div class="meter rk-meter"><i style="width:${prog}%"></i></div>
+    <p class="kbd">${nx?`次の「${nx.t}」まで、あと <b class="num">${need}</b> 問正解`:"最高ランクに到達しました！"}</p></div></div>`;
+}
+const TITLES=[[100,"名誉教授級"],[90,"教授級"],[75,"博士級"],[60,"修士級"],[40,"学士級"],[0,"新入生級"]];
+function sessionRank(ok,n,r0){
+  const p=n?ok/n*100:0;const t=TITLES.find(x=>p>=x[0])[1];
+  const r1=rankOf(mastery().pct);
+  const up=r1>r0?`<div class="rk-up">ランクアップ！ ${RANKS[r0].t} → <b>${RANKS[r1].t}</b></div>`:"";
+  return `<div class="rk-session"><span class="kbd">今回の称号</span><span class="rk-title">${t}</span></div>${up}`;
+}
+
+/* ===== 状態 ===== */
+const app=document.getElementById("app");
+let S={view:"home",size:10,fmt:"ALL"};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const rich=s=>esc(s).replace(/&lt;(\/?)(sup|sub|u)&gt;/g,"<$1$2>").replace(/&lt;br&gt;/g,"<br>");
+const ROM=["Ⅰ","Ⅱ","Ⅲ"];
+
+function header(){return `<header class="top"><div class="subject"><h1><b>化学</b> ドリル</h1><span class="tag">共通テスト対策</span></div>
+  <div class="row"><a class="subj-link" href="index.html">メニュー</a><small class="num">全${Q.length}問</small></div></header>`}
+const fmtOK=q=>S.fmt==="ALL"||q.f===S.fmt;
+function stats(cat){const qs=Q.filter(q=>!cat||q.c===cat);let done=0,ok=0;qs.forEach(q=>{const r=rec[q.id];if(r){done++;if(r.last)ok++}});return{n:qs.length,done,ok}}
+
+function home(){
+  delete app.dataset.cat;
+  const missN=Q.filter(q=>rec[q.id]&&rec[q.id].last===false&&fmtOK(q)).length;
+  const all=stats();
+  app.innerHTML=header()+`
+  <p class="lead">分野を選んで始めてください。1問ごとに正誤と解説が出ます。正解を増やすとランクが上がります。記録はこの端末に保存されます。</p>
+  <div class="row"><span class="kbd" ${FSEG.length<3?"hidden":""}>形式</span>
+    <div class="seg" role="group" aria-label="形式" ${FSEG.length<3?"hidden":""}>${FSEG.map(([k,l])=>`<button id="fm${k}" aria-pressed="${S.fmt===k}" data-fmt="${k}">${l}</button>`).join("")}</div>
+    <span class="kbd">出題数</span>
+    <div class="seg" role="group" aria-label="出題数">${[10,20,0].map(n=>`<button id="sz${n}" aria-pressed="${S.size===n}" data-size="${n}">${n?n+"問":"全問"}</button>`).join("")}</div></div>
+  <div class="cats">${Object.entries(CATS).map(([k,c])=>{const s=stats(k);const pct=s.n?Math.round(s.ok/s.n*100):0;
+    return `<button class="cat" id="cat${k}" data-cat="${k}"><span class="k">${c.k}　<span class="era-yr">${c.yr}</span></span><span class="t">${c.name}</span><span class="d">${c.d}</span>
+    <span class="meter" aria-hidden="true"><i style="width:${pct}%"></i></span><span class="s num">正解済 ${s.ok} / ${s.n}　解答済 ${s.done}</span></button>`}).join("")}</div>
+  <div class="row">
+    <button class="btn primary" id="mix" data-cat="ALL">全分野ミックス</button>
+    <button class="btn" id="review" data-cat="MISS" ${missN?"":"disabled"}>間違えた問題を復習（${missN}問）</button>
+  </div>
+  ${rankPanel()}
+  <div class="panel"><h2>これまでの成績</h2>
+    <div class="score"><span class="big">${all.done?Math.round(all.ok/all.done*100):0}<small style="font-size:18px">%</small></span>
+    <span class="kbd num">直近の正答率（解答済 ${all.done} 問中 ${all.ok} 問正解）</span></div>
+    <div class="row" style="margin-top:10px"><button class="btn" id="reset" ${all.done?"":"disabled"}>記録を消す</button><span class="kbd" id="resetMsg"></span></div>
+  </div>
+  <footer>操作：選択肢は数字キー（1〜6）、次へは Enter キーでも進めます。</footer>`;
+  app.querySelectorAll("[data-size]").forEach(b=>b.onclick=()=>{S.size=+b.dataset.size;home()});
+  app.querySelectorAll("[data-fmt]").forEach(b=>b.onclick=()=>{S.fmt=b.dataset.fmt;home()});
+  app.querySelectorAll("button[data-cat]").forEach(b=>b.onclick=()=>start(b.dataset.cat));
+  let armed=false;const rb=document.getElementById("reset");
+  rb.onclick=()=>{if(!armed){armed=true;rb.textContent="本当に消す";document.getElementById("resetMsg").textContent="もう一度押すと全記録を消去します";return}rec={};save();home()};
+}
+
+function start(cat){
+  let pool=Q.filter(fmtOK);
+  pool=cat==="ALL"?pool:cat==="MISS"?pool.filter(q=>rec[q.id]&&rec[q.id].last===false):pool.filter(q=>q.c===cat);
+  if(!pool.length){home();return}
+  pool=shuffle(pool);if(S.size&&cat!=="MISS")pool=pool.slice(0,S.size);
+  S={...S,view:"quiz",r0:rankOf(mastery().pct),cat,list:pool,i:0,res:[],done:false};
+  question();
+}
+
+function body(q){
+  if(q.f==="S")return `<p class="stem">次の文X・Yについて、その正誤の組合せとして正しいものを選べ。</p>
+    <div class="stmts"><div class="stmt"><span class="lb">X</span><span class="tx">${rich(q.X)}</span></div><div class="stmt"><span class="lb">Y</span><span class="tx">${rich(q.Y)}</span></div></div>`;
+  if(q.f==="N")return `<p class="stem">${rich(q.p||"次のⅠ〜Ⅲについて、古いものから年代順に正しく配列したものを選べ。")}</p>
+    <div class="stmts">${q.i.map((t,k)=>`<div class="stmt"><span class="lb">${ROM[k]}</span><span class="tx">${rich(t)}</span></div>`).join("")}</div>`;
+  return `<p class="stem">${rich(q.q)}</p>`;
+}
+
+function question(){
+  const q=S.list[S.i];S.done=false;app.dataset.cat=q.c;
+  const label=S.cat==="ALL"?"全分野ミックス":S.cat==="MISS"?"復習":CATS[S.cat].name;
+  S.opts=(q.f==="K"?shuffle(q.o.map((t,k)=>({t,k}))):q.o.map((t,k)=>({t,k})));
+  app.innerHTML=`${header()}<div class="qhead"><span>${label}　<span class="num">${S.i+1} / ${S.list.length}</span></span><button class="btn" id="quit" style="padding:4px 12px;font-size:13px">やめる</button></div>
+  <div class="bar"><i style="width:${S.i/S.list.length*100}%"></i></div>
+  <div class="panel"><div><span class="qno">${q.id}</span><span class="kbd">${CATS[q.c].name}</span><span class="fmt">${FMT[q.f]}</span></div>
+    ${body(q)}
+    <div class="choices ${q.f==="N"?"six":""}">${S.opts.map((o,n)=>`<button class="ch" id="ch${n}" data-n="${n}"><span class="oval">${n+1}</span><span>${rich(o.t)}</span></button>`).join("")}</div>
+    <div id="fb"></div></div>`;
+  app.querySelectorAll(".ch").forEach(b=>b.onclick=()=>choose(+b.dataset.n));
+  document.getElementById("quit").onclick=()=>{S.view="home";home()};
+}
+
+function answerText(q){
+  if(q.f==="N"){const o=q.ord.split("").map(d=>+d-1);return `${NO[q.a]}（${o.map(k=>`${rich(q.i[k])}${q.yr?`〈${rich(q.yr[k])}〉`:""}`).join(" → ")}）`}
+  return rich(q.o[q.a]);
+}
+function choose(n){
+  if(S.done)return;S.done=true;
+  const q=S.list[S.i];const ok=S.opts[n].k===q.a;
+  app.querySelectorAll(".ch").forEach((b,m)=>{b.disabled=true;if(S.opts[m].k===q.a)b.classList.add("right")});
+  const b=document.getElementById("ch"+n);b.classList.add("sel");if(!ok)b.classList.add("wrong");
+  mark(q.id,ok);S.res.push({q,ok,your:S.opts[n].t});
+  const last=S.i===S.list.length-1;
+  document.getElementById("fb").innerHTML=`<div class="fb ${ok?"ok":"ng"}" role="status">
+    <div class="v"><span class="mark">${ok?"○":"×"}</span>${ok?"正解！":"おしい！"}</div>
+    <p>正解：<b>${answerText(q)}</b></p><p>${rich(q.e)}</p></div>
+    <div class="row" style="margin-top:14px"><button class="btn primary" id="next">${last?"結果を見る":"次の問題へ"}</button></div>`;
+  const nx=document.getElementById("next");nx.focus({preventScroll:true});
+  nx.onclick=()=>{if(last){result()}else{S.i++;question();window.scrollTo({top:0})}};
+}
+
+function qSummary(q){
+  if(q.f==="S")return `X：${rich(q.X)}<br>Y：${rich(q.Y)}`;
+  if(q.f==="N")return q.i.map((t,k)=>`${ROM[k]} ${rich(t)}`).join("　");
+  return rich(q.q);
+}
+function result(){
+  S.view="result";delete app.dataset.cat;
+  const n=S.res.length,ok=S.res.filter(r=>r.ok).length,miss=S.res.filter(r=>!r.ok);
+  app.innerHTML=header()+`<div class="panel"><h2>結果</h2>
+    <div class="score"><span class="big">${ok}</span><span class="num" style="font-size:20px">/ ${n}</span><span class="kbd">正答率 ${Math.round(ok/n*100)}%</span></div>${sessionRank(ok,n,S.r0)}
+    ${miss.length?`<ul class="miss">${miss.map(r=>`<li data-cat="${r.q.c}"><div class="kbd"><span class="qno">${r.q.id}</span>${CATS[r.q.c].name}<span class="fmt">${FMT[r.q.f]}</span></div>
+      <div class="en">${qSummary(r.q)}</div>
+      <div class="x">正解：<b>${answerText(r.q)}</b>　／　あなたの解答：${rich(r.your)}</div><div class="x">${rich(r.q.e)}</div></li>`).join("")}</ul>`:`<p style="font-size:18px;font-weight:900">全問正解！すばらしい！</p>`}
+    <div class="row" style="margin-top:16px"><button class="btn primary" id="again">同じ条件でもう一度</button><button class="btn" id="back">トップへ戻る</button></div></div>`;
+  document.getElementById("again").onclick=()=>start(S.cat);
+  document.getElementById("back").onclick=home;
+}
+
+document.addEventListener("keydown",e=>{
+  if(S.view!=="quiz")return;
+  const n=S.list[S.i].o.length;
+  if(/^[1-6]$/.test(e.key)&&!S.done&&+e.key<=n){choose(+e.key-1)}
+  else if(e.key==="Enter"&&S.done){const nx=document.getElementById("next");if(nx&&document.activeElement!==nx){e.preventDefault();nx.click()}}
+});
+home();
+</script>
+
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
+</body>
+</html>

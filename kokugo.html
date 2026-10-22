@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EAF4FF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161A2E" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="入試ドリル">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}</style>
+<title>国語ドリル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Nunito:wght@600;800;900&family=Fredoka:wght@600;700&display=swap">
+<style>
+/* Layout: ステッカー風のポップな一列カラム。太いフチ＋ずらした影、分野ごとにカラー */
+:root{
+  --bg:#EAF4FF; --dot:#CFE3FA; --card:#FFFFFF; --ink:#1B1E3A; --muted:#5C6385; --edge:#1B1E3A;
+  --g:#FF5C8A; --v:#2FA8FF; --o:#FFB800; --c:var(--g);
+  --c-soft:#FFE3EC;
+  --ok:#14B06A; --ok-soft:#DDF7EA; --ng:#FF4D4D; --ng-soft:#FFE4E4;
+  --btn-ink:#FFFFFF;
+  --f-jp:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  --f-en:"Nunito","Segoe UI",system-ui,sans-serif;
+  --f-num:"Fredoka","Nunito",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#161A2E; --dot:#22284A; --card:#232945; --ink:#F2F4FF; --muted:#A9B0D4; --edge:#060815;
+  --g:#FF7AA2; --v:#5BBEFF; --o:#FFC933; --c-soft:#3A2440;
+  --ok:#3DD68C; --ok-soft:#173829; --ng:#FF6F6F; --ng-soft:#3E1D22; --btn-ink:#161A2E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161A2E; --dot:#22284A; --card:#232945; --ink:#F2F4FF; --muted:#A9B0D4; --edge:#060815;
+  --g:#FF7AA2; --v:#5BBEFF; --o:#FFC933; --c-soft:#3A2440;
+  --ok:#3DD68C; --ok-soft:#173829; --ng:#FF6F6F; --ng-soft:#3E1D22; --btn-ink:#161A2E; color-scheme:dark}
+[data-cat="G"]{--c:var(--g)} [data-cat="V"]{--c:var(--v)} [data-cat="O"]{--c:var(--o)}
+*{box-sizing:border-box}
+body{background-color:var(--bg);background-image:radial-gradient(var(--dot) 2px,transparent 2.5px);background-size:22px 22px;
+  color:var(--ink);font-family:var(--f-jp);font-weight:500;font-size:15px;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--v);outline-offset:3px}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.subject{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.subject h1{margin:0;font-size:30px;font-weight:900;letter-spacing:.02em;text-wrap:balance;
+  text-shadow:3px 3px 0 var(--g)}
+.subject h1 b{font-family:var(--f-num);font-weight:700;color:var(--v);text-shadow:3px 3px 0 var(--o)}
+.tag{font-size:12px;font-weight:900;background:var(--o);color:#1B1E3A;border:2px solid var(--edge);border-radius:999px;padding:2px 12px;transform:rotate(-4deg);box-shadow:2px 2px 0 var(--edge)}
+.top small{font-family:var(--f-num);font-size:14px;background:var(--card);border:2px solid var(--edge);border-radius:999px;padding:2px 12px}
+.lead{color:var(--muted);margin:0}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.cat{background:var(--card);border:3px solid var(--edge);border-radius:20px;padding:16px 16px 14px;text-align:left;display:flex;flex-direction:column;gap:6px;min-width:0;
+  box-shadow:5px 5px 0 var(--c);transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}
+.cat::after{content:"";position:absolute;right:-24px;top:-24px;width:80px;height:80px;border-radius:50%;background:var(--c);opacity:.25}
+.cat:hover{transform:translate(-2px,-3px) rotate(-.6deg);box-shadow:8px 8px 0 var(--c)}
+.cat:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--c)}
+.cat .k{font-family:var(--f-num);font-size:12px;font-weight:700;color:var(--c);letter-spacing:.12em;filter:brightness(.85)}
+.cat .t{font-size:20px;font-weight:900}
+.cat .d{font-size:13px;color:var(--muted)}
+.meter{height:12px;background:var(--bg);border:2px solid var(--edge);border-radius:999px;position:relative;margin-top:6px;overflow:hidden}
+.meter i{position:absolute;inset:0 auto 0 0;background:var(--c);border-radius:999px}
+.cat .s{font-size:12px;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{background:var(--card);border:3px solid var(--edge);border-radius:999px;padding:8px 20px;font-weight:700;box-shadow:3px 3px 0 var(--edge);transition:transform .1s,box-shadow .1s}
+.btn:hover:not([disabled]){transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--edge)}
+.btn:active:not([disabled]){transform:translate(3px,3px);box-shadow:0 0 0 var(--edge)}
+.btn.primary{background:var(--g);color:#fff}
+#mix.primary{background:linear-gradient(90deg,var(--g),var(--v))}
+.btn[disabled]{opacity:.4;cursor:default;box-shadow:none}
+.seg{display:inline-flex;border:3px solid var(--edge);border-radius:999px;overflow:hidden;box-shadow:3px 3px 0 var(--edge)}
+.seg button{background:var(--card);border:0;padding:5px 16px;font-size:13px;font-weight:700}
+.seg button+button{border-left:2px solid var(--edge)}
+.seg button[aria-pressed="true"]{background:var(--o);color:#1B1E3A}
+.panel{background:var(--card);border:3px solid var(--edge);border-radius:24px;padding:20px;box-shadow:6px 6px 0 var(--edge)}
+.panel h2{margin:0 0 8px;font-size:18px;font-weight:900}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;font-weight:700}
+.bar{height:14px;background:var(--card);border:3px solid var(--edge);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:repeating-linear-gradient(45deg,var(--c) 0 10px,color-mix(in srgb,var(--c) 70%,#fff) 10px 20px);transition:width .35s cubic-bezier(.3,1.6,.5,1)}
+.qno{display:inline-block;background:var(--c);color:#fff;font-family:var(--f-num);font-weight:700;padding:1px 10px;margin-right:8px;font-size:13px;border-radius:999px;border:2px solid var(--edge)}
+[data-cat="O"] .qno{color:#1B1E3A}
+.stem{font-family:var(--f-en);font-weight:800;font-size:21px;line-height:1.6;margin:14px 0 6px}
+.stem .blank{display:inline-block;min-width:5.5em;background:var(--c-soft);border:2px dashed var(--c);border-radius:10px;text-align:center;font-family:var(--f-num);font-size:14px;color:var(--ink);line-height:1.8}
+.ja{color:var(--muted);font-size:14px;margin:0}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+@media (max-width:520px){.choices{grid-template-columns:1fr}}
+.ch{display:flex;align-items:center;gap:12px;background:var(--card);border:3px solid var(--edge);border-radius:16px;padding:10px 14px;text-align:left;font-family:var(--f-en);font-weight:800;font-size:17px;
+  box-shadow:3px 3px 0 var(--edge);transition:transform .12s,box-shadow .12s;min-width:0}
+.ch:hover:not([disabled]){transform:translate(-1px,-2px);box-shadow:4px 5px 0 var(--c)}
+.oval{flex:none;width:30px;height:30px;border:2px solid var(--edge);border-radius:50%;display:grid;place-items:center;font-family:var(--f-num);font-size:14px;font-weight:700;background:var(--c);color:#fff}
+[data-cat="O"] .oval{color:#1B1E3A}
+.ch.right{background:var(--ok-soft);border-color:var(--ok);box-shadow:3px 3px 0 var(--ok)}
+.ch.right .oval{background:var(--ok)}
+.ch.wrong{background:var(--ng-soft);border-color:var(--ng);box-shadow:3px 3px 0 var(--ng);animation:shake .35s}
+.ch.wrong .oval{background:var(--ng)}
+.ch.sel.right{animation:pop .4s}
+.ch[disabled]{cursor:default}
+.ch[disabled]:not(.right):not(.wrong){opacity:.55}
+.fb{margin-top:18px;border:3px solid var(--ok);border-radius:18px;background:var(--ok-soft);padding:12px 16px;animation:pop .35s}
+.fb.ng{border-color:var(--ng);background:var(--ng-soft)}
+.fb .v{font-weight:900;font-size:20px;display:flex;align-items:center;gap:8px}
+.fb.ok .v{color:var(--ok)} .fb.ng .v{color:var(--ng)}
+.fb p{margin:6px 0 0}
+.fb .en{font-family:var(--f-en);font-weight:800;font-size:16px}
+.mark{font-family:var(--f-num);font-size:26px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;border:2px solid var(--edge)}
+.fb.ok .mark{background:var(--ok)} .fb.ng .mark{background:var(--ng)}
+/* 並べ替え */
+.build{min-height:60px;border:3px dashed var(--c);border-radius:16px;background:var(--bg);padding:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;font-family:var(--f-en);font-weight:800;font-size:17px}
+.build .fix{color:var(--muted)}
+.build .ph{color:var(--muted);font-family:var(--f-jp);font-size:13px}
+.pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{border:2px solid var(--edge);border-radius:12px;background:var(--card);padding:4px 14px;font-family:var(--f-en);font-weight:800;font-size:17px;box-shadow:2px 2px 0 var(--edge);transition:transform .1s}
+.chip:hover:not([disabled]){transform:translateY(-2px) rotate(-2deg)}
+.chip.used{opacity:.2;cursor:default;box-shadow:none}
+.build .chip{background:var(--c);color:#fff;animation:pop .25s}
+[data-cat="O"] .build .chip{color:#1B1E3A}
+.kbd{font-size:12px;color:var(--muted)}
+.score{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.score .big{font-family:var(--f-num);font-weight:700;font-size:56px;line-height:1;color:var(--g);text-shadow:3px 3px 0 var(--o)}
+.miss{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.miss li{border:2px solid var(--edge);border-radius:14px;padding:10px 12px;min-width:0;background:var(--bg)}
+.miss .en{font-family:var(--f-en);font-weight:800;font-size:16px}
+.miss .en b{color:var(--ok)}
+.miss .x{font-size:13px;color:var(--muted)}
+footer{color:var(--muted);font-size:12px;text-align:center}
+@keyframes pop{0%{transform:scale(.9)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<style>
+/* 日本史用の追加：時代ごとのカラーと設問ブロック */
+:root{--ey:#B88A00;--ea:#F26A2E;--em:#0E9C8C;--ee:#E8457A;--ed:#7353F0;--ep:#2C8FE0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ea:#FF8F5C;--em:#2CC7B5;--ee:#FF7AA2;--ed:#9C85FF;--ep:#5BBEFF;--ey:#E6C340}}
+:root[data-theme="dark"]{--ea:#FF8F5C;--em:#2CC7B5;--ee:#FF7AA2;--ed:#9C85FF;--ep:#5BBEFF;--ey:#E6C340}
+[data-cat="A"]{--c:var(--ea)} [data-cat="B"]{--c:var(--em)} [data-cat="C"]{--c:var(--ee)} [data-cat="D"]{--c:var(--ed)} [data-cat="E"]{--c:var(--ep)}
+.stem{font-family:var(--f-jp);font-weight:700;font-size:18px}
+.stmts{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.stmt{display:flex;gap:10px;align-items:flex-start;background:var(--bg);border:2px solid var(--edge);border-radius:14px;padding:8px 12px;min-width:0}
+.stmt .lb{flex:none;font-family:var(--f-num);font-weight:700;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:#fff;border:2px solid var(--edge)}
+.stmt .tx{font-weight:700;min-width:0}
+.ch{font-family:var(--f-jp);font-weight:700}
+.choices.six{grid-template-columns:repeat(3,1fr)}
+@media (max-width:520px){.choices.six{grid-template-columns:1fr 1fr}}
+.choices.six .ch{white-space:nowrap;gap:8px;padding:10px}
+@media (max-width:520px){.choices.six .ch{font-size:15px;padding:10px 8px}.choices.six .oval{width:26px;height:26px;font-size:13px}}
+.fmt{display:inline-block;font-size:11px;font-weight:900;border:2px solid var(--edge);border-radius:999px;padding:0 8px;margin-left:6px;background:var(--o);color:#1B1E3A}
+.era-yr{font-family:var(--f-num);font-size:12px;color:var(--muted)}
+.subj-link{font-size:13px;font-weight:700;color:var(--ink);text-decoration:none;border:2px solid var(--edge);border-radius:999px;padding:2px 12px;background:var(--card)}
+.subj-link:hover{background:var(--o);color:#1B1E3A}
+.miss .en{font-family:var(--f-jp);font-weight:700}
+.subject h1 b{font-family:var(--f-jp);font-weight:900}
+</style>
+<style>
+/* ランク表示 */
+.rankp{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.rk-body{flex:1;min-width:200px}
+.rk-body h2{margin:0 0 2px}
+.rk-body p{margin:4px 0}
+.rk-meter i{background:linear-gradient(90deg,var(--o),var(--g))}
+.rk-badge{flex:none;width:118px;height:118px;border-radius:50%;border:4px solid var(--edge);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;box-shadow:4px 4px 0 var(--edge);transform:rotate(-6deg);text-align:center;color:#1B1E3A}
+.rk-badge .rk-en{font-family:var(--f-num);font-size:10px;letter-spacing:.12em;font-weight:700}
+.rk-badge .rk-t{font-size:22px;font-weight:900;line-height:1.2}
+.rk-badge .rk-st{font-size:12px;letter-spacing:1px}
+.rk0{background:#E4E8F2}.rk1{background:#BFE6FF}.rk2{background:#C9F2DA}.rk3{background:#FFD873}.rk4{background:#FFB3CB}
+.rk5{background:conic-gradient(#FFD873,#FFB3CB,#BFE6FF,#C9F2DA,#FFD873)}
+.rk-session{display:flex;align-items:baseline;gap:10px;margin-top:12px;flex-wrap:wrap}
+.rk-title{font-size:26px;font-weight:900;color:var(--ink);background:var(--o);border:3px solid var(--edge);border-radius:999px;padding:0 16px;box-shadow:3px 3px 0 var(--edge);transform:rotate(-2deg);display:inline-block;color:#1B1E3A}
+.rk-up{margin-top:12px;font-weight:900;font-size:18px;color:var(--g);animation:pop .5s}
+</style>
+
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* ===== 問題データ ===== */
+const D={"cats": {"A": {"name": "漢字", "k": "KANJI", "yr": "現代文", "d": "同音異字の識別（傍線部のカタカナと同じ漢字を含むもの）"}, "B": {"name": "語彙・慣用句", "k": "VOCABULARY", "yr": "現代文", "d": "評論キーワード、慣用句・ことわざ・故事成語の意味"}, "C": {"name": "文学史", "k": "LITERARY HISTORY", "yr": "現代文・古文", "d": "近現代文学と古典文学の作者・作品"}, "D": {"name": "古文", "k": "CLASSICAL JAPANESE", "yr": "古文", "d": "重要古語、助動詞・敬語の識別、短文解釈"}, "E": {"name": "漢文", "k": "KANBUN", "yr": "漢文", "d": "再読文字・使役・受身・反語・比較・抑揚などの句法と書き下し"}}, "q": [{"id": "A01", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br>新しい思想に<u>ケイ</u>ハツされる。", "o": ["<u>ケイ</u>モウ思想", "<u>ケイ</u>コクを無視する", "事業を<u>ケイ</u>ゾクする", "<u>ケイ</u>ジ板に貼る"], "e": "啓発の「啓」。啓蒙＝啓、警告＝警、継続＝継、掲示＝掲。"}, {"id": "A02", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br>先人のコウ<u>セキ</u>をたたえる。", "o": ["成<u>セキ</u>が上がる", "<u>セキ</u>ニンを負う", "データをブン<u>セキ</u>する", "古代のイ<u>セキ</u>"], "e": "功績の「績」。成績＝績、責任＝責、分析＝析、遺跡＝跡。"}, {"id": "A03", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br><u>キ</u>セイの概念を疑う。", "o": ["<u>キ</u>チの事実", "<u>キ</u>ケンな場所", "<u>キ</u>バツな発想", "人生の<u>キ</u>ロに立つ"], "e": "既成の「既」。既知＝既、危険＝危、奇抜＝奇、岐路＝岐。"}, {"id": "A04", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br><u>ショウ</u>ドウ的に買う。", "o": ["車が<u>ショウ</u>トツする", "<u>ショウ</u>ガイ物を除く", "努力を<u>ショウ</u>サンする", "ケン<u>ショウ</u>に応募する"], "e": "衝動の「衝」。衝突＝衝、障害＝障、称賛＝称、懸賞＝賞。"}, {"id": "A05", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br>利益を社会に<u>カン</u>ゲンする。", "o": ["無事にセイ<u>カン</u>する", "部屋の<u>カン</u>キをする", "作業を<u>カン</u>シする", "<u>カン</u>ヨウな態度"], "e": "還元の「還」。生還＝還、換気＝換、監視＝監、寛容＝寛。"}, {"id": "A06", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br>自由を<u>キョウ</u>ジュする。", "o": ["<u>キョウ</u>ラク的な生活", "自然の<u>キョウ</u>イ", "意見に<u>キョウ</u>メイする", "大きなハン<u>キョウ</u>を呼ぶ"], "e": "享受の「享」。享楽＝享、脅威＝脅、共鳴＝共、反響＝響。"}, {"id": "A07", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br><u>ケン</u>チョな効果が現れる。", "o": ["<u>ケン</u>ビ鏡で観察する", "<u>ケン</u>キョな姿勢", "ホ<u>ケン</u>に加入する", "長年の<u>ケン</u>アン"], "e": "顕著の「顕」。顕微鏡＝顕、謙虚＝謙、保険＝険、懸案＝懸。"}, {"id": "A08", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br><u>ボウ</u>ダイな資料。", "o": ["宇宙が<u>ボウ</u>チョウする", "進行を<u>ボウ</u>ガイする", "話の<u>ボウ</u>トウ", "株価が<u>ボウ</u>ラクする"], "e": "膨大の「膨」。膨張＝膨、妨害＝妨、冒頭＝冒、暴落＝暴。"}, {"id": "A09", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br>賞金を<u>カク</u>トクする。", "o": ["ギョ<u>カク</u>量が増える", "勝利を<u>カク</u>シンする", "<u>カク</u>イツ的な教育", "患者を<u>カク</u>リする"], "e": "獲得の「獲」。漁獲＝獲、確信＝確、画一＝画、隔離＝隔。"}, {"id": "A10", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br>シ<u>サ</u>に富む発言。", "o": ["犯罪をキョウ<u>サ</u>する", "<u>サ</u>ギの被害", "品質をケン<u>サ</u>する", "社長をホ<u>サ</u>する"], "e": "示唆の「唆」。教唆＝唆、詐欺＝詐、検査＝査、補佐＝佐。"}, {"id": "A11", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br><u>ゲン</u>ミツに区別する。", "o": ["<u>ゲン</u>カクな規則", "<u>ゲン</u>ソウを抱く", "人口が<u>ゲン</u>ショウする", "生命のキ<u>ゲン</u>"], "e": "厳密の「厳」。厳格＝厳、幻想＝幻、減少＝減、起源＝源。"}, {"id": "A12", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br><u>セン</u>サイな感覚。", "o": ["化学<u>セン</u>イ", "<u>セン</u>レンされた文章", "美しい<u>セン</u>リツ", "<u>セン</u>ザイ的な需要"], "e": "繊細の「繊」。繊維＝繊、洗練＝洗、旋律＝旋、潜在＝潜。"}, {"id": "A13", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br><u>ヘン</u>ケンを捨てる。", "o": ["報道の<u>ヘン</u>コウ", "本を<u>ヘン</u>キャクする", "フ<u>ヘン</u>的な真理", "制度を<u>ヘン</u>カクする"], "e": "偏見の「偏」。偏向＝偏、返却＝返、普遍＝遍、変革＝変。"}, {"id": "A14", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br>人間関係がキ<u>ハク</u>になる。", "o": ["ケイ<u>ハク</u>な言動", "<u>ハク</u>シュを送る", "少数派を<u>ハク</u>ガイする", "<u>ハク</u>ラン会を開く"], "e": "希薄の「薄」。軽薄＝薄、拍手＝拍、迫害＝迫、博覧＝博。"}, {"id": "A15", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br><u>ソ</u>ガイ感を抱く。", "o": ["カ<u>ソ</u>化が進む", "侵入を<u>ソ</u>シする", "適切な<u>ソ</u>チをとる", "<u>ソ</u>ゼイを納める"], "e": "疎外の「疎」。過疎＝疎、阻止＝阻、措置＝措、租税＝租。"}, {"id": "A16", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br>石油に<u>イ</u>ゾンする。", "o": ["仕事を<u>イ</u>ライする", "<u>イ</u>ダイな業績", "規則に<u>イ</u>ハンする", "事件のケイ<u>イ</u>"], "e": "依存の「依」。依頼＝依、偉大＝偉、違反＝違、経緯＝緯。"}, {"id": "A17", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br>音楽に<u>トウ</u>スイする。", "o": ["<u>トウ</u>キを焼く", "<u>トウ</u>メイな水", "<u>トウ</u>トツな質問", "ケイ<u>トウ</u>立てて説明する"], "e": "陶酔の「陶」。陶器＝陶、透明＝透、唐突＝唐、系統＝統。"}, {"id": "A18", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br>抽象的な<u>ガイ</u>ネン。", "o": ["タイ<u>ガイ</u>の人は賛成する", "不正にフン<u>ガイ</u>する", "ショウ<u>ガイ</u>を捧げる", "ヘイ<u>ガイ</u>を除く"], "e": "概念の「概」。大概＝概、憤慨＝慨、生涯＝涯、弊害＝害。"}, {"id": "A19", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br>道が<u>ケイ</u>シャしている。", "o": ["増加の<u>ケイ</u>コウ", "<u>ケイ</u>ヤクを結ぶ", "<u>ケイ</u>タイ電話", "恩師に<u>ケイ</u>フクする"], "e": "傾斜の「傾」。傾向＝傾、契約＝契、携帯＝携、敬服＝敬。"}, {"id": "A20", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br>人権を<u>ヨウ</u>ゴする。", "o": ["ホウ<u>ヨウ</u>を交わす", "心がドウ<u>ヨウ</u>する", "<u>ヨウ</u>イな問題", "協力を<u>ヨウ</u>セイする"], "e": "擁護の「擁」。抱擁＝擁、動揺＝揺、容易＝容、要請＝要。"}, {"id": "A21", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br>需要と供給のキン<u>コウ</u>。", "o": ["ドリョウ<u>コウ</u>を統一する", "事情を<u>コウ</u>リョする", "社会に<u>コウ</u>ケンする", "<u>コウ</u>カイ先に立たず"], "e": "均衡の「衡」。度量衡＝衡、考慮＝考、貢献＝貢、後悔＝後。"}, {"id": "A22", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br><u>シン</u>チョウに検討する。", "o": ["自宅でキン<u>シン</u>する", "<u>シン</u>ライを得る", "<u>シン</u>コクな事態", "<u>シン</u>シ的な態度"], "e": "慎重の「慎」。謹慎＝慎、信頼＝信、深刻＝深、紳士＝紳。"}, {"id": "A23", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br>異物を<u>ハイ</u>ジョする。", "o": ["<u>ハイ</u>キガスを減らす", "事件の<u>ハイ</u>ケイ", "シッ<u>ハイ</u>を恐れる", "偶像をスウ<u>ハイ</u>する"], "e": "排除の「排」。排気＝排、背景＝背、失敗＝敗、崇拝＝拝。"}, {"id": "A24", "c": "A", "f": "K", "q": "傍線部のカタカナと同じ漢字を含むものはどれか。<br>内政にカン<u>ショウ</u>する。", "o": ["コウ<u>ショウ</u>がまとまる", "<u>ショウ</u>ゲキを受ける", "仮説をケン<u>ショウ</u>する", "運動を<u>ショウ</u>レイする"], "e": "干渉の「渉」。交渉＝渉、衝撃＝衝、検証＝証、奨励＝奨。"}, {"id": "B01", "c": "B", "f": "K", "q": "「恣意的」の語の意味として最も適当なものはどれか。", "o": ["その場の思いつきや好みで勝手に決めるさま", "綿密な計画に基づいて意図的に行うさま", "客観的な根拠に基づいて判断するさま", "周囲の意向をくみ取って行動するさま"], "e": "恣意的は、論理的必然性がなく自分勝手に判断するさま。「恣」はほしいままの意。"}, {"id": "B02", "c": "B", "f": "K", "q": "「パラダイム」の語の意味として最も適当なものはどれか。", "o": ["ある時代や分野で支配的な、物の見方や考え方の枠組み", "一見矛盾しているようで真理を含む表現", "議論を進めるために仮に立てる前提", "具体的な事例を数多く集めた資料"], "e": "パラダイムは、T.クーンが科学史で用いた語で、ある時代の支配的な認識の枠組みをいう。"}, {"id": "B03", "c": "B", "f": "K", "q": "「アイロニー」の語の意味として最も適当なものはどれか。", "o": ["皮肉。反語", "郷愁", "曖昧さ", "類推"], "e": "アイロニーは皮肉・反語の意。郷愁はノスタルジー、類推はアナロジー。"}, {"id": "B04", "c": "B", "f": "K", "q": "「アナロジー」の語の意味として最も適当なものはどれか。", "o": ["類似点をもとに他の事柄を推し量ること", "互いに矛盾する二つの命題が並び立つこと", "具体的な事実から一般法則を導くこと", "物事を対立する二項に分けて考えること"], "e": "アナロジーは類推。具体例から一般法則を導くのは帰納。"}, {"id": "B05", "c": "B", "f": "K", "q": "「アイデンティティ」の語の意味として最も適当なものはどれか。", "o": ["自分が自分であるという一貫した感覚。自己同一性", "他者に共感し同調しようとする傾向", "社会の規範から逸脱しようとする意識", "自己を否定し他者に従属する態度"], "e": "アイデンティティは自己同一性・主体性の意。"}, {"id": "B06", "c": "B", "f": "K", "q": "「相対化」の語の意味として最も適当なものはどれか。", "o": ["絶対的とされるものを、他との関係の中で捉え直すこと", "複数のものを一つに統合すること", "物事を唯一の基準で評価すること", "対立する意見の中間をとること"], "e": "相対化は、ある価値を唯一絶対とせず、他との比較・関係において位置づけ直すこと。"}, {"id": "B07", "c": "B", "f": "K", "q": "「捨象」の語の意味として最も適当なものはどれか。", "o": ["物事から共通でない性質を切り捨てること", "複数の物事から共通の性質を抜き出すこと", "具体的な形をもって現れること", "心に思い浮かべた像"], "e": "抽象の過程で、共通性以外の性質を捨て去ることを捨象という。共通の性質を抜き出すのは抽象。"}, {"id": "B08", "c": "B", "f": "K", "q": "「ア・プリオリ」の語の意味として最も適当なものはどれか。", "o": ["経験に先立って成り立つさま", "経験によって後から得られるさま", "偶然に左右されるさま", "実際に役立つかどうかを重視するさま"], "e": "ア・プリオリは「先天的・先験的」。経験に基づくのはア・ポステリオリ。"}, {"id": "B09", "c": "B", "f": "K", "q": "「木で鼻をくくる」の慣用句の意味として最も適当なものはどれか。", "o": ["ひどく無愛想に冷たくあしらう", "手がかりがなく途方に暮れる", "見え透いたうそをつく", "その場しのぎでごまかす"], "e": "「木で鼻をくくる」は冷淡で無愛想な応対をすること。「くくる」は「こくる（こする）」が変化した語とされる。"}, {"id": "B10", "c": "B", "f": "K", "q": "「情けは人のためならず」のことわざの意味として最も適当なものはどれか。", "o": ["人に親切にすれば、巡り巡って自分によい報いがある", "人に情けをかけるとその人のためにならない", "情けをかけるのは相手を選ぶべきだ", "他人の情けに頼らず自力で生きよ"], "e": "本来は、人への親切はいずれ自分に返ってくるという意。「甘やかすと本人のためにならない」は誤用。"}, {"id": "B11", "c": "B", "f": "K", "q": "「気が置けない」の慣用句の意味として最も適当なものはどれか。", "o": ["遠慮や気遣いをする必要がなく気楽につきあえる", "油断できず気を許せない", "気持ちが落ち着かずそわそわする", "相手の気持ちが理解できない"], "e": "「気が置けない」は気遣い無用で打ち解けられる意。「油断できない」は誤用。"}, {"id": "B12", "c": "B", "f": "K", "q": "「役不足」の語の意味として最も適当なものはどれか。", "o": ["力量に比べて与えられた役目が軽すぎること", "役目に対して力量が足りないこと", "役を演じる人の数が足りないこと", "役目を果たす意欲が乏しいこと"], "e": "役不足は役目が軽すぎることへの不満。力量不足の意は「力不足」。"}, {"id": "B13", "c": "B", "f": "K", "q": "「枯れ木も山のにぎわい」のことわざの意味として最も適当なものはどれか。", "o": ["つまらないものでも、ないよりはましであること", "年長者がいると場が引き締まること", "衰えたものもかつては栄えていたこと", "多くの人が集まると騒がしくなること"], "e": "つまらないものでも数に加われば役に立つの意。主に自分をへりくだって使い、他人に使うと失礼。"}, {"id": "B14", "c": "B", "f": "K", "q": "「間髪を入れず」の慣用句の意味として最も適当なものはどれか。", "o": ["少しの時間もおかずに、すぐに", "ほんのわずかの差で", "慎重に機会をうかがって", "相手の言葉をさえぎって"], "e": "「間、髪を容れず」で、髪の毛一本入る隙もない、すなわち即座にの意。読みは「かん、はつをいれず」。"}, {"id": "B15", "c": "B", "f": "K", "q": "「二律背反」の語の意味として最も適当なものはどれか。", "o": ["互いに矛盾する二つの命題が、同等の妥当性をもって主張されること", "二つの法律が同じ内容を定めていること", "二つの意見を折衷して一つにまとめること", "規則に従うふりをして実際には背くこと"], "e": "二律背反（アンチノミー）は、相反する二命題がともに成り立つと主張できる状態。"}, {"id": "B16", "c": "B", "f": "K", "q": "「形而上」の語の意味として最も適当なものはどれか。", "o": ["形がなく、感覚ではとらえられない抽象的・観念的なもの", "形を備え、感覚でとらえられる具体的なもの", "物事の外見や表面に現れたもの", "社会の制度として定められたもの"], "e": "形而上は形をもたない観念的なもの。形を備えた具体物は形而下。"}, {"id": "B17", "c": "B", "f": "K", "q": "「蛇足」の故事成語の意味として最も適当なものはどれか。", "o": ["付け加える必要のない余計なもの", "物事の最も重要な部分", "前もって準備しておくこと", "始めは勢いがよく終わりが振るわないこと"], "e": "蛇の絵に足を描き加えて負けた故事（『戦国策』）から。「竜頭蛇尾」と混同しない。"}, {"id": "B18", "c": "B", "f": "K", "q": "「他山の石」の故事成語の意味として最も適当なものはどれか。", "o": ["他人の誤った言行も、自分を磨く助けになること", "他人の優れた言行を手本として見習うこと", "自分とは無関係な事柄", "他人の成功をうらやむこと"], "e": "よその山の粗悪な石も自分の玉を磨くのに役立つ（『詩経』）の意。目上の人の立派な言行を手本にする意で使うのは誤用。"}, {"id": "B19", "c": "B", "f": "K", "q": "「ニヒリズム」の語の意味として最も適当なものはどれか。", "o": ["既成の価値や権威をすべて否定する立場。虚無主義", "自己の利益を最優先する立場。利己主義", "理性より感情を重んじる立場", "実際の効用を真理の基準とする立場"], "e": "ニヒリズムは虚無主義。利己主義はエゴイズム、実用主義はプラグマティズム。"}, {"id": "B20", "c": "B", "f": "K", "q": "「レトリック」の語の意味として最も適当なものはどれか。", "o": ["効果的に表現するための言葉の技法。修辞", "論理の筋道を厳密に追う方法", "事実をありのままに記録する態度", "言葉の語源を研究する学問"], "e": "レトリックは修辞（法）。転じて、内容の乏しい巧みな言い回しを批判的に指すこともある。"}, {"id": "B21", "c": "B", "f": "K", "q": "「流れに棹さす」の慣用句の意味として最も適当なものはどれか。", "o": ["時流に乗って物事が勢いよく進むようにする", "時流に逆らって物事を妨げる", "途中で物事を投げ出す", "争いの仲裁をする"], "e": "舟を棹で進めることから、時流に乗る意。「流れに逆らう」意で使うのは誤用。"}, {"id": "B22", "c": "B", "f": "K", "q": "「さわり（話のさわり）」の語の意味として最も適当なものはどれか。", "o": ["話や曲などの最も印象的な要点・聞かせどころ", "話の最初の部分", "話のあらすじ", "話の結末"], "e": "「さわり」は本来、義太夫節の聞かせどころの意で、話の要点を指す。「冒頭部分」の意は誤用。"}, {"id": "B23", "c": "B", "f": "K", "q": "「メタファー」の語の意味として最も適当なものはどれか。", "o": ["「ような」などを用いずにたとえる表現。隠喩", "「ような」などを用いてたとえる表現。直喩", "人間でないものを人間に見立てる表現。擬人法", "語順を入れかえて印象を強める表現。倒置法"], "e": "メタファーは隠喩（暗喩）。直喩はシミリー。"}, {"id": "B24", "c": "B", "f": "K", "q": "「敷衍」の語の意味として最も適当なものはどれか。", "o": ["意味や趣旨を押し広げて、詳しく説明すること", "要点だけを短くまとめること", "他人の説を引用して権威づけること", "議論の矛盾点を指摘すること"], "e": "敷衍（ふえん）は、述べたことを押し広げて詳しく説明すること。要点をまとめるのは要約。"}, {"id": "C01", "c": "C", "f": "K", "q": "『舞姫』の作者は誰か。", "o": ["森鷗外", "夏目漱石", "二葉亭四迷", "幸田露伴"], "e": "『舞姫』（1890）は森鷗外のドイツ留学体験をもとにした雅文体の小説。"}, {"id": "C02", "c": "C", "f": "K", "q": "言文一致体で書かれた小説『浮雲』の作者は誰か。", "o": ["二葉亭四迷", "坪内逍遥", "尾崎紅葉", "山田美妙"], "e": "二葉亭四迷『浮雲』は言文一致体による近代小説の先駆とされる。"}, {"id": "C03", "c": "C", "f": "K", "q": "写実主義を提唱した評論『小説神髄』の著者は誰か。", "o": ["坪内逍遥", "森鷗外", "北村透谷", "正岡子規"], "e": "坪内逍遥は『小説神髄』で、人情や世態風俗をありのままに描く写実主義を説いた。"}, {"id": "C04", "c": "C", "f": "K", "q": "『たけくらべ』『にごりえ』の作者は誰か。", "o": ["樋口一葉", "与謝野晶子", "泉鏡花", "徳冨蘆花"], "e": "樋口一葉は吉原近辺の子どもたちを描いた『たけくらべ』などを残した。"}, {"id": "C05", "c": "C", "f": "K", "q": "自然主義文学の先駆となった『破戒』の作者は誰か。", "o": ["島崎藤村", "田山花袋", "国木田独歩", "徳田秋声"], "e": "島崎藤村『破戒』（1906）は被差別部落出身の教師を描いた。田山花袋は『蒲団』。"}, {"id": "C06", "c": "C", "f": "K", "q": "「先生と私」「両親と私」「先生と遺書」の三部から成る『こころ』の作者は誰か。", "o": ["夏目漱石", "森鷗外", "志賀直哉", "芥川龍之介"], "e": "『こころ』は夏目漱石の後期三部作の一つで、1914年に発表された。"}, {"id": "C07", "c": "C", "f": "K", "q": "『今昔物語集』に材を取った『羅生門』の作者は誰か。", "o": ["芥川龍之介", "菊池寛", "谷崎潤一郎", "有島武郎"], "e": "芥川龍之介は『羅生門』『鼻』など王朝物で古典に取材した短編を書いた。"}, {"id": "C08", "c": "C", "f": "K", "q": "「国境の長いトンネルを抜けると雪国であった。」で始まる『雪国』の作者は誰か。", "o": ["川端康成", "横光利一", "三島由紀夫", "井伏鱒二"], "e": "川端康成は新感覚派の作家で、1968年にノーベル文学賞を受けた。"}, {"id": "C09", "c": "C", "f": "K", "q": "『人間失格』『斜陽』の作者は誰か。", "o": ["太宰治", "坂口安吾", "織田作之助", "石川淳"], "e": "太宰治は戦後、無頼派と呼ばれ『斜陽』『人間失格』を発表した。"}, {"id": "C10", "c": "C", "f": "K", "q": "情熱的な短歌を収めた歌集『みだれ髪』の作者は誰か。", "o": ["与謝野晶子", "樋口一葉", "斎藤茂吉", "若山牧水"], "e": "与謝野晶子『みだれ髪』（1901）は明星派浪漫主義を代表する歌集。"}, {"id": "C11", "c": "C", "f": "K", "q": "「はたらけど／はたらけど猶わが生活楽にならざり」の歌を含む『一握の砂』の作者は誰か。", "o": ["石川啄木", "正岡子規", "北原白秋", "長塚節"], "e": "石川啄木『一握の砂』は三行書きの短歌で生活感情を詠んだ。"}, {"id": "C12", "c": "C", "f": "K", "q": "唐代の伝奇「人虎伝」に材を取った『山月記』の作者は誰か。", "o": ["中島敦", "森鷗外", "芥川龍之介", "井伏鱒二"], "e": "中島敦『山月記』は、詩人を志した李徴が虎になる話。"}, {"id": "C13", "c": "C", "f": "K", "q": "白樺派の作家で、長編『暗夜行路』を書いたのは誰か。", "o": ["志賀直哉", "武者小路実篤", "有島武郎", "里見弴"], "e": "志賀直哉は「小説の神様」と呼ばれ、唯一の長編が『暗夜行路』。"}, {"id": "C14", "c": "C", "f": "K", "q": "プロレタリア文学の代表作『蟹工船』の作者は誰か。", "o": ["小林多喜二", "葉山嘉樹", "徳永直", "宮本百合子"], "e": "小林多喜二『蟹工船』（1929）は過酷な労働を描いたプロレタリア文学の代表作。"}, {"id": "C15", "c": "C", "f": "K", "q": "『源氏物語』の作者は誰か。", "o": ["紫式部", "清少納言", "和泉式部", "菅原孝標女"], "e": "紫式部は一条天皇の中宮彰子に仕え、『源氏物語』『紫式部日記』を書いた。"}, {"id": "C16", "c": "C", "f": "K", "q": "「春はあけぼの」で始まる随筆『枕草子』の作者は誰か。", "o": ["清少納言", "紫式部", "赤染衛門", "藤原道綱母"], "e": "清少納言は中宮定子に仕え、『枕草子』を書いた。"}, {"id": "C17", "c": "C", "f": "K", "q": "女性に仮託して仮名で書かれた『土佐日記』の作者は誰か。", "o": ["紀貫之", "在原業平", "藤原定家", "小野小町"], "e": "紀貫之は『土佐日記』を女性の筆に仮託して書いた。『古今和歌集』の撰者でもある。"}, {"id": "C18", "c": "C", "f": "K", "q": "「ゆく河の流れは絶えずして」で始まる『方丈記』の作者は誰か。", "o": ["鴨長明", "兼好法師", "西行", "藤原俊成"], "e": "鴨長明『方丈記』（1212）は無常観を基調とする鎌倉時代の随筆。"}, {"id": "C19", "c": "C", "f": "K", "q": "「つれづれなるままに」で始まる『徒然草』の作者は誰か。", "o": ["兼好法師", "鴨長明", "西行", "慈円"], "e": "『徒然草』は鎌倉時代末期、兼好法師（吉田兼好）による随筆。"}, {"id": "C20", "c": "C", "f": "K", "q": "醍醐天皇の命により編まれた最初の勅撰和歌集はどれか。", "o": ["古今和歌集", "万葉集", "新古今和歌集", "後撰和歌集"], "e": "『古今和歌集』（905年ごろ）は最初の勅撰和歌集で、紀貫之らが撰者。『万葉集』は勅撰ではない。"}, {"id": "C21", "c": "C", "f": "K", "q": "「月日は百代の過客にして」で始まる紀行文『おくのほそ道』の作者は誰か。", "o": ["松尾芭蕉", "与謝蕪村", "小林一茶", "井原西鶴"], "e": "松尾芭蕉が門人曾良と東北・北陸を旅した記録が『おくのほそ道』。"}, {"id": "C22", "c": "C", "f": "K", "q": "町人の経済生活を描いた浮世草子『日本永代蔵』の作者は誰か。", "o": ["井原西鶴", "近松門左衛門", "十返舎一九", "曲亭馬琴"], "e": "井原西鶴は『好色一代男』『日本永代蔵』『世間胸算用』などの浮世草子を書いた。"}, {"id": "C23", "c": "C", "f": "K", "q": "人形浄瑠璃『曾根崎心中』の作者は誰か。", "o": ["近松門左衛門", "井原西鶴", "竹田出雲", "鶴屋南北"], "e": "近松門左衛門は『曾根崎心中』など世話物の浄瑠璃で知られる。"}, {"id": "C24", "c": "C", "f": "K", "q": "『源氏物語』の中で「物語の出で来はじめの祖」と呼ばれた作品はどれか。", "o": ["竹取物語", "伊勢物語", "宇津保物語", "落窪物語"], "e": "『源氏物語』絵合巻で『竹取物語』が「物語の出で来はじめの祖」と称されている。"}, {"id": "D01", "c": "D", "f": "K", "q": "古語「うつくし」の意味として最も適当なものはどれか。", "o": ["かわいらしい", "美しく華やかだ", "気の毒だ", "みすぼらしい"], "e": "古語「うつくし」は小さいものへの愛情を表し「かわいらしい」が代表的な意味。"}, {"id": "D02", "c": "D", "f": "K", "q": "古語「ありがたし」の意味として最も適当なものはどれか。", "o": ["めったにない・珍しい", "感謝したい", "ありふれている", "恐れ多い"], "e": "「有り難し」で存在することが難しい、すなわち「めったにない」の意。"}, {"id": "D03", "c": "D", "f": "K", "q": "古語「ゆかし」の意味として最も適当なものはどれか。", "o": ["見たい・知りたい・心ひかれる", "奥ゆかしく上品だ", "懐かしい", "行きたくない"], "e": "「ゆかし」は「行く」と同根で、心がそちらへ行く、すなわち見たい・知りたいの意。"}, {"id": "D04", "c": "D", "f": "K", "q": "古語「いみじ」の意味として最も適当なものはどれか。", "o": ["程度がはなはだしい・たいそう", "つまらない", "忌まわしいだけだ", "控えめだ"], "e": "「いみじ」はよい意味にも悪い意味にも、程度のはなはだしさを表す。"}, {"id": "D05", "c": "D", "f": "K", "q": "古語「あさまし」の意味として最も適当なものはどれか。", "o": ["驚きあきれるほどだ", "心が卑しい", "浅くて物足りない", "明るくさわやかだ"], "e": "古語「あさまし」は意外なことに驚きあきれる意。よい場合にも悪い場合にも用いる。"}, {"id": "D06", "c": "D", "f": "K", "q": "古語「つれづれなり」の意味として最も適当なものはどれか。", "o": ["することがなく退屈で手持ちぶさただ", "次々と連なっている", "冷淡でそっけない", "気が晴れ晴れとしている"], "e": "「つれづれなり」は所在なく退屈なさま。『徒然草』の書き出しでも用いられる。"}, {"id": "D07", "c": "D", "f": "K", "q": "古語「めでたし」の意味として最も適当なものはどれか。", "o": ["すばらしい・立派だ", "祝うべきだ", "ばかげている", "目立たない"], "e": "「めでたし」は「愛で甚し」から、すばらしい・見事だの意。"}, {"id": "D08", "c": "D", "f": "K", "q": "古語「やがて」の意味として最も適当なものはどれか。", "o": ["そのまま・すぐに", "まもなく・そのうち", "ようやく・やっと", "ふたたび"], "e": "古語「やがて」は「そのまま」「すぐに」の意。現代語の「そのうち」とは異なる。"}, {"id": "D09", "c": "D", "f": "K", "q": "古語「年ごろ」の意味として最も適当なものはどれか。", "o": ["長年の間・数年来", "結婚に適した年齢", "年齢の割に", "その年の暮れ"], "e": "古語「年ごろ」は長年・数年来の意。同様に「日ごろ」は数日来の意。"}, {"id": "D10", "c": "D", "f": "K", "q": "古語「おどろく」の意味として最も適当なものはどれか。", "o": ["目を覚ます", "恐れて震える", "怒って騒ぐ", "喜んで踊る"], "e": "古語「おどろく」は「目を覚ます」「はっと気づく」の意。"}, {"id": "D11", "c": "D", "f": "K", "q": "古語「ののしる」の意味として最も適当なものはどれか。", "o": ["大声で騒ぐ・評判になる", "悪口を言う", "泣き叫んで嘆く", "小声でささやく"], "e": "古語「ののしる」は大声を立てて騒ぐ、また評判になる意。"}, {"id": "D12", "c": "D", "f": "K", "q": "古語「ことわり」の意味として最も適当なものはどれか。", "o": ["道理", "拒絶", "前置き", "事情を伝える手紙"], "e": "古語「ことわり」は道理・理由の意。「ことわりなり」で「もっともだ」。"}, {"id": "D13", "c": "D", "f": "K", "q": "古語「なやむ」の意味として最も適当なものはどれか。", "o": ["病気で苦しむ", "思い迷う", "困らせる", "怠ける"], "e": "古語「なやむ」は病気で苦しむ意が代表的。"}, {"id": "D14", "c": "D", "f": "K", "q": "次の傍線部「ぬ」の文法的説明として正しいものはどれか。<br>花咲か<u>ぬ</u>里", "o": ["打消の助動詞「ず」の連体形", "完了の助動詞「ぬ」の終止形", "完了の助動詞「ぬ」の連体形", "ナ行変格活用動詞の活用語尾"], "e": "未然形「咲か」に接続し、体言「里」に続くので打消「ず」の連体形。完了「ぬ」は連用形に接続する。"}, {"id": "D15", "c": "D", "f": "K", "q": "次の傍線部「なる」の文法的説明として正しいものはどれか。<br>男もす<u>なる</u>日記といふものを、女もしてみむとてするなり。（土佐日記）", "o": ["伝聞・推定の助動詞「なり」の連体形", "断定の助動詞「なり」の連体形", "形容動詞の活用語尾", "四段活用動詞「なる」の連体形"], "e": "サ変動詞「す」の終止形に接続しているので伝聞・推定の「なり」。「男もするという日記」の意。"}, {"id": "D16", "c": "D", "f": "K", "q": "次の傍線部「る」の意味として正しいものはどれか。<br>冬はいかなる所にも住ま<u>る</u>。（徒然草）", "o": ["可能", "受身", "尊敬", "自発"], "e": "「冬はどんな所にでも住むことができる」の意で、可能の助動詞「る」。"}, {"id": "D17", "c": "D", "f": "K", "q": "過去推量の助動詞として最も適当なものはどれか。", "o": ["けむ", "らむ", "まし", "べし"], "e": "「けむ」は過去推量（〜ただろう）。「らむ」は現在推量、「まし」は反実仮想。"}, {"id": "D18", "c": "D", "f": "K", "q": "次の傍線部「な」の文法的説明として正しいものはどれか。<br>子といふもの、なくてあり<u>な</u>む。（徒然草）", "o": ["完了（強意）の助動詞「ぬ」の未然形", "打消の助動詞「ず」の未然形", "禁止の副詞", "願望の終助詞「なむ」の一部"], "e": "連用形「あり」に接続しているので完了（強意）「ぬ」の未然形。「きっと〜だろう」と強める。"}, {"id": "D19", "c": "D", "f": "K", "q": "次の傍線部「給ふ」の敬語の種類として正しいものはどれか。<br>かぐや姫、いといたく泣き<u>給ふ</u>。", "o": ["尊敬語", "謙譲語", "丁寧語", "敬語ではない"], "e": "四段活用の補助動詞「給ふ」は尊敬語で、動作主かぐや姫を敬う。"}, {"id": "D20", "c": "D", "f": "K", "q": "次の傍線部「侍り」の敬語の種類として正しいものはどれか。<br>かくなむ思ひ<u>侍り</u>し。", "o": ["丁寧語", "尊敬語", "謙譲語", "敬語ではない"], "e": "補助動詞の「侍り」は丁寧語で「〜ます・〜ございます」と訳す。"}, {"id": "D21", "c": "D", "f": "K", "q": "次の傍線部「奉る」の意味として最も適当なものはどれか。<br>文を書きて帝に<u>奉る</u>。", "o": ["差し上げる（謙譲語）", "お召しになる（尊敬語）", "いただく（謙譲語）", "ございます（丁寧語）"], "e": "「与ふ」の謙譲語としての「奉る」で、帝への敬意を表す。「着る・乗る」の尊敬語の用法もあるが、ここは文を差し上げる意。"}, {"id": "D22", "c": "D", "f": "K", "q": "次の和歌の傍線部「ける」の活用形として正しいものはどれか。<br>人はいさ心も知らずふるさとは花<u>ぞ</u>昔の香ににほひ<u>ける</u>", "o": ["連体形", "終止形", "已然形", "連用形"], "e": "係助詞「ぞ」の結びは連体形となる（係り結び）。「こそ」の結びは已然形。"}, {"id": "D23", "c": "D", "f": "K", "q": "次の傍線部の解釈として最も適当なものはどれか。<br>春は<u>あけぼの</u>。（枕草子）", "o": ["春は夜明け方が趣深い", "春は夕暮れ時が趣深い", "春は昼間が明るくてよい", "春は夜が更けた頃がよい"], "e": "「あけぼの」は夜がほのぼのと明けはじめる頃。下に「をかし」などが省略されている。"}, {"id": "D24", "c": "D", "f": "K", "q": "次の傍線部の解釈として最も適当なものはどれか。<br>涙のこぼるるに、目も見えず、物も<u>え言はず</u>。", "o": ["言うことができない", "言ってはいけない", "言うつもりはない", "言ったほうがよい"], "e": "副詞「え」は打消の語と呼応して不可能（〜できない）を表す。"}, {"id": "E01", "c": "E", "f": "K", "q": "「未知」の書き下し文として正しいものはどれか。（返り点：未（レ）知）", "o": ["未だ知らず", "未だ知るべし", "既に知る", "将に知らんとす"], "e": "「未」は再読文字で「いまだ〜ず」と読み、「まだ〜ない」の意。"}, {"id": "E02", "c": "E", "f": "K", "q": "再読文字「将」の読みと意味の組み合わせとして正しいものはどれか。", "o": ["まさに〜んとす／今にも〜しようとする", "まさに〜べし／当然〜すべきだ", "よろしく〜べし／〜するのがよい", "なほ〜のごとし／ちょうど〜のようだ"], "e": "「将」「且」は「まさに〜んとす」と読み、近い未来を表す。"}, {"id": "E03", "c": "E", "f": "K", "q": "再読文字「当」の読みと意味の組み合わせとして正しいものはどれか。", "o": ["まさに〜べし／当然〜すべきだ", "まさに〜んとす／今にも〜しようとする", "すべからく〜べし／ぜひ〜する必要がある", "いまだ〜ず／まだ〜ない"], "e": "「当」「応」は「まさに〜べし」。「当」は当然、「応」は推量（きっと〜だろう）の意が中心。"}, {"id": "E04", "c": "E", "f": "K", "q": "再読文字「宜」の意味として正しいものはどれか。", "o": ["〜するのがよい", "今にも〜しようとする", "まだ〜しない", "どうして〜しないのか"], "e": "「宜」は「よろしく〜べし」と読み、適当（〜するのがよい）を表す。"}, {"id": "E05", "c": "E", "f": "K", "q": "「過猶不及」（論語）の書き下し文として正しいものはどれか。（返り点：過 猶（レ）不（レ）及）", "o": ["過ぎたるは猶ほ及ばざるがごとし", "過ぎたるは猶ほ及ばず", "過ぎたるに猶ほ及ばざらんや", "過ぎて猶ほ及ばんとす"], "e": "「猶」は再読文字で「なほ〜のごとし」と読む。やり過ぎは足りないのと同じようによくない、の意。"}, {"id": "E06", "c": "E", "f": "K", "q": "再読文字「須」の読みとして正しいものはどれか。", "o": ["すべからく〜べし", "まさに〜べし", "よろしく〜べし", "なんぞ〜ざる"], "e": "「須」は「すべからく〜べし」と読み、「ぜひ〜する必要がある」の意。"}, {"id": "E07", "c": "E", "f": "K", "q": "「使子路問之」の書き下し文として正しいものはどれか。（返り点：使（二）子路（一）問（レ）之）", "o": ["子路をして之を問はしむ", "子路に之を問はしむ", "子路を使ひて之を問ふ", "子路の之を問ふを使む"], "e": "「使（二）A（一）B」は「AをしてBせしむ」と読む使役形。"}, {"id": "E08", "c": "E", "f": "K", "q": "「為人所笑」の意味として正しいものはどれか。（返り点：為（二）人 所（一レ）笑）", "o": ["人に笑われる", "人を笑わせる", "人のために笑う", "人が笑うのをやめさせる"], "e": "「AのBする所と為る」で受身「AにBされる」。書き下し文は「人の笑ふ所と為る」。"}, {"id": "E09", "c": "E", "f": "K", "q": "「見疑」の書き下し文として正しいものはどれか。（返り点：見（レ）疑）", "o": ["疑はる", "疑ひを見る", "疑ふを見る", "疑はしむ"], "e": "「見」は受身の助字で「る・らる」と読む。「疑われる」の意。"}, {"id": "E10", "c": "E", "f": "K", "q": "「豈〜哉」の意味として正しいものはどれか。", "o": ["どうして〜だろうか、いや〜ない", "なんと〜ではないか", "どうか〜してほしい", "もし〜ならば"], "e": "「豈〜哉（や）」は「あに〜んや」と読む反語形。"}, {"id": "E11", "c": "E", "f": "K", "q": "「燕雀安知鴻鵠之志哉」（史記）の意味として最も適当なものはどれか。", "o": ["小人物には大人物の大きな志などわからない", "小人物でも大人物の志をよく理解している", "大人物は小人物の志を知ろうとしない", "小人物はどこで大人物の志を知ったのか"], "e": "「安くんぞ〜んや」は反語。「燕雀安くんぞ鴻鵠の志を知らんや」で、小さな鳥には大きな鳥の志はわからないの意。"}, {"id": "E12", "c": "E", "f": "K", "q": "「百聞不如一見」の意味として正しいものはどれか。（返り点：百聞 不（レ）如（二）一見（一））", "o": ["百回聞くことは一回見ることに及ばない", "百回聞いても一回見たのと同じではない", "百回聞いたら一回は見るべきだ", "一回見ることは百回聞くことに及ばない"], "e": "「AはBに如かず」は比較形で「AはBに及ばない」の意。"}, {"id": "E13", "c": "E", "f": "K", "q": "「苛政猛於虎也」（礼記）の書き下し文として正しいものはどれか。（返り点：苛政 猛（二）於虎（一）也）", "o": ["苛政は虎よりも猛なり", "苛政は虎に猛からしむ", "苛政の猛きこと虎のごとし", "苛政は虎を猛にするなり"], "e": "置き字「於」が形容詞の後に置かれて比較（〜よりも）を表す。厳しい政治は虎よりも恐ろしい、の意。"}, {"id": "E14", "c": "E", "f": "K", "q": "「死馬且買之、況生者乎」（戦国策）の書き下し文として正しいものはどれか。", "o": ["死馬すら且つ之を買ふ、況んや生ける者をや", "死馬且に之を買はんとす、況んや生ける者か", "死馬且つ之を買ふ、生ける者に況ぶや", "死馬すら之を買はしむ、況んや生ける者に乎"], "e": "「AすらB、況んやCをや」は抑揚形。死んだ馬でさえ買うのだから、まして生きた馬ならなおさらだ、の意。"}, {"id": "E15", "c": "E", "f": "K", "q": "「無不A」（返り点：無（レ）不（レ）A）の意味として正しいものはどれか。", "o": ["Aしないものはない（すべてAする）", "Aするものはない", "Aしないこともある", "Aしないわけにはいかない"], "e": "「Aせざるは無し」は二重否定で強い肯定を表す。「Aしないわけにはいかない」は「不（レ）可（レ）不（レ）A」など。"}, {"id": "E16", "c": "E", "f": "K", "q": "「伯楽不常有」（韓愈「雑説」）の意味として正しいものはどれか。（返り点：伯楽 不（二）常 有（一））", "o": ["伯楽はいつもいるとは限らない", "伯楽はいつもいない", "伯楽はいつでもいる", "伯楽はいたためしがない"], "e": "「常には有らず」は部分否定。「常不有（常に有らず）」なら全部否定で「いつもいない」。"}, {"id": "E17", "c": "E", "f": "K", "q": "限定を表す「唯」の読みとして正しいものはどれか。（例：唯A耳）", "o": ["ただ〜のみ", "いやしくも〜ば", "たとひ〜とも", "すなはち〜"], "e": "「唯・惟・只・但」は「ただ」と読み、文末の「耳・已・爾」を「のみ」と読んで限定を表す。"}, {"id": "E18", "c": "E", "f": "K", "q": "「縦〜」の読みと意味として正しいものはどれか。", "o": ["たとひ〜とも／たとえ〜としても", "もし〜ば／もし〜ならば", "いやしくも〜ば／かりにも〜ならば", "まさに〜んとす／今にも〜しようとする"], "e": "「縦」は「たとひ〜とも」と読み、逆接の仮定を表す。"}, {"id": "E19", "c": "E", "f": "K", "q": "「所以」の読みとして正しいものはどれか。", "o": ["ゆゑん", "しょい", "もつてす", "ところもつて"], "e": "「所以」は「ゆゑん」と読み、理由・方法・手段の意を表す。"}, {"id": "E20", "c": "E", "f": "K", "q": "「不唯A」（返り点：不（二）唯 A（一））の意味として正しいものはどれか。", "o": ["ただAだけではない", "ただAだけである", "決してAしない", "Aしないこともない"], "e": "「ただにAのみならず」と読む累加形で、「ただAだけでなく（さらに〜）」の意。"}, {"id": "E21", "c": "E", "f": "K", "q": "「請以剣舞」（史記・鴻門之会）の書き下し文として正しいものはどれか。（返り点：請 以（レ）剣 舞）", "o": ["請ふ剣を以て舞はん", "剣を以て舞ふを請ふ", "請ひて剣を以て舞はしむ", "剣を請ひて以て舞ふ"], "e": "「請ふ〜ん」は願望形で「どうか〜させてください」の意。"}, {"id": "E22", "c": "E", "f": "K", "q": "「学而時習之、不亦説乎」（論語）の傍線部「不亦説乎」の意味として最も適当なものはどれか。", "o": ["なんとうれしいことではないか", "うれしくないのだろうか", "またうれしいはずがない", "うれしくないこともない"], "e": "「亦説ばしからずや」は詠嘆形で「なんと〜ではないか」の意。"}, {"id": "E23", "c": "E", "f": "K", "q": "「不入虎穴、不得虎子」（後漢書）の書き下し文として正しいものはどれか。（返り点：不（レ）入（二）虎穴（一）、不（レ）得（二）虎子（一））", "o": ["虎穴に入らずんば、虎子を得ず", "虎穴に入らず、虎子を得ずんば", "虎穴に入りて、虎子を得ず", "虎穴に入らざれば、虎子を得ざらんや"], "e": "一二点で「虎穴」を先に読み「入らず」へ返る。危険を冒さなければ大きな成果は得られない、の意。"}, {"id": "E24", "c": "E", "f": "K", "q": "「己所不欲、勿施於人」（論語）の意味として最も適当なものはどれか。", "o": ["自分が望まないことは、他人にしてはならない", "自分が望まないことでも、他人にはしてやるべきだ", "他人が望まないことは、自分もしなくてよい", "自分の欲を捨てて、他人に施しをせよ"], "e": "「勿かれ」は禁止。「己の欲せざる所は、人に施すこと勿かれ」。"}]};
+const CATS=D.cats;const Q=D.q;
+const FMT={K:"4択",S:"正誤",N:"整序"};
+const SO=["X 正　Y 正","X 正　Y 誤","X 誤　Y 正","X 誤　Y 誤"];
+const NO=["Ⅰ－Ⅱ－Ⅲ","Ⅰ－Ⅲ－Ⅱ","Ⅱ－Ⅰ－Ⅲ","Ⅱ－Ⅲ－Ⅰ","Ⅲ－Ⅰ－Ⅱ","Ⅲ－Ⅱ－Ⅰ"];
+const NK=["123","132","213","231","312","321"];
+Q.forEach(q=>{if(q.f==="S"){q.o=SO;q.a=(q.xs?0:2)+(q.ys?0:1)}else if(q.f==="N"){q.o=NO;q.a=NK.indexOf(q.ord)}else{q.a=0}});
+const FSEG=[["ALL","すべて"]].concat(["K","S","N"].filter(f=>Q.some(q=>q.f===f)).map(f=>[f,FMT[f]]));
+
+/* ===== 記録（このブラウザのみ） ===== */
+const KEY="kyotsu-kokugo-v1";
+let rec={};
+try{rec=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){rec={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(rec))}catch(e){}}
+function mark(id,ok){const r=rec[id]||{c:0,w:0};ok?r.c++:r.w++;r.last=ok;rec[id]=r;save()}
+/* ===== ランク（習得度：正解済み問題の割合） ===== */
+const RANKS=[
+  {t:"新入生",en:"FRESHMAN",min:0},
+  {t:"学士",en:"BACHELOR",min:15},
+  {t:"修士",en:"MASTER",min:35},
+  {t:"博士",en:"DOCTOR",min:55},
+  {t:"教授",en:"PROFESSOR",min:75},
+  {t:"名誉教授",en:"EMERITUS",min:90}
+];
+function mastery(){let ok=0;Q.forEach(q=>{const r=rec[q.id];if(r&&r.last)ok++});return{ok,n:Q.length,pct:Q.length?ok/Q.length*100:0}}
+function rankOf(pct){let i=0;RANKS.forEach((r,k)=>{if(pct>=r.min)i=k});return i}
+function stars(i){return "★".repeat(i)+"☆".repeat(RANKS.length-1-i)}
+function rankPanel(){
+  const m=mastery(),i=rankOf(m.pct),r=RANKS[i],nx=RANKS[i+1];
+  const need=nx?Math.max(1,Math.ceil(nx.min/100*m.n)-m.ok):0;
+  const lo=r.min,hi=nx?nx.min:100,prog=nx?Math.min(100,Math.max(0,(m.pct-lo)/(hi-lo)*100)):100;
+  return `<div class="panel rankp"><div class="rk-badge rk${i}" aria-hidden="true"><span class="rk-en">${r.en}</span><span class="rk-t">${r.t}</span><span class="rk-st">${stars(i)}</span></div>
+    <div class="rk-body"><h2>あなたのランク：${r.t}</h2>
+    <p class="kbd num">正解済み ${m.ok} / ${m.n} 問（${Math.floor(m.pct)}%）</p>
+    <div class="meter rk-meter"><i style="width:${prog}%"></i></div>
+    <p class="kbd">${nx?`次の「${nx.t}」まで、あと <b class="num">${need}</b> 問正解`:"最高ランクに到達しました！"}</p></div></div>`;
+}
+const TITLES=[[100,"名誉教授級"],[90,"教授級"],[75,"博士級"],[60,"修士級"],[40,"学士級"],[0,"新入生級"]];
+function sessionRank(ok,n,r0){
+  const p=n?ok/n*100:0;const t=TITLES.find(x=>p>=x[0])[1];
+  const r1=rankOf(mastery().pct);
+  const up=r1>r0?`<div class="rk-up">ランクアップ！ ${RANKS[r0].t} → <b>${RANKS[r1].t}</b></div>`:"";
+  return `<div class="rk-session"><span class="kbd">今回の称号</span><span class="rk-title">${t}</span></div>${up}`;
+}
+
+/* ===== 状態 ===== */
+const app=document.getElementById("app");
+let S={view:"home",size:10,fmt:"ALL"};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const rich=s=>esc(s).replace(/&lt;(\/?)(sup|sub|u)&gt;/g,"<$1$2>").replace(/&lt;br&gt;/g,"<br>");
+const ROM=["Ⅰ","Ⅱ","Ⅲ"];
+
+function header(){return `<header class="top"><div class="subject"><h1><b>国語</b> ドリル</h1><span class="tag">共通テスト対策</span></div>
+  <div class="row"><a class="subj-link" href="index.html">メニュー</a><small class="num">全${Q.length}問</small></div></header>`}
+const fmtOK=q=>S.fmt==="ALL"||q.f===S.fmt;
+function stats(cat){const qs=Q.filter(q=>!cat||q.c===cat);let done=0,ok=0;qs.forEach(q=>{const r=rec[q.id];if(r){done++;if(r.last)ok++}});return{n:qs.length,done,ok}}
+
+function home(){
+  delete app.dataset.cat;
+  const missN=Q.filter(q=>rec[q.id]&&rec[q.id].last===false&&fmtOK(q)).length;
+  const all=stats();
+  app.innerHTML=header()+`
+  <p class="lead">分野を選んで始めてください。1問ごとに正誤と解説が出ます。正解を増やすとランクが上がります。記録はこの端末に保存されます。</p>
+  <div class="row"><span class="kbd" ${FSEG.length<3?"hidden":""}>形式</span>
+    <div class="seg" role="group" aria-label="形式" ${FSEG.length<3?"hidden":""}>${FSEG.map(([k,l])=>`<button id="fm${k}" aria-pressed="${S.fmt===k}" data-fmt="${k}">${l}</button>`).join("")}</div>
+    <span class="kbd">出題数</span>
+    <div class="seg" role="group" aria-label="出題数">${[10,20,0].map(n=>`<button id="sz${n}" aria-pressed="${S.size===n}" data-size="${n}">${n?n+"問":"全問"}</button>`).join("")}</div></div>
+  <div class="cats">${Object.entries(CATS).map(([k,c])=>{const s=stats(k);const pct=s.n?Math.round(s.ok/s.n*100):0;
+    return `<button class="cat" id="cat${k}" data-cat="${k}"><span class="k">${c.k}　<span class="era-yr">${c.yr}</span></span><span class="t">${c.name}</span><span class="d">${c.d}</span>
+    <span class="meter" aria-hidden="true"><i style="width:${pct}%"></i></span><span class="s num">正解済 ${s.ok} / ${s.n}　解答済 ${s.done}</span></button>`}).join("")}</div>
+  <div class="row">
+    <button class="btn primary" id="mix" data-cat="ALL">全分野ミックス</button>
+    <button class="btn" id="review" data-cat="MISS" ${missN?"":"disabled"}>間違えた問題を復習（${missN}問）</button>
+  </div>
+  ${rankPanel()}
+  <div class="panel"><h2>これまでの成績</h2>
+    <div class="score"><span class="big">${all.done?Math.round(all.ok/all.done*100):0}<small style="font-size:18px">%</small></span>
+    <span class="kbd num">直近の正答率（解答済 ${all.done} 問中 ${all.ok} 問正解）</span></div>
+    <div class="row" style="margin-top:10px"><button class="btn" id="reset" ${all.done?"":"disabled"}>記録を消す</button><span class="kbd" id="resetMsg"></span></div>
+  </div>
+  <footer>操作：選択肢は数字キー（1〜6）、次へは Enter キーでも進めます。</footer>`;
+  app.querySelectorAll("[data-size]").forEach(b=>b.onclick=()=>{S.size=+b.dataset.size;home()});
+  app.querySelectorAll("[data-fmt]").forEach(b=>b.onclick=()=>{S.fmt=b.dataset.fmt;home()});
+  app.querySelectorAll("button[data-cat]").forEach(b=>b.onclick=()=>start(b.dataset.cat));
+  let armed=false;const rb=document.getElementById("reset");
+  rb.onclick=()=>{if(!armed){armed=true;rb.textContent="本当に消す";document.getElementById("resetMsg").textContent="もう一度押すと全記録を消去します";return}rec={};save();home()};
+}
+
+function start(cat){
+  let pool=Q.filter(fmtOK);
+  pool=cat==="ALL"?pool:cat==="MISS"?pool.filter(q=>rec[q.id]&&rec[q.id].last===false):pool.filter(q=>q.c===cat);
+  if(!pool.length){home();return}
+  pool=shuffle(pool);if(S.size&&cat!=="MISS")pool=pool.slice(0,S.size);
+  S={...S,view:"quiz",r0:rankOf(mastery().pct),cat,list:pool,i:0,res:[],done:false};
+  question();
+}
+
+function body(q){
+  if(q.f==="S")return `<p class="stem">次の文X・Yについて、その正誤の組合せとして正しいものを選べ。</p>
+    <div class="stmts"><div class="stmt"><span class="lb">X</span><span class="tx">${rich(q.X)}</span></div><div class="stmt"><span class="lb">Y</span><span class="tx">${rich(q.Y)}</span></div></div>`;
+  if(q.f==="N")return `<p class="stem">${rich(q.p||"次のⅠ〜Ⅲについて、古いものから年代順に正しく配列したものを選べ。")}</p>
+    <div class="stmts">${q.i.map((t,k)=>`<div class="stmt"><span class="lb">${ROM[k]}</span><span class="tx">${rich(t)}</span></div>`).join("")}</div>`;
+  return `<p class="stem">${rich(q.q)}</p>`;
+}
+
+function question(){
+  const q=S.list[S.i];S.done=false;app.dataset.cat=q.c;
+  const label=S.cat==="ALL"?"全分野ミックス":S.cat==="MISS"?"復習":CATS[S.cat].name;
+  S.opts=(q.f==="K"?shuffle(q.o.map((t,k)=>({t,k}))):q.o.map((t,k)=>({t,k})));
+  app.innerHTML=`${header()}<div class="qhead"><span>${label}　<span class="num">${S.i+1} / ${S.list.length}</span></span><button class="btn" id="quit" style="padding:4px 12px;font-size:13px">やめる</button></div>
+  <div class="bar"><i style="width:${S.i/S.list.length*100}%"></i></div>
+  <div class="panel"><div><span class="qno">${q.id}</span><span class="kbd">${CATS[q.c].name}</span><span class="fmt">${FMT[q.f]}</span></div>
+    ${body(q)}
+    <div class="choices ${q.f==="N"?"six":""}">${S.opts.map((o,n)=>`<button class="ch" id="ch${n}" data-n="${n}"><span class="oval">${n+1}</span><span>${rich(o.t)}</span></button>`).join("")}</div>
+    <div id="fb"></div></div>`;
+  app.querySelectorAll(".ch").forEach(b=>b.onclick=()=>choose(+b.dataset.n));
+  document.getElementById("quit").onclick=()=>{S.view="home";home()};
+}
+
+function answerText(q){
+  if(q.f==="N"){const o=q.ord.split("").map(d=>+d-1);return `${NO[q.a]}（${o.map(k=>`${rich(q.i[k])}${q.yr?`〈${rich(q.yr[k])}〉`:""}`).join(" → ")}）`}
+  return rich(q.o[q.a]);
+}
+function choose(n){
+  if(S.done)return;S.done=true;
+  const q=S.list[S.i];const ok=S.opts[n].k===q.a;
+  app.querySelectorAll(".ch").forEach((b,m)=>{b.disabled=true;if(S.opts[m].k===q.a)b.classList.add("right")});
+  const b=document.getElementById("ch"+n);b.classList.add("sel");if(!ok)b.classList.add("wrong");
+  mark(q.id,ok);S.res.push({q,ok,your:S.opts[n].t});
+  const last=S.i===S.list.length-1;
+  document.getElementById("fb").innerHTML=`<div class="fb ${ok?"ok":"ng"}" role="status">
+    <div class="v"><span class="mark">${ok?"○":"×"}</span>${ok?"正解！":"おしい！"}</div>
+    <p>正解：<b>${answerText(q)}</b></p><p>${rich(q.e)}</p></div>
+    <div class="row" style="margin-top:14px"><button class="btn primary" id="next">${last?"結果を見る":"次の問題へ"}</button></div>`;
+  const nx=document.getElementById("next");nx.focus({preventScroll:true});
+  nx.onclick=()=>{if(last){result()}else{S.i++;question();window.scrollTo({top:0})}};
+}
+
+function qSummary(q){
+  if(q.f==="S")return `X：${rich(q.X)}<br>Y：${rich(q.Y)}`;
+  if(q.f==="N")return q.i.map((t,k)=>`${ROM[k]} ${rich(t)}`).join("　");
+  return rich(q.q);
+}
+function result(){
+  S.view="result";delete app.dataset.cat;
+  const n=S.res.length,ok=S.res.filter(r=>r.ok).length,miss=S.res.filter(r=>!r.ok);
+  app.innerHTML=header()+`<div class="panel"><h2>結果</h2>
+    <div class="score"><span class="big">${ok}</span><span class="num" style="font-size:20px">/ ${n}</span><span class="kbd">正答率 ${Math.round(ok/n*100)}%</span></div>${sessionRank(ok,n,S.r0)}
+    ${miss.length?`<ul class="miss">${miss.map(r=>`<li data-cat="${r.q.c}"><div class="kbd"><span class="qno">${r.q.id}</span>${CATS[r.q.c].name}<span class="fmt">${FMT[r.q.f]}</span></div>
+      <div class="en">${qSummary(r.q)}</div>
+      <div class="x">正解：<b>${answerText(r.q)}</b>　／　あなたの解答：${rich(r.your)}</div><div class="x">${rich(r.q.e)}</div></li>`).join("")}</ul>`:`<p style="font-size:18px;font-weight:900">全問正解！すばらしい！</p>`}
+    <div class="row" style="margin-top:16px"><button class="btn primary" id="again">同じ条件でもう一度</button><button class="btn" id="back">トップへ戻る</button></div></div>`;
+  document.getElementById("again").onclick=()=>start(S.cat);
+  document.getElementById("back").onclick=home;
+}
+
+document.addEventListener("keydown",e=>{
+  if(S.view!=="quiz")return;
+  const n=S.list[S.i].o.length;
+  if(/^[1-6]$/.test(e.key)&&!S.done&&+e.key<=n){choose(+e.key-1)}
+  else if(e.key==="Enter"&&S.done){const nx=document.getElementById("next");if(nx&&document.activeElement!==nx){e.preventDefault();nx.click()}}
+});
+home();
+</script>
+
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
+</body>
+</html>

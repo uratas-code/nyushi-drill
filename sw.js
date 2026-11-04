@@ -1,5 +1,5 @@
 // 入試ドリル Service Worker：問題を追加したら VERSION を上げる
-const VERSION = "v3";
+const VERSION = "v4";
 const CACHE = "nyushi-drill-" + VERSION;
 const CORE = ["./", "./index.html", "./english.html", "./kokugo.html", "./sugaku.html", "./nihonshi.html", "./sekaishi.html", "./chiri.html", "./seikei.html", "./rinri.html", "./butsuri.html", "./kagaku.html", "./seibutsu.html", "./joho.html",
   "./manifest.webmanifest", "./icons/icon-180.png", "./icons/icon-192.png", "./icons/icon-512.png"];
